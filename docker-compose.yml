@@ -1,0 +1,28 @@
+services:
+  mongodb:
+    image: mongo
+    env_file:
+      - ./libs/common/.env
+    volumes:
+      - 'mongo:/data/db'
+    ports:
+      - '27017:27017'
+
+  organization:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: dev
+    env_file:
+      - ./.env
+    command: ['yarn', 'start:dev']
+    depends_on:
+      - mongodb
+    volumes:
+      - '.:/usr/src/app' #this is the purpose of mounting for dev, we'll mount other way for production
+    ports:
+      - '4000:4000'
+
+volumes:
+  mongo:
+    driver: local

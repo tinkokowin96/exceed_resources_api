@@ -2,13 +2,13 @@ services:
   mongodb:
     image: mongo
     env_file:
-      - ./libs/common/.env
+      - ./.env
     volumes:
       - 'mongo:/data/db'
     ports:
       - '27017:27017'
 
-  organization:
+  app:
     build:
       context: .
       dockerfile: ./Dockerfile

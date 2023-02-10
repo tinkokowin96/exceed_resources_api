@@ -1,3 +1,5 @@
+import { Department } from 'src/organization/schema/department.schema';
+import { Voucher } from 'src/organization/schema/voucher.schema';
 import { EAttachment, EField, EPaymentMethod, ETrigger } from './enumn';
 
 export type AttachmentType = {

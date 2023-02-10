@@ -4,6 +4,7 @@ import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EWeekDay } from 'src/common/util/enumn';
 import { PayExtraType } from 'src/common/util/schema.type';
+import { Organization } from './organization.schema';
 
 @Schema()
 export class OConfig extends CoreSchema {
@@ -72,9 +73,9 @@ export class OConfig extends CoreSchema {
   @IsEnum(EWeekDay, { each: true })
   remoteWorkingDays: EWeekDay[];
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Company' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
   @ValidateNested()
-  company: Company;
+  organization: Organization;
 }
 
 export const OConfigSchema = SchemaFactory.createForClass(OConfig);

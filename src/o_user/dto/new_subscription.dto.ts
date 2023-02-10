@@ -1,6 +1,4 @@
 import { OmitType } from '@nestjs/mapped-types';
-import { CompanySubscription } from '@schema/company_subscription.schema';
+import { OSubscription } from 'src/organization/schema/o_subscription.schema';
 
-export class NewSubscriptionDto extends OmitType(CompanySubscription, [
-    'status',
-]) {}
+export class NewSubscriptionDto extends OmitType(OSubscription, ['status']) {}

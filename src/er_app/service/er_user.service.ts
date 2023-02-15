@@ -14,7 +14,7 @@ import { UpdatePermissionDto } from '../dto/update_permission.dto';
 import { ErUser } from '../schema/er_user.schema';
 
 @Injectable()
-export class ErUserService extends UserService<ErUser> {
+export class ErUserService extends UserService {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(ErUser.name) model: Model<ErUser>,

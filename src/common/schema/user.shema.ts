@@ -20,7 +20,7 @@ export class UserSchema extends CoreSchema {
   @Prop({ type: String, required: true, unique: true })
   @IsNotEmpty()
   @IsString()
-  username: string;
+  userName: string;
 
   @Prop({ type: String, required: true, unique: true })
   @IsNotEmpty()

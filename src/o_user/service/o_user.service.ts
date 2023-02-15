@@ -13,7 +13,7 @@ import { LoginOUserDto } from '../dto/login_o_user.dto';
 import { OUser } from '../schema/o_user.schema';
 
 @Injectable()
-export class OUserService extends UserService<OUser> {
+export class OUserService extends UserService {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(OUser.name) model: Model<OUser>,

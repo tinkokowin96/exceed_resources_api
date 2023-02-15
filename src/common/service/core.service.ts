@@ -1,7 +1,8 @@
-import { NotFoundException } from '@nestjs/common';
+import { Inject, NotFoundException } from '@nestjs/common';
 import { Response } from 'express';
 import { Connection, FilterQuery, Model, ProjectionType, QueryOptions, Types, UpdateQuery } from 'mongoose';
-import { CoreSchema } from '../schema/core.shema';
+import { Audit } from '../schema/audit.schema';
+import { AUDIT_MODEL } from '../util/constant';
 import { responseError } from '../util/response_error';
 import { AuditType } from '../util/type';
 
@@ -12,11 +13,12 @@ type MakeTransactionType = {
   audit?: AuditType;
 };
 
-export abstract class CoreService<Schema extends CoreSchema = CoreSchema> {
-  constructor(protected readonly connection: Connection, protected readonly model?: Model<Schema>) {}
+export abstract class CoreService {
+  @Inject(AUDIT_MODEL) private readonly auditModel: Model<Audit>;
+  constructor(protected readonly connection: Connection, protected readonly model?: Model<any>) {}
 
-  async create(dto: Omit<Partial<Schema>, '_id' | 'updatedAt'>, custom?: Model<Schema>) {
-    const model = custom ?? this.model;
+  async create(dto: any, custom?: Model<any>) {
+    const model = (custom ?? this.model) as Model<any>;
     const doc = new model({
       ...dto,
       _id: new Types.ObjectId(),
@@ -31,7 +33,7 @@ export abstract class CoreService<Schema extends CoreSchema = CoreSchema> {
     projection?: ProjectionType<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (custom ?? this.model) as Model<Schema>;
+    const model = (custom ?? this.model) as Model<any>;
     const docs = await model.find(filter, projection, {
       ...options,
       lean: true,
@@ -46,7 +48,7 @@ export abstract class CoreService<Schema extends CoreSchema = CoreSchema> {
     projection?: ProjectionType<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (custom ?? this.model) as Model<Schema>;
+    const model = (custom ?? this.model) as Model<any>;
     const doc = await model.findOne(filter, projection, {
       lean: true,
       ...options,
@@ -61,7 +63,7 @@ export abstract class CoreService<Schema extends CoreSchema = CoreSchema> {
     projection?: ProjectionType<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (custom ?? this.model) as Model<Schema>;
+    const model = (custom ?? this.model) as Model<any>;
     const doc = await model.findById(id, projection, {
       lean: true,
       ...options,
@@ -76,7 +78,7 @@ export abstract class CoreService<Schema extends CoreSchema = CoreSchema> {
     custom?: Model<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (this.model ?? custom) as Model<Schema>;
+    const model = (this.model ?? custom) as Model<any>;
     const prev = await model.findById(id, null, {
       lean: true,
     });
@@ -100,7 +102,7 @@ export abstract class CoreService<Schema extends CoreSchema = CoreSchema> {
     custom?: Model<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (this.model ?? custom) as Model<Schema>;
+    const model = (this.model ?? custom) as Model<any>;
     const prev = await model.find({ _id: { $in: ids } }, null, {
       lean: true,
     });
@@ -132,8 +134,15 @@ export abstract class CoreService<Schema extends CoreSchema = CoreSchema> {
       session.commitTransaction();
       session.endSession();
 
-      if (audit) {
-      }
+      if (audit)
+        this.create(
+          {
+            ...audit,
+            prev: res?.prev,
+            next: res?.next,
+          },
+          this.auditModel,
+        );
 
       const responseObj: any = {};
       if (typeof res === 'string') responseObj['message'] = res;

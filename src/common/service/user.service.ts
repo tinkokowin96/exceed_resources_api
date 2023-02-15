@@ -2,7 +2,6 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
 import { LoginAccountDto } from '../dto/login_account.dto';
-import { UserSchema } from '../schema/user.shema';
 import { encrypt } from '../util/encrypt';
 import { AppRequest } from '../util/type';
 import { CoreService } from './core.service';
@@ -13,13 +12,13 @@ type LoginType = {
   res: Response;
   populate?: string[];
 };
-export abstract class UserService<Schema extends UserSchema> extends CoreService<Schema> {
+export abstract class UserService extends CoreService {
   async login({ dto, callback, res, populate }: LoginType) {
     let relations = ['permission'];
     if (populate) relations = [...relations, ...populate];
     const user = await this.findOne(
       {
-        $or: [{ username: dto.username }, { email: dto.email }],
+        $or: [{ userName: dto.userName }, { email: dto.email }],
       },
       null,
       null,
@@ -28,7 +27,7 @@ export abstract class UserService<Schema extends UserSchema> extends CoreService
 
     const matchPassword = compareSync(dto.password, user.password);
 
-    if (!user || !matchPassword) throw new NotFoundException('Wrong username or password');
+    if (!user || !matchPassword) throw new NotFoundException('Wrong userName or password');
 
     if (user.loggedIn) throw new BadRequestException('User already logged in');
 

@@ -7,7 +7,6 @@ import { EModule, EUser } from './enumn';
 export interface AppRequest extends Request {
   id: string;
   user: EUser;
-  superAdmin: boolean;
   permission: Permission;
   config: ErConfig | OConfig;
 }

@@ -1,9 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hashSync } from 'bcryptjs';
-import { IsDateString, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { OUserBank } from 'src/bank/schema/o_user_bank.schema';
+import { Bank } from 'src/bank/schema/bank.schema';
 import { UserSchema } from 'src/common/schema/user.shema';
+import { ERequestStatus } from 'src/common/util/enumn';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { Project } from 'src/project/schema/project.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
@@ -21,7 +30,14 @@ export class OUser extends UserSchema {
   @IsDateString()
   joiningDate: Date;
 
-  //NOTE: the following are optional for o_admin_user
+  @Prop({ type: String, enum: ERequestStatus })
+  @IsEnum(ERequestStatus)
+  upgradeRequestStatus: ERequestStatus;
+
+  @Prop({ type: Boolean, default: false })
+  @IsBoolean()
+  accessAdminApp: boolean;
+
   @Prop({ type: Number })
   @IsNumber()
   basicSalary: number;
@@ -30,9 +46,9 @@ export class OUser extends UserSchema {
   @ValidateNested()
   status: OUserStatus;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUserBank' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Bank' })
   @ValidateNested()
-  bank: OUserBank;
+  bank: Bank;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OAssociated' })
   @ValidateNested({ each: true })

@@ -1,10 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsDateString, IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { ESubscriptionStatus } from 'src/common/util/enumn';
+import { EAddon, ESubscriptionStatus } from 'src/common/util/enumn';
 import { PaymentType } from 'src/common/util/schema.type';
-import { SubscriptionAddon } from './subscription_addon.schema';
+import { Organization } from './organization.schema';
 
 @Schema()
 export class OSubscription extends CoreSchema {
@@ -27,6 +35,11 @@ export class OSubscription extends CoreSchema {
   @IsString()
   declineRemark: string;
 
+  @Prop({ type: Boolean, required: true })
+  @IsNotEmpty()
+  @IsBoolean()
+  active: boolean;
+
   @Prop({ type: Date, required: true })
   @IsNotEmpty()
   @IsDateString()
@@ -37,9 +50,13 @@ export class OSubscription extends CoreSchema {
   @ValidateNested()
   payment: PaymentType;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'SubscriptionAddon' }] })
-  @ValidateNested({ each: true })
-  addons: SubscriptionAddon;
+  @Prop({ type: [{ type: String, enum: EAddon }] })
+  @IsEnum(EAddon, { each: true })
+  addons: EAddon[];
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
+  @ValidateNested()
+  organization: Organization;
 }
 
 export const OSubscriptionSchema = SchemaFactory.createForClass(OSubscription);

@@ -6,26 +6,12 @@ import { encrypt } from '../util/encrypt';
 import { AppRequest } from '../util/type';
 import { CoreService } from './core.service';
 
-type LoginType = {
-  dto: LoginAccountDto;
-  callback: (user: any) => Promise<any>;
-  res: Response;
-  populate?: string[];
-};
 export abstract class UserService extends CoreService {
-  async login({ dto, callback, res, populate }: LoginType) {
-    let relations = ['permission'];
-    if (populate) relations = [...relations, ...populate];
-    const user = await this.findOne(
-      {
-        $or: [{ userName: dto.userName }, { email: dto.email }],
-      },
-      null,
-      null,
-      { lean: false, populate: relations },
-    );
-
+  async login(dto: LoginAccountDto, res: Response) {
+    const user = await this.findOne({ $or: [{ userName: dto.userName }, { email: dto.email }] });
     const matchPassword = compareSync(dto.password, user.password);
+
+    if (!user.active) throw new ForbiddenException('User is not active');
 
     if (!user || !matchPassword) throw new NotFoundException('Wrong userName or password');
 
@@ -37,8 +23,7 @@ export abstract class UserService extends CoreService {
       process.env.ENC_PASSWORD,
       JSON.stringify({
         id: user._id,
-        role: user.role,
-        ...(await callback(user)),
+        type: user.type,
       }),
     );
 

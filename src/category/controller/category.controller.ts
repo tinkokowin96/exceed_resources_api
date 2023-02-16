@@ -9,7 +9,7 @@ import { CategoryService } from '../service/category.service';
 export class CategoryController {
   constructor(private readonly service: CategoryService) {}
 
-  @Users([EUser.ErApp, EUser.OAdmin, EUser.Organization])
+  @Users([EUser.ErApp, EUser.Organization])
   @Post('create')
   async create(@Param('type') type: ECategory, @Body() dto: CreateCategoryDto, @Res() res: Response) {
     return this.service.createCategory(dto, type, res);

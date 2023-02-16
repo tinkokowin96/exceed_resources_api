@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { OAdminUserBank, OAdminUserBankSchema } from 'src/bank/schema/o_admin_user_bank.schema';
-import { OUserBank, OUserBankSchema } from 'src/bank/schema/o_user_bank.schema';
+import { Bank, BankSchema } from 'src/bank/schema/bank.schema';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { Project, ProjectSchema } from 'src/project/schema/project.schema';
 import { OUserController } from './controller/o_user.controller';
@@ -13,8 +12,7 @@ import { OUserService } from './service/o_user.service';
     MongooseModule.forFeature([
       { name: OUser.name, schema: OUserSchema },
       { name: Organization.name, schema: OrganizationSchema },
-      { name: OUserBank.name, schema: OUserBankSchema },
-      { name: OAdminUserBank.name, schema: OAdminUserBankSchema },
+      { name: Bank.name, schema: BankSchema },
       { name: Project.name, schema: ProjectSchema },
     ]),
   ],

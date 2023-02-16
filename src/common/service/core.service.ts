@@ -134,15 +134,16 @@ export abstract class CoreService {
       session.commitTransaction();
       session.endSession();
 
-      if (audit)
-        this.create(
-          {
-            ...audit,
-            prev: res?.prev,
-            next: res?.next,
-          },
-          this.auditModel,
-        );
+      if (audit) {
+        // this.create(
+        //   {
+        //     ...audit,
+        //     prev: res?.prev,
+        //     next: res?.next,
+        //   },
+        //   this.auditModel,
+        // );
+      }
 
       const responseObj: any = {};
       if (typeof res === 'string') responseObj['message'] = res;

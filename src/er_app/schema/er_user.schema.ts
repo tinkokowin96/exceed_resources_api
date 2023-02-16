@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hashSync } from 'bcryptjs';
 import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { ErUserBank } from 'src/bank/schema/er_user_bank';
+import { Bank } from 'src/bank/schema/bank.schema';
 import { UserSchema } from 'src/common/schema/user.shema';
 import { Permission } from 'src/permission/permission.schema';
 
@@ -29,9 +29,9 @@ export class ErUser extends UserSchema {
   @ValidateNested()
   permission: Permission;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'ErUserBank' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Bank' })
   @ValidateNested()
-  bank: ErUserBank;
+  bank: Bank;
 }
 
 export const ErUserSchema = SchemaFactory.createForClass(ErUser);

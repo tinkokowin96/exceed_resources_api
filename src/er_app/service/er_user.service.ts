@@ -1,8 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
-import { ErUserBank } from 'src/bank/schema/er_user_bank';
+import { Bank } from 'src/bank/schema/bank.schema';
 import { LoginAccountDto } from 'src/common/dto/login_account.dto';
 import { UserService } from 'src/common/service/user.service';
 import { EModule, EUser } from 'src/common/util/enumn';
@@ -19,7 +19,7 @@ export class ErUserService extends UserService {
     @InjectConnection() connection: Connection,
     @InjectModel(ErUser.name) model: Model<ErUser>,
     @InjectModel(Permission.name) private readonly permissionModel: Model<Permission>,
-    @InjectModel(ErUserBank.name) private readonly erUserBankModel: Model<ErUserBank>,
+    @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
   ) {
     super(connection, model);
   }
@@ -28,7 +28,7 @@ export class ErUserService extends UserService {
     return this.makeTransaction({
       action: async () => {
         let bank;
-        if (bankId) bank = await this.findById(bankId, this.erUserBankModel);
+        if (bankId) bank = await this.findById(bankId, this.bankModel);
         return await this.create({
           ...dto,
           bank,
@@ -46,19 +46,7 @@ export class ErUserService extends UserService {
 
   async loginAccount(dto: LoginAccountDto, res: Response) {
     return this.makeTransaction({
-      action: async () =>
-        await this.login({
-          dto,
-          res,
-          callback: async (user: ErUser) => {
-            if (!user.active) throw new ForbiddenException('User is not active');
-            return {
-              superAdmin: user.superAdmin,
-              type: EUser.ErApp,
-              permissionId: user.permission?._id,
-            };
-          },
-        }),
+      action: async () => await this.login(dto, res),
       res,
       audit: {
         name: 'er-user_login',

@@ -1,7 +1,7 @@
 export enum EUser {
   ErApp = 'ErApp',
-  OAdmin = 'OAdmin',
   Organization = 'Organization',
+  OInActive = 'OInActive',
 }
 
 export enum EModule {
@@ -53,6 +53,12 @@ export enum ERequestMethod {
   Put = 'Put',
   Patch = 'Patch',
   Delete = 'Delete',
+}
+
+export enum ERequestStatus {
+  Approved = 'Approved',
+  Pending = 'Pending',
+  Declined = 'Declined',
 }
 
 export enum ECategory {

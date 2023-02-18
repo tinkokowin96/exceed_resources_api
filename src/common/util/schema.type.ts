@@ -1,56 +1,126 @@
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from 'class-validator';
 import { Department } from 'src/organization/schema/department.schema';
 import { Voucher } from 'src/organization/schema/voucher.schema';
 import { EAttachment, EField, EPaymentMethod, ETrigger } from './enumn';
 
-export type AttachmentType = {
+export class WorkingHourType {
+  @IsNotEmpty()
+  @Min(0)
+  @Max(23)
+  hour: number;
+
+  @IsNotEmpty()
+  @Min(0)
+  @Max(60)
+  minute: number;
+}
+
+export class AttachmentType {
+  @IsNotEmpty()
+  @IsEnum(EAttachment)
   type: EAttachment;
+
+  @IsNotEmpty()
+  @IsString()
   name: string;
+
+  @IsNotEmpty()
+  @IsString()
   url: string;
+
   data: any;
-};
+}
 
-export type PaymentType = {
+export class PaymentType {
+  @IsNotEmpty()
+  @IsString()
   paymentProof: string;
+
+  @IsNotEmpty()
+  @IsNumber()
   originalAmount: number;
+
+  @IsNotEmpty()
+  @IsNumber()
   amount: number;
+
+  @IsNotEmpty()
+  @IsBoolean()
   onlyStandard: boolean;
+
+  @IsNotEmpty()
+  @IsEnum(EPaymentMethod)
   paymentMethod: EPaymentMethod;
+
+  @ValidateNested()
   voucher: Voucher;
-};
+}
 
-export type CommentTextType = {
+export class CommentTextType {
+  @IsNotEmpty()
+  @IsString()
   text: string;
+
+  @IsNotEmpty()
+  @IsString()
   colleagueId: string;
-};
+}
 
-export type ExtraType = {
+export class ExtraType {
+  @IsNotEmpty()
+  @IsNumber()
   point: number;
+
+  @IsNotEmpty()
+  @IsNumber()
   amount: number;
+
+  @IsNotEmpty()
+  @IsBoolean()
   amountAbsolute: boolean;
-};
+}
 
-export type TriggerType = {
+export class TriggerType {
+  @IsNotEmpty()
+  @IsEnum(ETrigger)
   type: ETrigger;
+
+  @IsNotEmpty()
+  @IsNumber()
   amount: number;
-};
+}
 
-export type PayExtraType = {
-  extra: ExtraType;
-  reward: boolean;
+export class PayExtraType extends ExtraType {
+  @IsNotEmpty()
+  @ValidateNested()
   trigger: TriggerType;
-};
+}
 
-export type LeaveAllowedDepartmentType = {
+export class LeaveAllowedDepartmentType {
+  @IsNotEmpty()
+  @ValidateNested()
   department: Department;
+
+  @IsNotEmpty()
+  @IsNumber()
   num_allowed: number;
-};
+}
 
-export type ReportTypeType = {
+export class ReportTypeType {
+  @IsNotEmpty()
+  @IsEnum(EField)
   type: EField.CUser | EField.Position | EField.Department;
-  value: any;
-};
 
-export type LocationType = {
+  @IsNotEmpty()
+  value: any;
+}
+
+export class LocationType {
+  @IsNotEmpty()
+  @IsNumber()
   lat: number;
+
+  @IsNotEmpty()
+  @IsNumber()
   lng: number;
-};
+}

@@ -58,7 +58,7 @@ export abstract class CoreService {
   }
 
   async findById(
-    id: string,
+    id: string | Types.ObjectId,
     custom?: Model<any>,
     projection?: ProjectionType<any>,
     options?: QueryOptions<any>,

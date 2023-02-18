@@ -12,7 +12,6 @@ export enum EModule {
   Chat = 'Chat',
   Common = 'Common',
   ErApp = 'ErApp',
-  OAdminApp = 'OAdminApp',
   OUser = 'OUser',
   Organization = 'Organization',
   Permission = 'Permission',

@@ -1,17 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EWeekDay } from 'src/common/util/enumn';
-import { PayExtraType } from 'src/common/util/schema.type';
+import { PayExtraType, WorkingHourType } from 'src/common/util/schema.type';
 import { Organization } from './organization.schema';
 
 @Schema()
 export class OConfig extends CoreSchema {
-  @Prop({ type: Boolean, default: true })
-  @IsBoolean()
-  loginAllAssociated: boolean;
-
   @Prop({ type: Boolean, default: true })
   @IsBoolean()
   showOwnerPhone: boolean;
@@ -32,24 +28,17 @@ export class OConfig extends CoreSchema {
   @IsBoolean()
   allowedLateAsOntime: boolean;
 
-  @Prop({ type: Boolean, default: false })
-  @IsBoolean()
-  ownerCreateOwnerAccount: boolean;
-
-  @Prop({ type: Boolean, default: false })
-  @IsBoolean()
-  ownerCreateCUserAccount: boolean;
-
-  @Prop({ type: Number })
-  @IsNumber()
-  checkInTime: number;
-
-  @Prop({ type: Number })
-  @IsNumber()
-  checkOutTime: number;
-
-  @Prop({ type: [String], required: true })
+  @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
+  @ValidateNested()
+  checkInTime: WorkingHourType;
+
+  @Prop({ type: SchemaTypes.Mixed, required: true })
+  @IsNotEmpty()
+  @ValidateNested()
+  checkOutTime: WorkingHourType;
+
+  @Prop({ type: [String], default: ['organization/change-super-admin'] })
   @IsString({ each: true })
   restrictedRoutes: string[];
 

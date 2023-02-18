@@ -3,10 +3,8 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
-import { LoginAccountDto } from 'src/common/dto/login_account.dto';
 import { UserService } from 'src/common/service/user.service';
 import { EModule, EUser } from 'src/common/util/enumn';
-import { AppRequest } from 'src/common/util/type';
 import { Permission } from 'src/permission/permission.schema';
 import { CreateErUserDto } from '../dto/create_er_user.dto';
 import { ToggleActiveDto } from '../dto/toggle_active.dto';
@@ -40,29 +38,6 @@ export class ErUserService extends UserService {
         name: 'er-user_create',
         module: EModule.ErApp,
         payload: dto,
-      },
-    });
-  }
-
-  async loginAccount(dto: LoginAccountDto, res: Response) {
-    return this.makeTransaction({
-      action: async () => await this.login(dto, res),
-      res,
-      audit: {
-        name: 'er-user_login',
-        module: EModule.ErApp,
-        payload: dto,
-      },
-    });
-  }
-
-  async logoutAccount({ id }: AppRequest, res: Response) {
-    return this.makeTransaction({
-      action: async () => await this.logout(id, res),
-      res,
-      audit: {
-        name: 'er-user_logout',
-        module: EModule.ErApp,
       },
     });
   }

@@ -40,7 +40,7 @@ export class Organization extends CoreSchema {
   @ValidateNested({ each: true })
   colleagues: OUser[];
 
-  @Prop({ type: [{ type: SchemaTypes.Mixed }] })
+  @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
   attachments: AttachmentType[];
 }

@@ -3,6 +3,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
 import { LoginAccountDto } from 'src/common/dto/login_account.dto';
+import { EModule } from 'src/common/util/enumn';
 import { CreateErUserDto } from '../dto/create_er_user.dto';
 import { ToggleActiveDto } from '../dto/toggle_active.dto';
 import { UpdatePermissionDto } from '../dto/update_permission.dto';
@@ -22,14 +23,14 @@ export class ErUserController {
   @Throttle(2, 60)
   @Post('login')
   async login(@Body() dto: LoginAccountDto, @Res() res: Response) {
-    return this.service.loginAccount(dto, res);
+    return this.service.login(dto, res, { name: 'er-user_login', module: EModule.ErApp, payload: dto });
   }
 
-  @Throttle(2, 60)
+  @Throttle(1, 120)
   @Users(['ErApp'])
   @Get('logout')
   async logout(@Req() req, @Res() res: Response) {
-    return this.service.logoutAccount(req, res);
+    return this.service.logout(req, res, { name: 'er-user_logout', module: EModule.ErApp });
   }
 
   @Users(['ErApp'])

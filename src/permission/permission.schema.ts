@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
+import { EUser } from 'src/common/util/enumn';
 
 @Schema()
 export class Permission extends CoreSchema {
@@ -10,6 +11,11 @@ export class Permission extends CoreSchema {
   @IsNotEmpty()
   @IsString()
   name: string;
+
+  @Prop({ type: String, enum: EUser, required: true })
+  @IsNotEmpty()
+  @IsEnum(EUser)
+  type: EUser;
 
   @Prop({ type: [String], required: true })
   @IsNotEmpty()

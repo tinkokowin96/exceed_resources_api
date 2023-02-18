@@ -39,7 +39,6 @@ export class AuthGuard implements CanActivate {
       if (!req.cookies.user) return false;
       let user;
       const { id, type } = await decrypt(process.env.ENC_PASSWORD, req.cookies.user);
-      req.user = type;
       req.id = id;
       if (type === EUser.ErApp) {
         if (!allowedUsers.includes(EUser.ErApp)) return false;
@@ -87,6 +86,7 @@ export class AuthGuard implements CanActivate {
           });
           throw new ForbiddenException('Subscription is expired');
         }
+        req.user = user;
         if (user.currentOrganization.superAdmin) return true;
         if (addons) return !!intersection(addons, activeSubscription.addons).length;
         return user.currentOrganization.permission.allowedRoutes.includes(url);

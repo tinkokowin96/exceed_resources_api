@@ -7,7 +7,7 @@ import { UserService } from 'src/common/service/user.service';
 import { EModule, EUser } from 'src/common/util/enumn';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Project } from 'src/project/schema/project.schema';
-import { CreateOUserDto } from '../dto/create_o_user.dto';
+import { CreateEmployeeDto, CreateOwnerDto } from '../dto/create_o_user.dto';
 import { OUser } from '../schema/o_user.schema';
 
 @Injectable()
@@ -22,8 +22,26 @@ export class OUserService extends UserService {
     super(connection, model);
   }
 
-  async createAccount(
-    { bankId, currentOrganizationId, projectIds, associatedOrganizationIds, ...dto }: CreateOUserDto,
+  async createOwner(dto: CreateOwnerDto, res: Response) {
+    return this.makeTransaction({
+      action: async () => {
+        return await this.create({
+          ...dto,
+          joiningDate: new Date(),
+          type: EUser.Organization,
+        });
+      },
+      res,
+      audit: {
+        name: 'o-user_create-owner',
+        module: EModule.OUser,
+        payload: dto,
+      },
+    });
+  }
+
+  async createEmployee(
+    { bankId, currentOrganizationId, projectIds, associatedOrganizationIds, ...dto }: CreateEmployeeDto,
     res: Response,
   ) {
     return this.makeTransaction({
@@ -55,7 +73,7 @@ export class OUserService extends UserService {
       },
       res,
       audit: {
-        name: 'o-user_create',
+        name: 'o-user_create-employee',
         module: EModule.OUser,
         payload: dto,
       },

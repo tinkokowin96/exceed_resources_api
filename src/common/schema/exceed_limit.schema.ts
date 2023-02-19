@@ -14,15 +14,27 @@ export class ExceedLimit extends CoreSchema {
 
   @Prop({ type: Date, required: true })
   @IsDateString()
-  lastLimitTime: Date;
+  lastExceedTime: Date;
 
   @Prop({ type: Date })
   @IsDateString()
   blockedTime: Date;
 
-  @Prop({ type: Number, default: 1 })
+  @Prop({ type: Number, default: 0 })
   @IsNumber()
-  numLimit: number;
+  numAttempt: number;
+
+  @Prop({ type: Number, default: 0 })
+  @IsNumber()
+  numAttemptHalfDayBlock: number;
+
+  @Prop({ type: Number, default: 0 })
+  @IsNumber()
+  numAttemptOneDayBlock: number;
+
+  @Prop({ type: Number, default: 0 })
+  @IsNumber()
+  numAttemptThreeDayBlock: number;
 
   @Prop({ type: Number, default: 0 })
   @IsNumber()
@@ -30,7 +42,7 @@ export class ExceedLimit extends CoreSchema {
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
-  blockedForever: number;
+  blockedForever: boolean;
 }
 
 export const ExceedLimitSchema = SchemaFactory.createForClass(ExceedLimit);

@@ -3,7 +3,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
 import { EModule } from 'src/common/util/enumn';
-import { CreateOUserDto } from '../dto/create_o_user.dto';
+import { CreateEmployeeDto, CreateOwnerDto } from '../dto/create_o_user.dto';
 import { LoginOUserDto } from '../dto/login_o_user.dto';
 import { OUserService } from '../service/o_user.service';
 
@@ -11,13 +11,20 @@ import { OUserService } from '../service/o_user.service';
 export class OUserController {
   constructor(private readonly service: OUserService) {}
 
-  @Throttle(1, 120)
-  @Post('create')
-  async createAccount(@Body() dto: CreateOUserDto, @Res() res: Response) {
-    return this.service.createAccount(dto, res);
+  @Throttle(1, 60 * 5)
+  // @Throttle(1, 120)
+  @Post('create-owner')
+  async createOwner(@Body() dto: CreateOwnerDto, @Res() res: Response) {
+    return res.send('');
+    // return this.service.createOwner(dto, res);
   }
 
-  @Throttle(2, 60)
+  @Users(['Organization'])
+  @Post('create-employee')
+  async createEmployee(@Body() dto: CreateEmployeeDto, @Res() res: Response) {
+    return this.service.createEmployee(dto, res);
+  }
+
   @Post('login')
   async loginAccount(@Body() dto: LoginOUserDto, @Res() res: Response) {
     return this.service.login(dto, res, { name: 'o-user_login', module: EModule.OUser, payload: dto });

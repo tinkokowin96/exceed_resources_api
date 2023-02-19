@@ -57,16 +57,20 @@ export class AuthGuard implements CanActivate {
         if (type === EUser.Organization && !allowedUsers.includes(EUser.Organization)) return false;
         if (type === EUser.OInActive && !allowedUsers.includes(EUser.OInActive)) return false;
 
-        user = await this.oUserModel
-          .findById(id, null, { lean: true })
-          .populate('permission', 'allowedRoutes')
-          .populate({
-            path: 'currentOrganization',
-            populate: {
+        user = await this.oUserModel.findById(id, null, { lean: true }).populate({
+          path: 'currentOrganization',
+          populate: [
+            {
               path: 'organization',
               model: Organization.name,
             },
-          });
+            {
+              path: 'permission',
+              select: 'allowedRoutes assignableRoles',
+              model: Organization.name,
+            },
+          ],
+        });
         const config = await this.oConfigModel.findOne({ organization: user.currentOrganization._id });
         req.config = config;
         if (!user.active) throw new ForbiddenException('User is not active');

@@ -36,49 +36,76 @@ export class CustomThrottleGuard extends ThrottlerGuard {
       const blockUntil = moment(doc.blockedTime)
         .add(doc.blockedDay === 0.5 ? 12 : doc.blockedDay === 1 ? 24 : 72, 'hours')
         .toDate();
-      if (Date.now() < blockUntil.getTime())
+      if (Date.now() < blockUntil.getTime()) {
+        const updated = { lastExceedTime: new Date() };
+        let numAttempt;
+        let nextBlock;
+        switch (doc.blockedDay) {
+          case 0.5:
+            nextBlock = 1;
+            numAttempt = doc.numAttemptHalfDayBlock + 1;
+            if (numAttempt < 20) updated['numAttemptHalfDayBlock'] = doc.numAttemptHalfDayBlock + 1;
+            else updated['blockedDay'] = 1;
+            break;
+          case 1:
+            nextBlock = 3;
+            numAttempt = doc.numAttemptOneDayBlock + 1;
+            if (numAttempt < 20) updated['numAttemptOneDayBlock'] = doc.numAttemptOneDayBlock + 1;
+            else updated['blockedDay'] = 3;
+            break;
+          case 3:
+            nextBlock = 'Forever';
+            numAttempt = doc.numAttemptThreeDayBlock + 1;
+            if (numAttempt < 20) updated['numAttemptThreeDayBlock'] = doc.numAttemptThreeDayBlock + 1;
+            else updated['blockedForever'] = true;
+            break;
+
+          default:
+            break;
+        }
+        await this.model.findOneAndUpdate(filterObj, { $set: updated });
+
         throw new ThrottlerException(
-          `This ${filterObj['address'] ? 'address' : 'account'} is blocked until ${blockUntil}`,
+          `This ${
+            filterObj['address'] ? 'address' : 'account'
+          } is blocked until ${blockUntil}  and if you keep trying ${
+            20 - numAttempt
+          } time before due, you'll be blocked ${
+            typeof nextBlock === 'string' ? nextBlock : `${nextBlock} day`
+          }`,
         );
-      else
+      } else {
         await this.model.findOneAndUpdate(filterObj, {
           $set: {
             blockedTime: null,
             blockedDay: 0,
-            numLimit: 10,
+            numAttempt: 0,
+            numAttemptHalfDayBlock: 0,
+            numAttemptOneDayBlock: 0,
+            numAttemptThreeDayBlock: 0,
           },
         });
+      }
     }
 
     if (totalHits > limit) {
-      let remainingLimit = 9;
-      let numLimit, blockedDay, blockedForever, blockedTime;
+      let remainingAttempt;
       if (doc) {
-        if (doc.numLimit <= 10) {
-          numLimit = doc.numLimit + 1;
-          remainingLimit = 10 - numLimit;
-          blockedDay = doc.blockedDay;
-          blockedForever = false;
-        } else {
-          numLimit = 0;
-          blockedDay = doc.blockedDay === 0 ? 0.5 : doc.blockedDay === 0.5 ? 1 : doc.blockedDay === 1 ? 3 : 0;
+        const updated = { lastExceedTime: new Date() };
+        const numAttempt = doc.numAttempt + 1;
+        remainingAttempt = 10 - numAttempt;
 
-          blockedForever = blockedDay === 0 ? true : false;
-          if (blockedForever || blockedDay !== 0) blockedTime = new Date();
-        }
-        await this.model.findOneAndUpdate(filterObj, {
-          $set: {
-            numLimit,
-            blockedDay,
-            blockedForever,
-            lastLimitTime: new Date(),
-            blockedTime,
-          },
-        });
+        if (numAttempt > 9) {
+          updated['numAttempt'] = 0;
+          updated['blockedDay'] = 0.5;
+          updated['blockedTime'] = new Date();
+        } else updated['numAttempt'] = numAttempt;
+        await this.model.findOneAndUpdate(filterObj, { $set: updated });
       } else {
+        remainingAttempt = 9;
         const doc = new this.model({
           _id: new Types.ObjectId(),
-          lastLimitTime: new Date(),
+          lastExceedTime: new Date(),
           ...filterObj,
         });
         await doc.save();
@@ -87,16 +114,17 @@ export class CustomThrottleGuard extends ThrottlerGuard {
       throw new ThrottlerException(
         `Limit exceeded, retry ${format(
           Date.now() + timeToExpire * 1000,
-        )} and you can only exceed limit ${remainingLimit} times not to be blocked`,
+        )} and you can only exceed limit ${remainingAttempt} times not to be blocked`,
       );
     }
 
-    if (doc && doc.numLimit !== 10)
-      this.model.findOneAndUpdate(filterObj, {
+    if (doc && doc.numAttempt !== 0) {
+      await this.model.findOneAndUpdate(filterObj, {
         $set: {
-          numLimit: 10,
+          numAttempt: 0,
         },
       });
+    }
     return true;
   }
 

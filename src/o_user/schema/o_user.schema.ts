@@ -6,7 +6,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsString,
+  IsPhoneNumber,
   ValidateNested,
 } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
@@ -22,7 +22,7 @@ import { OUserStatus } from './o_user_status.schema';
 export class OUser extends UserSchema {
   @Prop({ type: String, required: true })
   @IsNotEmpty()
-  @IsString()
+  @IsPhoneNumber()
   phone: string;
 
   @Prop({ type: Date, required: true })

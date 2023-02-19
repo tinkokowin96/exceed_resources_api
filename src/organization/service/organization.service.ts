@@ -47,6 +47,7 @@ export class OrganizationService extends CoreService {
         ).next;
         return await this.create({ ...dto, superAdmin: req.user, category: cat, config });
       },
+      req,
       res,
       audit: {
         name: 'o-user_create',

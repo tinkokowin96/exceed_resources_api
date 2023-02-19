@@ -34,6 +34,10 @@ export class UserSchema extends CoreSchema {
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
+  deleted: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  @IsBoolean()
   loggedIn: boolean;
 
   @Prop({ type: Boolean, default: false })

@@ -23,25 +23,21 @@ export class PermissionService extends CoreService {
     super(connection, model);
   }
 
-  async createPermission(
-    { assignableRoleIds, ...dto }: CreatePermissionDto,
-    { user, config }: AppRequest,
-    res: Response,
-  ) {
+  async createPermission({ assignableRoleIds, ...dto }: CreatePermissionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async () => {
         const superAdmin =
-          user.type === EUser.ErApp
-            ? (user as ErUser).superAdmin
-            : (user as OUser).currentOrganization.superAdmin;
+          req.user.type === EUser.ErApp
+            ? (req.user as ErUser).superAdmin
+            : (req.user as OUser).currentOrganization.superAdmin;
 
-        const includeRestricted = intersection(config.restrictedRoutes, dto.allowedRoutes);
+        const includeRestricted = intersection(req.config.restrictedRoutes, dto.allowedRoutes);
         if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
 
         const assignableRoles = (await this.find(
           {
             _id: { $in: assignableRoleIds },
-            type: user.type === EUser.ErApp ? ECategory.ErUserRole : ECategory.OUserRole,
+            type: req.user.type === EUser.ErApp ? ECategory.ErUserRole : ECategory.OUserRole,
           },
           this.categoryModel,
           { _id: 1 },
@@ -49,9 +45,9 @@ export class PermissionService extends CoreService {
 
         if (!superAdmin) {
           const permission =
-            user.type === EUser.ErApp
-              ? (user as ErUser).permission
-              : (user as OUser).currentOrganization.permission;
+            req.user.type === EUser.ErApp
+              ? (req.user as ErUser).permission
+              : (req.user as OUser).currentOrganization.permission;
 
           if (pull(assignableRoleIds, ...permission.assignableRoles.map((each) => each.toString())).length)
             throw new BadRequestException('Included forbidden assignable roles');
@@ -59,6 +55,7 @@ export class PermissionService extends CoreService {
 
         return await this.create({ ...dto, assignableRoles });
       },
+      req,
       res,
       audit: {
         name: 'permission_create',
@@ -70,12 +67,12 @@ export class PermissionService extends CoreService {
 
   async updatePermission(
     { id, permissions: { add, remove } }: UpdatePermissionDto,
-    { config: { restrictedRoutes } }: AppRequest,
+    req: AppRequest,
     res: Response,
   ) {
     return this.makeTransaction({
       action: async () => {
-        const includeRestricted = intersection(restrictedRoutes, [...add, ...remove]);
+        const includeRestricted = intersection(req.config.restrictedRoutes, [...add, ...remove]);
         if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
         await this.findByIdAndUpdate(id, {
           $push: { allowedRoutes: add },
@@ -83,6 +80,7 @@ export class PermissionService extends CoreService {
         });
       },
       res,
+      req,
       audit: {
         name: 'permission_update',
         module: EModule.Permission,

@@ -5,6 +5,7 @@ import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
 import { UserService } from 'src/common/service/user.service';
 import { EModule, EUser } from 'src/common/util/enumn';
+import { AppRequest } from 'src/common/util/type';
 import { Permission } from 'src/permission/permission.schema';
 import { CreateErUserDto } from '../dto/create_er_user.dto';
 import { ToggleActiveDto } from '../dto/toggle_active.dto';
@@ -22,7 +23,7 @@ export class ErUserService extends UserService {
     super(connection, model);
   }
 
-  async createAccount({ bankId, ...dto }: CreateErUserDto, res: Response) {
+  async createAccount({ bankId, ...dto }: CreateErUserDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async () => {
         let bank;
@@ -33,6 +34,7 @@ export class ErUserService extends UserService {
           type: EUser.ErApp,
         });
       },
+      req,
       res,
       audit: {
         name: 'er-user_create',
@@ -42,10 +44,11 @@ export class ErUserService extends UserService {
     });
   }
 
-  async toggleActive({ id, active }: ToggleActiveDto, res: Response) {
+  async toggleActive({ id, active }: ToggleActiveDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async () => await this.findByIdAndUpdate(id, { $set: { active } }),
       res,
+      req,
       audit: {
         name: 'er-user_toggle-active',
         module: EModule.ErApp,
@@ -54,13 +57,14 @@ export class ErUserService extends UserService {
     });
   }
 
-  async updatePermission({ userId, permissionId }: UpdatePermissionDto, res: Response) {
+  async updatePermission({ userId, permissionId }: UpdatePermissionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async () => {
         const permission = await this.findById(permissionId, this.permissionModel);
         const next = await this.findByIdAndUpdate(userId, { $set: { permission } });
         return next;
       },
+      req,
       res,
       audit: {
         name: 'er-user_update-permission',

@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Param, Post, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
 import { ECategory, EUser } from 'src/common/util/enumn';
+import { AppRequest } from 'src/common/util/type';
 import { CreateCategoryDto } from '../dto/create_category.dto';
 import { CategoryService } from '../service/category.service';
 
@@ -11,7 +12,12 @@ export class CategoryController {
 
   @Users([EUser.ErApp, EUser.Organization])
   @Post('create')
-  async create(@Param('type') type: ECategory, @Body() dto: CreateCategoryDto, @Res() res: Response) {
-    return this.service.createCategory(dto, type, res);
+  async create(
+    @Param('type') type: ECategory,
+    @Body() dto: CreateCategoryDto,
+    @Req() req: AppRequest,
+    @Res() res: Response,
+  ) {
+    return this.service.createCategory(dto, type, req, res);
   }
 }

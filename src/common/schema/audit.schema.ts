@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsIP, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EModule } from 'src/common/util/enumn';
+import { ErUser } from 'src/er_app/schema/er_user.schema';
+import { OUser } from 'src/o_user/schema/o_user.schema';
 
 @Schema()
 export class Audit extends CoreSchema {
@@ -17,13 +19,25 @@ export class Audit extends CoreSchema {
   module: EModule;
 
   @Prop({ type: SchemaTypes.Mixed })
-  payload: any;
+  payload?: any;
 
   @Prop({ type: SchemaTypes.Mixed })
   prev?: any;
 
   @Prop({ type: SchemaTypes.Mixed })
   next?: any;
+
+  @Prop({ type: String })
+  @IsIP()
+  submittedIP?: string;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'ErUser' })
+  @ValidateNested()
+  submittedErUser?: ErUser;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
+  @ValidateNested()
+  submittedOUser?: OUser;
 }
 
 export const AuditSchema = SchemaFactory.createForClass(Audit);

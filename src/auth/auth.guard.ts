@@ -34,29 +34,25 @@ export class AuthGuard implements CanActivate {
     const req: AppRequest = httpCtx.getRequest();
     const url = req.protocol + '://' + req.get('Host') + req.originalUrl;
     // const url = req.protocol + '://' + req.host+req.originalUrl; when port don't need
+    let user, id, type;
 
-    if (allowedUsers) {
-      if (!req.cookies.user) return false;
-      let user;
-      const { id, type } = await decrypt(process.env.ENC_PASSWORD, req.cookies.user);
+    if (req.cookies.user) {
+      ({ id, type } = await decrypt(process.env.ENC_PASSWORD, req.cookies.user));
       req.id = id;
-      if (type === EUser.ErApp) {
-        if (!allowedUsers.includes(EUser.ErApp)) return false;
 
+      if (type === EUser.ErApp) {
         user = await this.erUserModel
           .findById(id, null, { lean: true })
           .populate('permission', 'allowedRoutes');
         const config = await this.erConfigModel.findById(process.env.CONFIG_ID, null, {
           lean: true,
         });
-        req.config = config;
-        if (!user.active) throw new ForbiddenException('User is not active');
-        if (user.superAdmin) return true;
-        return user.permission.allowedRoutes.includes(url);
-      } else {
-        if (type === EUser.Organization && !allowedUsers.includes(EUser.Organization)) return false;
-        if (type === EUser.OInActive && !allowedUsers.includes(EUser.OInActive)) return false;
 
+        req.user = user;
+        req.config = config;
+
+        if (!user.active) throw new ForbiddenException('User is not active');
+      } else {
         user = await this.oUserModel.findById(id, null, { lean: true }).populate({
           path: 'currentOrganization',
           populate: [
@@ -72,14 +68,27 @@ export class AuthGuard implements CanActivate {
           ],
         });
         const config = await this.oConfigModel.findOne({ organization: user.currentOrganization._id });
-        req.config = config;
         if (!user.active) throw new ForbiddenException('User is not active');
 
+        req.user = user;
+        req.config = config;
+      }
+    }
+
+    if (allowedUsers) {
+      if (!req.cookies.user) return false;
+      if (type === EUser.ErApp) {
+        if (!allowedUsers.includes(EUser.ErApp)) return false;
+
+        if (!user.active) throw new ForbiddenException('User is not active');
+        if (user.superAdmin) return true;
+        return user.permission.allowedRoutes.includes(url);
+      } else {
+        if (type === EUser.Organization && !allowedUsers.includes(EUser.Organization)) return false;
+        if (type === EUser.OInActive && !allowedUsers.includes(EUser.OInActive)) return false;
+
         const activeSubscription = await this.oSubscriptionModel.findOne(
-          {
-            active: true,
-            organizations: user.currentOrganization._id,
-          },
+          { active: true, organizations: user.currentOrganization._id },
           null,
           { lean: true },
         );
@@ -90,12 +99,12 @@ export class AuthGuard implements CanActivate {
           });
           throw new ForbiddenException('Subscription is expired');
         }
-        req.user = user;
         if (user.currentOrganization.superAdmin) return true;
         if (addons) return !!intersection(addons, activeSubscription.addons).length;
         return user.currentOrganization.permission.allowedRoutes.includes(url);
       }
     }
+
     return true;
   }
 }

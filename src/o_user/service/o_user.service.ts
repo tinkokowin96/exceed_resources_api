@@ -5,6 +5,7 @@ import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
 import { UserService } from 'src/common/service/user.service';
 import { EModule, EUser } from 'src/common/util/enumn';
+import { AppRequest } from 'src/common/util/type';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Project } from 'src/project/schema/project.schema';
 import { CreateEmployeeDto, CreateOwnerDto } from '../dto/create_o_user.dto';
@@ -22,7 +23,7 @@ export class OUserService extends UserService {
     super(connection, model);
   }
 
-  async createOwner(dto: CreateOwnerDto, res: Response) {
+  async createOwner(dto: CreateOwnerDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async () => {
         return await this.create({
@@ -32,6 +33,7 @@ export class OUserService extends UserService {
         });
       },
       res,
+      req,
       audit: {
         name: 'o-user_create-owner',
         module: EModule.OUser,
@@ -42,6 +44,7 @@ export class OUserService extends UserService {
 
   async createEmployee(
     { bankId, currentOrganizationId, projectIds, associatedOrganizationIds, ...dto }: CreateEmployeeDto,
+    req: AppRequest,
     res: Response,
   ) {
     return this.makeTransaction({
@@ -71,6 +74,7 @@ export class OUserService extends UserService {
           associatedOrganizations,
         });
       },
+      req,
       res,
       audit: {
         name: 'o-user_create-employee',

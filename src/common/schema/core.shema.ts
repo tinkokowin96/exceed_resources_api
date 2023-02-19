@@ -3,9 +3,9 @@ import { SchemaTypes, Types } from 'mongoose';
 
 @Schema()
 export class CoreSchema {
-    @Prop({ type: SchemaTypes.ObjectId })
-    _id: Types.ObjectId;
+  @Prop({ type: SchemaTypes.ObjectId })
+  _id: Types.ObjectId;
 
-    @Prop({ type: Date })
-    updatedAt: Date;
+  @Prop({ type: Date })
+  updatedAt: Date;
 }

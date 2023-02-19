@@ -3,14 +3,16 @@ import { Response } from 'express';
 import { Connection, FilterQuery, Model, ProjectionType, QueryOptions, Types, UpdateQuery } from 'mongoose';
 import { Audit } from '../schema/audit.schema';
 import { AUDIT_MODEL } from '../util/constant';
+import { EUser } from '../util/enumn';
 import { responseError } from '../util/response_error';
-import { AuditType } from '../util/type';
+import { AppRequest } from '../util/type';
 
 type MakeTransactionType = {
   action: () => Promise<any>;
+  req: AppRequest;
   res?: Response;
   callback?: () => any;
-  audit?: AuditType;
+  audit?: Pick<Audit, 'name' | 'module' | 'payload'>;
 };
 
 export abstract class CoreService {
@@ -126,7 +128,7 @@ export abstract class CoreService {
     return session;
   }
 
-  async makeTransaction({ action, res: response, callback, audit }: MakeTransactionType) {
+  async makeTransaction({ action, req, res: response, callback, audit }: MakeTransactionType) {
     const session = await this.startTransaction();
     try {
       const res = await action();
@@ -135,9 +137,15 @@ export abstract class CoreService {
       session.endSession();
 
       if (audit) {
+        const user = {};
+        if (req.user) {
+          if (req.user.type === EUser.ErApp) user['submittedErUser'] = req.user;
+          else user['submittedOUser'] = req.user;
+        } else user['submittedIP'] = req.ip;
         // this.create(
         //   {
         //     ...audit,
+        //     ...user,
         //     prev: res?.prev,
         //     next: res?.next,
         //   },

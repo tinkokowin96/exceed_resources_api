@@ -2,12 +2,13 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
 import { LoginAccountDto } from '../dto/login_account.dto';
+import { Audit } from '../schema/audit.schema';
 import { encrypt } from '../util/encrypt';
-import { AppRequest, AuditType } from '../util/type';
+import { AppRequest } from '../util/type';
 import { CoreService } from './core.service';
 
 export abstract class UserService extends CoreService {
-  async login(dto: LoginAccountDto, res: Response, audit: AuditType) {
+  async login(dto: LoginAccountDto, req: AppRequest, res: Response, audit: Omit<Audit, '_id' | 'updatedAt'>) {
     return this.makeTransaction({
       action: async () => {
         const user = await this.findOne({ $or: [{ userName: dto.userName }, { email: dto.email }] });
@@ -39,11 +40,12 @@ export abstract class UserService extends CoreService {
         return 'Successfully logged in';
       },
       res,
+      req,
       audit,
     });
   }
 
-  async logout(req: AppRequest, res: Response, audit: AuditType) {
+  async logout(req: AppRequest, res: Response, audit: Omit<Audit, '_id' | 'updatedAt'>) {
     return this.makeTransaction({
       action: async () => {
         const user = await this.findById(req.user._id, null, null, { lean: false });
@@ -51,6 +53,7 @@ export abstract class UserService extends CoreService {
         res.clearCookie('user');
         return 'Successfully logged out';
       },
+      req,
       res,
       audit,
     });

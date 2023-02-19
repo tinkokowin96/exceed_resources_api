@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
@@ -45,17 +46,19 @@ export class OSubscription extends CoreSchema {
   @IsDateString()
   activeUntil: Date;
 
-  @Prop({ type: SchemaTypes.Mixed, required: true })
-  @IsNotEmpty()
-  @ValidateNested()
-  payment: PaymentType;
-
   @Prop({ type: [{ type: String, enum: EAddon }] })
   @IsEnum(EAddon, { each: true })
   addons: EAddon[];
 
+  @Prop({ type: SchemaTypes.Mixed, required: true })
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => PaymentType)
+  payment: PaymentType;
+
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
   @ValidateNested()
+  @Type(() => Organization)
   organization: Organization;
 }
 

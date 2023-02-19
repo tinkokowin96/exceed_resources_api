@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
@@ -28,26 +29,30 @@ export class OConfig extends CoreSchema {
   @IsBoolean()
   allowedLateAsOntime: boolean;
 
+  @Prop({ type: [String], default: ['organization/change-super-admin'] })
+  @IsString({ each: true })
+  restrictedRoutes: string[];
+
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
+  @Type(() => WorkingHourType)
   checkInTime: WorkingHourType;
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
+  @Type(() => WorkingHourType)
   checkOutTime: WorkingHourType;
-
-  @Prop({ type: [String], default: ['organization/change-super-admin'] })
-  @IsString({ each: true })
-  restrictedRoutes: string[];
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
+  @Type(() => WorkingHourType)
   latePenalty: PayExtraType[];
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
+  @Type(() => WorkingHourType)
   ontimeReward: PayExtraType[];
 
   @Prop({ type: [{ type: String, enum: EWeekDay }] })
@@ -64,6 +69,7 @@ export class OConfig extends CoreSchema {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
   @ValidateNested()
+  @Type(() => WorkingHourType)
   organization: Organization;
 }
 

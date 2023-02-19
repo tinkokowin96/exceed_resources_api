@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
@@ -30,17 +31,20 @@ export class Quotation extends CoreSchema {
   @IsString()
   remark: string;
 
+  @Prop({ type: [SchemaTypes.Mixed] })
+  @ValidateNested({ each: true })
+  @Type(() => AttachmentType)
+  attachments: AttachmentType[];
+
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Category' }] })
   @ValidateNested({ each: true })
+  @Type(() => Category)
   roles: Category[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Collaborator' }] })
   @ValidateNested({ each: true })
+  @Type(() => Collaborator)
   collaborators: Collaborator[];
-
-  @Prop({ type: [SchemaTypes.Mixed] })
-  @ValidateNested({ each: true })
-  attachments: AttachmentType[];
 }
 
 export const QuotationSchema = SchemaFactory.createForClass(Quotation);

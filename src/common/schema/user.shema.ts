@@ -1,4 +1,5 @@
 import { Prop, Schema } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 
 import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
@@ -55,5 +56,6 @@ export class UserSchema extends CoreSchema {
 
   @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } })
   @ValidateNested()
+  @Type(() => Category)
   role: Category;
 }

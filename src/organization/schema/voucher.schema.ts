@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
@@ -47,6 +48,7 @@ export class Voucher extends CoreSchema {
 
   @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } })
   @ValidateNested()
+  @Type(() => Category)
   type: Category;
 }
 

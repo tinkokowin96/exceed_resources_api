@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
@@ -26,30 +27,37 @@ export class OAssociated extends CoreSchema {
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @ValidateNested()
+  @Type(() => WorkingHourType)
   checkInTime: WorkingHourType;
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @ValidateNested()
+  @Type(() => WorkingHourType)
   checkOutTime: WorkingHourType;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
   @ValidateNested({ each: true })
+  @Type(() => Organization)
   organization: Organization;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Position' })
   @ValidateNested({ each: true })
+  @Type(() => Position)
   position: Position;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission' })
   @ValidateNested()
+  @Type(() => Permission)
   permission: Permission;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Break' }] })
   @ValidateNested()
+  @Type(() => Break)
   breaks: Break[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Department' }] })
   @ValidateNested({ each: true })
+  @Type(() => Department)
   departments: Department[];
 }
 

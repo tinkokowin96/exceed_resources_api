@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
@@ -10,10 +10,10 @@ import { OrganizationService } from '../service/organization.service';
 export class OrganizationController {
   constructor(private readonly service: OrganizationService) {}
 
-  @Users(['OInActive'])
-  @Throttle(1, 120)
+  @Users(['OAny'])
+  // @Throttle(1, 120)
   @Post('create')
-  async createOrganization(@Body() dto: CreateOrganizationDto, req: AppRequest, res: Response) {
+  async createOrganization(@Body() dto: CreateOrganizationDto, @Req() req: AppRequest, @Res() res: Response) {
     return this.service.createOrganization(dto, req, res);
   }
 }

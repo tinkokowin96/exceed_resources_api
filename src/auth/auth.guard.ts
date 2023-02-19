@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext) {
-    const allowedUsers = this.reflector?.get<AllowedUser>('users', context.getHandler());
+    const allowedUsers = this.reflector?.get<AllowedUser[]>('users', context.getHandler());
     const addons = this.reflector?.get<AllowedAddon>('addons', context.getHandler());
 
     const httpCtx = context.switchToHttp();
@@ -67,11 +67,12 @@ export class AuthGuard implements CanActivate {
             },
           ],
         });
-        const config = await this.oConfigModel.findOne({ organization: user.currentOrganization._id });
-        if (!user.active) throw new ForbiddenException('User is not active');
 
         req.user = user;
-        req.config = config;
+        if (user.currentOrganization) {
+          const config = await this.oConfigModel.findOne({ organization: user.currentOrganization._id });
+          req.config = config;
+        }
       }
     }
 
@@ -84,21 +85,27 @@ export class AuthGuard implements CanActivate {
         if (user.superAdmin) return true;
         return user.permission.allowedRoutes.includes(url);
       } else {
-        if (type === EUser.Organization && !allowedUsers.includes(EUser.Organization)) return false;
-        if (type === EUser.OInActive && !allowedUsers.includes(EUser.OInActive)) return false;
+        const allowedInActive = allowedUsers.some((each) => each === EUser.OInActive || each === EUser.OAny);
+        if (!allowedInActive && (!user.currentOrganization || !allowedUsers.includes(EUser.Organization)))
+          return false;
 
-        const activeSubscription = await this.oSubscriptionModel.findOne(
-          { active: true, organizations: user.currentOrganization._id },
-          null,
-          { lean: true },
-        );
+        let activeSubscription;
+        if (user.currentOrganization)
+          activeSubscription = await this.oSubscriptionModel.findOne(
+            { active: true, organizations: user.currentOrganization._id },
+            null,
+            { lean: true },
+          );
+        if (activeSubscription) {
+          if (new Date(activeSubscription.activeUntil).getTime() < Date.now()) {
+            this.oSubscriptionModel.findByIdAndUpdate(user.currentOrganization.id, {
+              $set: { active: false },
+            });
+            if (!allowedInActive) throw new ForbiddenException('Subscription is expired');
+          }
+        } else if (!allowedInActive) throw new ForbiddenException('Subscription is expired');
 
-        if (new Date(activeSubscription.activeUntil).getTime() < Date.now()) {
-          this.oSubscriptionModel.findByIdAndUpdate(user.currentOrganization.id, {
-            $set: { activeUntil: new Date() },
-          });
-          throw new ForbiddenException('Subscription is expired');
-        }
+        if (allowedUsers.includes(EUser.OAny)) return true;
         if (user.currentOrganization.superAdmin) return true;
         if (addons) return !!intersection(addons, activeSubscription.addons).length;
         return user.currentOrganization.permission.allowedRoutes.includes(url);

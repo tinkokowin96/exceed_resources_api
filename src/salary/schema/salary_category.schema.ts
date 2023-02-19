@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Field } from 'src/common/schema/field.schema';
@@ -26,6 +27,7 @@ export class SalaryCategory {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Field' }] })
   @ValidateNested({ each: true })
+  @Type(() => Field)
   fields: Field[];
 }
 

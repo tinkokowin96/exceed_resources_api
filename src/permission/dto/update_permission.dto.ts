@@ -1,17 +1,22 @@
+import { Type } from 'class-transformer';
 import { ArrayNotEmpty, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
-type UpdatePermissionType = {
-    add: string[];
-    remove: string;
-};
+export class UpdatePermissionType {
+  @IsString({ each: true })
+  add: string[];
+
+  @IsString()
+  remove: string;
+}
 
 export class UpdatePermissionDto {
-    @IsNotEmpty()
-    @IsString()
-    id: string;
+  @IsNotEmpty()
+  @IsString()
+  id: string;
 
-    @IsNotEmpty()
-    @ArrayNotEmpty()
-    @ValidateNested()
-    permissions: UpdatePermissionType;
+  @IsNotEmpty()
+  @ArrayNotEmpty()
+  @ValidateNested()
+  @Type(() => UpdatePermissionType)
+  permissions: UpdatePermissionType;
 }

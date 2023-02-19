@@ -1,4 +1,5 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
@@ -16,6 +17,7 @@ export class OUserWorkingHour extends CoreSchema {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Break' })
   @ValidateNested()
+  @Type(() => Break)
   break: Break;
 }
 

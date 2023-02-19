@@ -1,6 +1,15 @@
 import { Inject, NotFoundException } from '@nestjs/common';
 import { Response } from 'express';
-import { Connection, FilterQuery, Model, ProjectionType, QueryOptions, Types, UpdateQuery } from 'mongoose';
+import {
+  ClientSession,
+  Connection,
+  FilterQuery,
+  Model,
+  ProjectionType,
+  QueryOptions,
+  Types,
+  UpdateQuery,
+} from 'mongoose';
 import { Audit } from '../schema/audit.schema';
 import { AUDIT_MODEL } from '../util/constant';
 import { EUser } from '../util/enumn';
@@ -8,7 +17,7 @@ import { responseError } from '../util/response_error';
 import { AppRequest } from '../util/type';
 
 type MakeTransactionType = {
-  action: () => Promise<any>;
+  action: (session: ClientSession) => Promise<any>;
   req: AppRequest;
   res?: Response;
   callback?: () => any;
@@ -19,13 +28,13 @@ export abstract class CoreService {
   @Inject(AUDIT_MODEL) private readonly auditModel: Model<Audit>;
   constructor(protected readonly connection: Connection, protected readonly model?: Model<any>) {}
 
-  async create(dto: any, custom?: Model<any>) {
-    const model = (custom ?? this.model) as Model<any>;
+  async create(dto: any, custom?: Model<any>, session?: ClientSession) {
+    const model = custom ?? this.model;
     const doc = new model({
       ...dto,
       _id: new Types.ObjectId(),
     });
-    const saved = await doc.save();
+    const saved = await doc.save({ session });
     return { next: saved };
   }
 
@@ -35,7 +44,7 @@ export abstract class CoreService {
     projection?: ProjectionType<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (custom ?? this.model) as Model<any>;
+    const model = custom ?? this.model;
     const docs = await model.find(filter, projection, {
       ...options,
       lean: true,
@@ -50,7 +59,7 @@ export abstract class CoreService {
     projection?: ProjectionType<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (custom ?? this.model) as Model<any>;
+    const model = custom ?? this.model;
     const doc = await model.findOne(filter, projection, {
       lean: true,
       ...options,
@@ -65,7 +74,7 @@ export abstract class CoreService {
     projection?: ProjectionType<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (custom ?? this.model) as Model<any>;
+    const model = custom ?? this.model;
     const doc = await model.findById(id, projection, {
       lean: true,
       ...options,
@@ -80,7 +89,7 @@ export abstract class CoreService {
     custom?: Model<any>,
     options?: QueryOptions<any>,
   ) {
-    const model = (this.model ?? custom) as Model<any>;
+    const model = custom ?? this.model;
     const prev = await model.findById(id, null, {
       lean: true,
     });
@@ -131,7 +140,7 @@ export abstract class CoreService {
   async makeTransaction({ action, req, res: response, callback, audit }: MakeTransactionType) {
     const session = await this.startTransaction();
     try {
-      const res = await action();
+      const res = await action(session);
       if (callback) await callback();
       session.commitTransaction();
       session.endSession();
@@ -158,8 +167,8 @@ export abstract class CoreService {
       else responseObj['data'] = res;
       if (response) response.send(responseObj);
     } catch (error) {
-      session.abortTransaction();
-      session.endSession();
+      await session.abortTransaction();
+      await session.endSession();
       responseError(response, error);
     }
   }

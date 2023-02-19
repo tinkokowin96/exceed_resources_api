@@ -2,6 +2,7 @@ export enum EUser {
   ErApp = 'ErApp',
   Organization = 'Organization',
   OInActive = 'OInActive',
+  OAny = 'OAny',
 }
 
 export enum EModule {

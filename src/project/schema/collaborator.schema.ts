@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
@@ -14,14 +15,17 @@ export class Collaborator extends CoreSchema {
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
+  @Type(() => AttachmentType)
   attachments: AttachmentType[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => OUser)
   colleague: OUser;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => Category)
   role: Category;
 }
 

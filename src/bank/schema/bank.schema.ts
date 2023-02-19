@@ -1,4 +1,5 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
@@ -14,18 +15,22 @@ export class Bank extends CoreSchema {
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
+  @Type(() => AttachmentType)
   attachment: AttachmentType;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
   @ValidateNested()
+  @Type(() => Category)
   bank: Category;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'ErUser' })
   @ValidateNested()
+  @Type(() => ErUser)
   erUser: ErUser;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
   @ValidateNested()
+  @Type(() => OUser)
   oUser: OUser;
 }
 

@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from 'class-validator';
 import { Department } from 'src/organization/schema/department.schema';
 import { Voucher } from 'src/organization/schema/voucher.schema';
@@ -93,12 +94,14 @@ export class TriggerType {
 export class PayExtraType extends ExtraType {
   @IsNotEmpty()
   @ValidateNested()
+  @Type(() => PayExtraType)
   trigger: TriggerType;
 }
 
 export class LeaveAllowedDepartmentType {
   @IsNotEmpty()
   @ValidateNested()
+  @Type(() => Department)
   department: Department;
 
   @IsNotEmpty()

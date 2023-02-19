@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
@@ -24,6 +25,7 @@ export class Permission extends CoreSchema {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Category' }] })
   @ValidateNested({ each: true })
+  @Type(() => Category)
   assignableRoles: Category[];
 }
 

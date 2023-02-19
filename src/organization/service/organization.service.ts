@@ -6,8 +6,10 @@ import { Category } from 'src/category/schema/category.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
+import { OUser } from 'src/o_user/schema/o_user.schema';
 import { CreateOrganizationDto } from '../dto/create_organization.dto';
 import { Organization } from '../schema/organization.schema';
+import { OAssociated } from '../schema/o_associated.schema';
 import { OConfig } from '../schema/o_config.schema';
 
 @Injectable()
@@ -17,6 +19,8 @@ export class OrganizationService extends CoreService {
     @InjectModel(Organization.name) model: Model<Organization>,
     @InjectModel(Category.name) private readonly categoryModel: Model<Category>,
     @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
+    @InjectModel(OAssociated.name) private readonly oAssociatedModel: Model<OAssociated>,
+    @InjectModel(OUser.name) private readonly oUserModel: Model<OUser>,
   ) {
     super(connection, model);
   }
@@ -45,7 +49,25 @@ export class OrganizationService extends CoreService {
             this.oConfigModel,
           )
         ).next;
-        return await this.create({ ...dto, superAdmin: req.user, category: cat, config });
+
+        const organization = await (
+          await this.create({ ...dto, superAdmin: req.user, category: cat, config })
+        ).next;
+
+        const currentOrganization = await (
+          await this.create(
+            {
+              superAdmin: true,
+              checkInTime,
+              checkOutTime,
+              organization,
+            },
+            this.oAssociatedModel,
+          )
+        ).next;
+        await this.findByIdAndUpdate(req.id, { $set: { currentOrganization } }, this.oUserModel);
+
+        return { next: organization };
       },
       req,
       res,

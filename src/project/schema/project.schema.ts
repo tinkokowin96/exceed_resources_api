@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
@@ -34,25 +35,30 @@ export class Project extends CoreSchema {
   @IsString()
   remark: string;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Quotation' }] })
-  @ValidateNested({ each: true })
-  quotations: Quotation[];
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Collaborator' }] })
-  @ValidateNested({ each: true })
-  collaborators: Collaborator[];
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Task' }] })
-  @ValidateNested({ each: true })
-  tasks: Task[];
-
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
+  @Type(() => AttachmentType)
   attachments: AttachmentType[];
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
+  @Type(() => PayExtraType)
   reward: PayExtraType[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Quotation' }] })
+  @ValidateNested({ each: true })
+  @Type(() => Quotation)
+  quotations: Quotation[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Collaborator' }] })
+  @ValidateNested({ each: true })
+  @Type(() => Collaborator)
+  collaborators: Collaborator[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Task' }] })
+  @ValidateNested({ each: true })
+  @Type(() => Task)
+  tasks: Task[];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

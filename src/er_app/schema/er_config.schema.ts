@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
@@ -23,6 +24,7 @@ export class ErConfig extends CoreSchema {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Currency' })
   @IsNotEmpty()
   @ValidateNested()
+  @Type(() => Currency)
   baseCurrency: Currency;
 }
 

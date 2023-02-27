@@ -1,14 +1,44 @@
 services:
-  mongodb:
+  # will create cluster with multiple ec2 instance (not dockerized) on production
+  mongo-primary:
+    container_name: mongo-primary
     image: mongo
-    env_file:
-      - ./.env
-    volumes:
-      - 'mongo:/data/db'
+    expose:
+      - 27017
+    restart: always
     ports:
-      - '27017:27017'
+      - '30000:27017'
+    volumes:
+      - 'mongo-primary:/data/db/primary'
+      - './rs-init.sh:/scripts/rs-init.sh'
+    command: mongod --replSet mR0 --bind_ip_all
+
+  mongo-secondary:
+    container_name: mongo-secondary
+    image: mongo
+    expose:
+      - 27017
+    restart: always
+    ports:
+      - '30001:27017'
+    volumes:
+      - 'mongo-secondary:/data/db/secondary'
+    command: mongod --replSet mR0 --bind_ip_all
+
+  mongo-arbiter:
+    image: mongo
+    container_name: mongo-arbiter
+    expose:
+      - 27017
+    restart: always
+    ports:
+      - '30002:27017'
+    volumes:
+      - 'mongo-arbiter:/data/db/arbiter'
+    command: mongod --replSet mR0 --bind_ip_all
 
   app:
+    container_name: app
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -17,12 +47,18 @@ services:
       - ./.env
     command: ['yarn', 'start:dev']
     depends_on:
-      - mongodb
+      - mongo-primary
+      - mongo-secondary
+      - mongo-arbiter
     volumes:
       - '.:/usr/src/app' #this is the purpose of mounting for dev, we'll mount other way for production
     ports:
       - '4000:4000'
 
 volumes:
-  mongo:
+  mongo-primary:
+    driver: local
+  mongo-secondary:
+    driver: local
+  mongo-arbiter:
     driver: local

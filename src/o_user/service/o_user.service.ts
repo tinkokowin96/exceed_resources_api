@@ -25,12 +25,15 @@ export class OUserService extends UserService {
 
   async createOwner(dto: CreateOwnerDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
-      action: async () => {
-        return await this.create({
-          ...dto,
-          joiningDate: new Date(),
-          type: EUser.Organization,
-        });
+      action: async (session) => {
+        return await this.create(
+          {
+            ...dto,
+            joiningDate: new Date(),
+            type: EUser.Organization,
+          },
+          session,
+        );
       },
       res,
       req,
@@ -48,7 +51,7 @@ export class OUserService extends UserService {
     res: Response,
   ) {
     return this.makeTransaction({
-      action: async () => {
+      action: async (session) => {
         let bank, currentOrganization, projects, associatedOrganizations;
         if (bankId) bank = await this.findById(bankId, this.bankModel, { _id: bankId });
         if (currentOrganizationId)
@@ -65,14 +68,17 @@ export class OUserService extends UserService {
               _id: 1,
             },
           );
-        return await this.create({
-          ...dto,
-          type: EUser.Organization,
-          bank,
-          currentOrganization,
-          projects,
-          associatedOrganizations,
-        });
+        return await this.create(
+          {
+            ...dto,
+            type: EUser.Organization,
+            bank,
+            currentOrganization,
+            projects,
+            associatedOrganizations,
+          },
+          session,
+        );
       },
       req,
       res,

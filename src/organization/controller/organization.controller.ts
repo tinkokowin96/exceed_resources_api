@@ -11,7 +11,7 @@ export class OrganizationController {
   constructor(private readonly service: OrganizationService) {}
 
   @Users(['OAny'])
-  // @Throttle(1, 120)
+  @Throttle(1, 120)
   @Post('create')
   async createOrganization(@Body() dto: CreateOrganizationDto, @Req() req: AppRequest, @Res() res: Response) {
     return this.service.createOrganization(dto, req, res);

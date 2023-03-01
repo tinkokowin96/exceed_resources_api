@@ -28,7 +28,7 @@ export abstract class CoreService {
   @Inject(AUDIT_MODEL) private readonly auditModel: Model<Audit>;
   constructor(protected readonly connection: Connection, protected readonly model?: Model<any>) {}
 
-  async create(dto: any, custom?: Model<any>, session?: ClientSession) {
+  async create(dto: any, session: ClientSession, custom?: Model<any>) {
     const model = custom ?? this.model;
     const doc = new model({
       ...dto,
@@ -86,6 +86,7 @@ export abstract class CoreService {
   async findByIdAndUpdate(
     id: string,
     update: UpdateQuery<any>,
+    session: ClientSession,
     custom?: Model<any>,
     options?: QueryOptions<any>,
   ) {
@@ -98,7 +99,7 @@ export abstract class CoreService {
     const next = await model.findByIdAndUpdate(
       id,
       { ...update, updatedAt: new Date() },
-      { ...options, new: true },
+      { ...options, session, new: true },
     );
 
     return {
@@ -110,6 +111,7 @@ export abstract class CoreService {
   async updateManyById(
     ids: string[],
     update: UpdateQuery<any>,
+    session: ClientSession,
     custom?: Model<any>,
     options?: QueryOptions<any>,
   ) {
@@ -122,7 +124,7 @@ export abstract class CoreService {
     const next = await model.updateMany(
       { _id: { $in: ids } },
       { ...update, updatedAt: new Date() },
-      { ...options, new: true },
+      { ...options, session, new: true },
     );
 
     return {

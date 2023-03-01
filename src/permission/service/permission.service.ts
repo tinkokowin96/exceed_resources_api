@@ -25,7 +25,7 @@ export class PermissionService extends CoreService {
 
   async createPermission({ assignableRoleIds, ...dto }: CreatePermissionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
-      action: async () => {
+      action: async (session) => {
         const superAdmin =
           req.user.type === EUser.ErApp
             ? (req.user as ErUser).superAdmin
@@ -53,7 +53,7 @@ export class PermissionService extends CoreService {
             throw new BadRequestException('Included forbidden assignable roles');
         }
 
-        return await this.create({ ...dto, assignableRoles });
+        return await this.create({ ...dto, assignableRoles }, session);
       },
       req,
       res,
@@ -71,13 +71,17 @@ export class PermissionService extends CoreService {
     res: Response,
   ) {
     return this.makeTransaction({
-      action: async () => {
+      action: async (session) => {
         const includeRestricted = intersection(req.config.restrictedRoutes, [...add, ...remove]);
         if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
-        await this.findByIdAndUpdate(id, {
-          $push: { allowedRoutes: add },
-          $pop: { allowedRoutes: remove },
-        });
+        await this.findByIdAndUpdate(
+          id,
+          {
+            $push: { allowedRoutes: add },
+            $pop: { allowedRoutes: remove },
+          },
+          session,
+        );
       },
       res,
       req,

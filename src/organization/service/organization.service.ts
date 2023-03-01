@@ -31,13 +31,13 @@ export class OrganizationService extends CoreService {
     res: Response,
   ) {
     return this.makeTransaction({
-      action: async () => {
+      action: async (session) => {
         let cat;
         if (!category && !categoryId) throw new BadRequestException('Required organization category');
         if (categoryId) cat = await this.findById(categoryId, this.categoryModel);
         else
           cat = await (
-            await this.create({ name: category, type: ECategory.Organization }, this.categoryModel)
+            await this.create({ name: category, type: ECategory.Organization }, session, this.categoryModel)
           ).next;
 
         const config = await (
@@ -46,12 +46,13 @@ export class OrganizationService extends CoreService {
               checkInTime,
               checkOutTime,
             },
+            session,
             this.oConfigModel,
           )
         ).next;
 
         const organization = await (
-          await this.create({ ...dto, superAdmin: req.user, category: cat, config })
+          await this.create({ ...dto, superAdmin: req.user, category: cat, config }, session)
         ).next;
 
         const currentOrganization = await (
@@ -62,11 +63,11 @@ export class OrganizationService extends CoreService {
               checkOutTime,
               organization,
             },
+            session,
             this.oAssociatedModel,
           )
         ).next;
-        await this.findByIdAndUpdate(req.id, { $set: { currentOrganization } }, this.oUserModel);
-
+        await this.findByIdAndUpdate(req.id, { $set: { currentOrganization } }, session, this.oUserModel);
         return { next: organization };
       },
       req,

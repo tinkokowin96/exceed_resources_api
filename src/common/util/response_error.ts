@@ -5,8 +5,6 @@ export const responseError = (res: Response, error: any) => {
     return res.status(error.status).send({ message: error.message });
   }
 
-  console.log(error);
-
   switch (error.constructor.name) {
     case 'ValidationError':
       return res.status(400).send({ message: error.message });

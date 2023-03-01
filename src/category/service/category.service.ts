@@ -22,7 +22,7 @@ export class CategoryService extends CoreService {
       action: async (session) => {
         if (!type) throw new BadRequestException('Category type is required');
         await this.create({ ...dto, type }, null, session);
-        throw new BadRequestException('Exception Occured..');
+        // throw new BadRequestException('Exception Occured..');
       },
       req,
       res,

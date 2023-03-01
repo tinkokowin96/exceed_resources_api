@@ -142,8 +142,6 @@ export abstract class CoreService {
     try {
       const res = await action(session);
       if (callback) await callback();
-      session.commitTransaction();
-      session.endSession();
 
       if (audit) {
         const user = {};
@@ -166,9 +164,12 @@ export abstract class CoreService {
       if (typeof res === 'string') responseObj['message'] = res;
       else responseObj['data'] = res;
       if (response) response.send(responseObj);
+
+      await session.commitTransaction();
+      session.endSession();
     } catch (error) {
       await session.abortTransaction();
-      await session.endSession();
+      session.endSession();
       responseError(response, error);
     }
   }

@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
-import { intersection } from 'lodash';
-import { Model } from 'mongoose';
+import { intersection, union } from 'lodash';
+import { Model, Types } from 'mongoose';
 import { decrypt } from 'src/common/util/encrypt';
 import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
@@ -89,13 +89,11 @@ export class AuthGuard implements CanActivate {
         if (!allowedInActive && (!user.currentOrganization || !allowedUsers.includes(EUser.Organization)))
           return false;
 
-        let activeSubscription;
+        let activeSubscription: OSubscription;
         if (user.currentOrganization)
-          activeSubscription = await this.oSubscriptionModel.findOne(
-            { active: true, organizations: user.currentOrganization._id },
-            null,
-            { lean: true },
-          );
+          activeSubscription = await this.oSubscriptionModel
+            .findOne({ active: true, organizations: user.currentOrganization._id }, null)
+            .populate('addons');
         if (activeSubscription) {
           if (new Date(activeSubscription.activeUntil).getTime() < Date.now()) {
             this.oSubscriptionModel.findByIdAndUpdate(user.currentOrganization.id, {
@@ -103,11 +101,23 @@ export class AuthGuard implements CanActivate {
             });
             if (!allowedInActive) throw new ForbiddenException('Subscription is expired');
           }
-        } else if (!allowedInActive) throw new ForbiddenException('Subscription is expired');
+        } else if (!allowedInActive) throw new ForbiddenException('No active subscription');
+        if (addons) {
+          const subscriptedAddons = activeSubscription.addons?.map((each) => each.type);
+          const matchedAddonTypes = intersection(addons, subscriptedAddons);
+          if (matchedAddonTypes.length) {
+            const matchedAddons = activeSubscription.addons?.filter((each) =>
+              matchedAddonTypes.includes(each.type),
+            );
+            if (matchedAddons.find((each) => each.allowEveryEmployee)) return true;
+            const allowedUsers = union(...matchedAddons.map((each) => each.allowedOusers));
+            return allowedUsers.some((each) => (each as unknown as Types.ObjectId).equals(id));
+          }
+          return false;
+        }
 
         if (allowedUsers.includes(EUser.OAny)) return true;
         if (user.currentOrganization.superAdmin) return true;
-        if (addons) return !!intersection(addons, activeSubscription.addons).length;
         return user.currentOrganization.permission.allowedRoutes.includes(url);
       }
     }

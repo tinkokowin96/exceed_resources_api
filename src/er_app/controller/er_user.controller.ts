@@ -15,7 +15,7 @@ export class ErUserController {
   constructor(private readonly service: ErUserService) {}
 
   @Throttle(1, 120)
-  @Users(['ErApp'])
+  // @Users(['ErApp'])
   @Post('create')
   async create(@Body() dto: CreateErUserDto, @Req() req: AppRequest, @Res() res: Response) {
     return this.service.createAccount(dto, req, res);

@@ -32,10 +32,8 @@ export enum ETrigger {
 }
 
 export enum ESubscriptionStatus {
-  Active = 'Active',
-  Guest = 'Guest',
-  Expired = 'Expired',
-  Suspended = 'Suspended',
+  Approved = 'Approved',
+  Refunded = 'Refunded',
   Declined = 'Declined',
 }
 
@@ -66,7 +64,7 @@ export enum ECategory {
   Priority = 'Priority',
   Organization = 'Organization',
   PaymentPlan = 'PaymentPlan',
-  Voucher = 'Voucher',
+  Cupon = 'Cupon',
   ErUserRole = 'ErUserRole',
   OUserRole = 'OUserRole',
   Bank = 'Bank',
@@ -113,6 +111,12 @@ export enum EWeekDay {
 
 export enum EAddon {
   VideoCall = 'VideoCall',
+}
+
+export enum ECupon {
+  Addon = 'Addon',
+  Standard = 'Standard',
+  Amount = 'Amount',
 }
 
 // export enum EPermission {

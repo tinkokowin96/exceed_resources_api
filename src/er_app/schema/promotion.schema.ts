@@ -4,7 +4,7 @@ import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsString, ValidateNested }
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EAddon } from 'src/common/util/enumn';
-import { Cupon } from 'src/er_app/schema/cupon.schema';
+import { ExtraType } from 'src/common/util/schema.type';
 
 @Schema()
 export class Promotion extends CoreSchema {
@@ -13,7 +13,7 @@ export class Promotion extends CoreSchema {
   @IsString()
   name: string;
 
-  @Prop({ type: Boolean, default: false })
+  @Prop({ type: Boolean, default: true })
   @IsBoolean()
   active: boolean;
 
@@ -29,10 +29,11 @@ export class Promotion extends CoreSchema {
   @IsString()
   remark: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Cupon' })
+  @Prop({ type: SchemaTypes.Mixed, required: true })
+  @IsNotEmpty()
   @ValidateNested()
-  @Type(() => Cupon)
-  cupon: Cupon;
+  @Type(() => ExtraType)
+  allowance: ExtraType;
 }
 
 export const PromotionSchema = SchemaFactory.createForClass(Promotion);

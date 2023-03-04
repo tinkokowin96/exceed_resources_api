@@ -29,6 +29,7 @@ type CreateType = Pick<QueryType, 'custom'> & {
   category?: {
     categoryId?: string;
     category?: string;
+    name?: string;
     type: ECategory;
   };
 };
@@ -86,7 +87,7 @@ export abstract class CoreService {
             custom: this.categoryModel,
           })
         ).next;
-      payload['category'] = cat;
+      payload[category.name ?? 'category'] = cat;
     }
     const doc = new model({
       payload,

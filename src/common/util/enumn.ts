@@ -28,7 +28,11 @@ export enum ETrigger {
   Week = 'Week',
   Month = 'Month',
   Year = 'Year',
-  Amount = 'Amount',
+}
+
+export enum EExtra {
+  Percentage = 'Percentage',
+  Absolute = 'Absolute',
 }
 
 export enum ESubscriptionStatus {

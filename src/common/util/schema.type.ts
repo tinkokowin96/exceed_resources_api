@@ -2,7 +2,8 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from 'class-validator';
 import { Department } from 'src/organization/schema/department.schema';
 import { Cupon } from 'src/er_app/schema/cupon.schema';
-import { EAttachment, EField, EPaymentMethod, ETrigger } from './enumn';
+import { EAttachment, EExtra, EField, EPaymentMethod, ETrigger } from './enumn';
+import { PickType } from '@nestjs/mapped-types';
 
 export class WorkingHourType {
   @IsNotEmpty()
@@ -14,6 +15,16 @@ export class WorkingHourType {
   @Min(0)
   @Max(60)
   minute: number;
+}
+
+export class CuponCodeType {
+  @IsNotEmpty()
+  @IsString()
+  code: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  numCupon: number;
 }
 
 export class AttachmentType {
@@ -67,20 +78,6 @@ export class CommentTextType {
   colleagueId: string;
 }
 
-export class ExtraType {
-  @IsNotEmpty()
-  @IsNumber()
-  point: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  amount: number;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  amountAbsolute: boolean;
-}
-
 export class TriggerType {
   @IsNotEmpty()
   @IsEnum(ETrigger)
@@ -91,11 +88,26 @@ export class TriggerType {
   amount: number;
 }
 
+export class ExtraType extends PickType(TriggerType, ['amount']) {
+  @IsNotEmpty()
+  @IsBoolean()
+  isPoint: boolean;
+
+  @IsNotEmpty()
+  @IsEnum(EExtra)
+  type: EExtra;
+}
+
 export class PayExtraType extends ExtraType {
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => PayExtraType)
+  @Type(() => TriggerType)
   trigger: TriggerType;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => ExtraType)
+  reward: ExtraType;
 }
 
 export class LeaveAllowedDepartmentType {

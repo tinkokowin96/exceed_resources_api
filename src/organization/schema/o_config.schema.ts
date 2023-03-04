@@ -47,12 +47,12 @@ export class OConfig extends CoreSchema {
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
-  @Type(() => WorkingHourType)
+  @Type(() => PayExtraType)
   latePenalty: PayExtraType[];
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
-  @Type(() => WorkingHourType)
+  @Type(() => PayExtraType)
   ontimeReward: PayExtraType[];
 
   @Prop({ type: [{ type: String, enum: EWeekDay }] })

@@ -5,6 +5,7 @@ import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { ECupon } from 'src/common/util/enumn';
+import { CuponCodeType, ExtraType } from 'src/common/util/schema.type';
 
 @Schema()
 export class Cupon extends CoreSchema {
@@ -12,23 +13,9 @@ export class Cupon extends CoreSchema {
   @IsString()
   name: string;
 
-  @Prop({ type: [String], required: true })
-  @IsNotEmpty()
-  @IsString({ each: true })
-  cuponCode: string[];
-
   @Prop({ type: Date })
   @IsDateString()
   active_until: Date;
-
-  @Prop({ type: Boolean, default: true })
-  @IsNumber()
-  absolute: boolean;
-
-  @Prop({ type: Number, required: true })
-  @IsNotEmpty()
-  @IsNumber()
-  amount: number;
 
   @Prop({ type: Boolean, default: true })
   @IsNumber()
@@ -38,11 +25,6 @@ export class Cupon extends CoreSchema {
   @IsNumber()
   activeOnAmount: number;
 
-  @Prop({ type: Number, required: true })
-  @IsNotEmpty()
-  @IsNumber()
-  numCupon: number;
-
   @Prop({ type: String })
   @IsString()
   remark: string;
@@ -51,6 +33,18 @@ export class Cupon extends CoreSchema {
   @IsNotEmpty()
   @IsEnum(ECupon)
   for: ECupon;
+
+  @Prop({ type: SchemaTypes.Mixed, required: true })
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => ExtraType)
+  allowance: ExtraType;
+
+  @Prop({ type: [SchemaTypes.Mixed], required: true })
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CuponCodeType)
+  cuponCodes: CuponCodeType[];
 
   @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } })
   @ValidateNested()

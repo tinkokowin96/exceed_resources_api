@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
@@ -17,57 +17,62 @@ export class OrganizationService extends CoreService {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Organization.name) model: Model<Organization>,
-    @InjectModel(Category.name) private readonly categoryModel: Model<Category>,
+    @InjectModel(Category.name) categoryModel: Model<Category>,
     @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
     @InjectModel(OAssociated.name) private readonly oAssociatedModel: Model<OAssociated>,
     @InjectModel(OUser.name) private readonly oUserModel: Model<OUser>,
   ) {
-    super(connection, model);
+    super(connection, model, categoryModel);
   }
 
   async createOrganization(
-    { category, categoryId, checkInTime, checkOutTime, ...dto }: CreateOrganizationDto,
+    { category, checkInTime, checkOutTime, ...dto }: CreateOrganizationDto,
     req: AppRequest,
     res: Response,
   ) {
     return this.makeTransaction({
       action: async (session) => {
-        let cat;
-        if (!category && !categoryId) throw new BadRequestException('Required organization category');
-        if (categoryId) cat = await this.findById(categoryId, this.categoryModel);
-        else
-          cat = await (
-            await this.create({ name: category, type: ECategory.Organization }, session, this.categoryModel)
-          ).next;
-
         const config = await (
-          await this.create(
-            {
+          await this.create({
+            dto: {
               checkInTime,
               checkOutTime,
             },
             session,
-            this.oConfigModel,
-          )
+            custom: this.oConfigModel,
+          })
         ).next;
 
         const organization = await (
-          await this.create({ ...dto, superAdmin: req.user, category: cat, config }, session)
+          await this.create({
+            dto: {
+              ...dto,
+              superAdmin: req.user,
+              config,
+              category: { ...category, type: ECategory.Organization },
+            },
+            session,
+          })
         ).next;
 
         const currentOrganization = await (
-          await this.create(
-            {
+          await this.create({
+            dto: {
               superAdmin: true,
               checkInTime,
               checkOutTime,
               organization,
             },
             session,
-            this.oAssociatedModel,
-          )
+            custom: this.oAssociatedModel,
+          })
         ).next;
-        await this.findByIdAndUpdate(req.id, { $set: { currentOrganization } }, session, this.oUserModel);
+        await this.findByIdAndUpdate({
+          id: req.id,
+          update: { $set: { currentOrganization } },
+          session,
+          custom: this.oUserModel,
+        });
         return { next: organization };
       },
       req,
@@ -75,7 +80,7 @@ export class OrganizationService extends CoreService {
       audit: {
         name: 'o-user_create',
         module: EModule.OUser,
-        payload: { category, categoryId, checkInTime, checkOutTime, ...dto },
+        payload: { category, checkInTime, checkOutTime, ...dto },
       },
     });
   }

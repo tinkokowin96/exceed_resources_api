@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { Cupon } from './cupon.schema';
+import { Cupon } from '../../er_app/schema/cupon.schema';
 import { OAddonSubscription } from './o_addon_subscription.schema';
 
 @Schema()

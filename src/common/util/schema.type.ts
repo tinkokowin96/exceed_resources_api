@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from 'class-validator';
 import { Department } from 'src/organization/schema/department.schema';
-import { Cupon } from 'src/organization/schema/cupon.schema';
+import { Cupon } from 'src/er_app/schema/cupon.schema';
 import { EAttachment, EField, EPaymentMethod, ETrigger } from './enumn';
 
 export class WorkingHourType {

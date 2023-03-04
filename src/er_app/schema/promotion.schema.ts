@@ -4,7 +4,7 @@ import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsString, ValidateNested }
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EAddon } from 'src/common/util/enumn';
-import { Cupon } from 'src/organization/schema/cupon.schema';
+import { Cupon } from 'src/er_app/schema/cupon.schema';
 
 @Schema()
 export class Promotion extends CoreSchema {

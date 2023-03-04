@@ -26,14 +26,14 @@ export class OUserService extends UserService {
   async createOwner(dto: CreateOwnerDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        return await this.create(
-          {
+        return await this.create({
+          dto: {
             ...dto,
             joiningDate: new Date(),
             type: EUser.Organization,
           },
           session,
-        );
+        });
       },
       res,
       req,
@@ -53,23 +53,28 @@ export class OUserService extends UserService {
     return this.makeTransaction({
       action: async (session) => {
         let bank, currentOrganization, projects, associatedOrganizations;
-        if (bankId) bank = await this.findById(bankId, this.bankModel, { _id: bankId });
+        if (bankId)
+          bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
         if (currentOrganizationId)
-          currentOrganization = await this.findById(currentOrganizationId, this.organizationModel, {
-            _id: 1,
+          currentOrganization = await this.findById({
+            id: currentOrganizationId,
+            custom: this.organizationModel,
+            projection: { _id: 1 },
           });
         if (projectIds)
-          projects = await this.find({ _id: { $in: projectIds } }, this.projectModel, { _id: 1 });
+          projects = await this.find({
+            filter: { _id: { $in: projectIds } },
+            custom: this.projectModel,
+            projection: { _id: 1 },
+          });
         if (associatedOrganizationIds)
-          associatedOrganizations = await this.find(
-            { _id: { $in: associatedOrganizationIds } },
-            this.organizationModel,
-            {
-              _id: 1,
-            },
-          );
-        return await this.create(
-          {
+          associatedOrganizations = await this.find({
+            filter: { _id: { $in: associatedOrganizationIds } },
+            custom: this.organizationModel,
+            projection: { _id: 1 },
+          });
+        return await this.create({
+          dto: {
             ...dto,
             type: EUser.Organization,
             bank,
@@ -78,7 +83,7 @@ export class OUserService extends UserService {
             associatedOrganizations,
           },
           session,
-        );
+        });
       },
       req,
       res,

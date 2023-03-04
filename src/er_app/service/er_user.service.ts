@@ -27,15 +27,15 @@ export class ErUserService extends UserService {
     return this.makeTransaction({
       action: async (session) => {
         let bank;
-        if (bankId) bank = await this.findById(bankId, this.bankModel);
-        return await this.create(
-          {
+        if (bankId) bank = await this.findById({ id: bankId, custom: this.bankModel });
+        return await this.create({
+          dto: {
             ...dto,
             bank,
             type: EUser.ErApp,
           },
           session,
-        );
+        });
       },
       req,
       res,
@@ -49,7 +49,7 @@ export class ErUserService extends UserService {
 
   async toggleActive({ id, active }: ToggleActiveDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
-      action: async (session) => await this.findByIdAndUpdate(id, { $set: { active } }, session),
+      action: async (session) => await this.findByIdAndUpdate({ id, update: { $set: { active } }, session }),
       res,
       req,
       audit: {
@@ -63,8 +63,8 @@ export class ErUserService extends UserService {
   async updatePermission({ userId, permissionId }: UpdatePermissionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const permission = await this.findById(permissionId, this.permissionModel);
-        const next = await this.findByIdAndUpdate(userId, { $set: { permission } }, session);
+        const permission = await this.findById({ id: permissionId, custom: this.permissionModel });
+        const next = await this.findByIdAndUpdate({ id: userId, update: { $set: { permission } }, session });
         return next;
       },
       req,

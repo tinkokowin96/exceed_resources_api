@@ -18,9 +18,9 @@ export class PermissionService extends CoreService {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Permission.name) model: Model<Permission>,
-    @InjectModel(Category.name) private readonly categoryModel: Model<Category>,
+    @InjectModel(Category.name) categoryModel: Model<Category>,
   ) {
-    super(connection, model);
+    super(connection, model, categoryModel);
   }
 
   async createPermission({ assignableRoleIds, ...dto }: CreatePermissionDto, req: AppRequest, res: Response) {
@@ -34,14 +34,14 @@ export class PermissionService extends CoreService {
         const includeRestricted = intersection(req.config.restrictedRoutes, dto.allowedRoutes);
         if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
 
-        const assignableRoles = (await this.find(
-          {
+        const assignableRoles = (await this.find({
+          filter: {
             _id: { $in: assignableRoleIds },
             type: req.user.type === EUser.ErApp ? ECategory.ErUserRole : ECategory.OUserRole,
           },
-          this.categoryModel,
-          { _id: 1 },
-        )) as unknown as Category[];
+          custom: this.categoryModel,
+          projection: { _id: 1 },
+        })) as unknown as Category[];
 
         if (!superAdmin) {
           const permission =
@@ -53,7 +53,7 @@ export class PermissionService extends CoreService {
             throw new BadRequestException('Included forbidden assignable roles');
         }
 
-        return await this.create({ ...dto, assignableRoles }, session);
+        return await this.create({ dto: { ...dto, assignableRoles }, session });
       },
       req,
       res,
@@ -74,14 +74,14 @@ export class PermissionService extends CoreService {
       action: async (session) => {
         const includeRestricted = intersection(req.config.restrictedRoutes, [...add, ...remove]);
         if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
-        await this.findByIdAndUpdate(
+        await this.findByIdAndUpdate({
           id,
-          {
+          update: {
             $push: { allowedRoutes: add },
             $pop: { allowedRoutes: remove },
           },
           session,
-        );
+        });
       },
       res,
       req,

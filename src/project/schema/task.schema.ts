@@ -34,41 +34,6 @@ export class Task extends CoreSchema {
   @IsString({ each: true })
   urls: string[];
 
-  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } }) // need to validate here
-  @ValidateNested()
-  @Type(() => Category)
-  status: Category;
-
-  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } }) // need to validate here
-  @ValidateNested()
-  @Type(() => Category)
-  priority: Category;
-
-  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Project' } })
-  @ValidateNested()
-  @Type(() => Project)
-  project: Project;
-
-  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Collaborator' } })
-  @ValidateNested()
-  @Type(() => Collaborator)
-  assignedBy: Collaborator;
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Collaborator' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Collaborator)
-  assignedTo: Collaborator[];
-
-  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Phase' } })
-  @ValidateNested()
-  @Type(() => Phase)
-  phase: Phase;
-
-  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Quotation' } })
-  @ValidateNested()
-  @Type(() => Quotation)
-  quotation: Quotation;
-
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
   @Type(() => AttachmentType)
@@ -78,6 +43,27 @@ export class Task extends CoreSchema {
   @ValidateNested({ each: true })
   @Type(() => PayExtraType)
   reward: PayExtraType[];
+
+  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } }) // need to validate here
+  status: Category;
+
+  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } }) // need to validate here
+  priority: Category;
+
+  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Project' } })
+  project: Project;
+
+  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Collaborator' } })
+  assignedBy: Collaborator;
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Collaborator' }] })
+  assignedTo: Collaborator[];
+
+  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Phase' } })
+  phase: Phase;
+
+  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Quotation' } })
+  quotation: Quotation;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

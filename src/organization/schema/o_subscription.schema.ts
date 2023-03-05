@@ -31,13 +31,9 @@ export class OSubscription extends CoreSchema {
   payment: PaymentType;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OAddonSubscription' }] })
-  @ValidateNested({ each: true })
-  @Type(() => OAddonSubscription)
   addons: OAddonSubscription[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
-  @ValidateNested()
-  @Type(() => Organization)
   organization: Organization;
 }
 

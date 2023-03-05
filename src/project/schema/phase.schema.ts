@@ -41,13 +41,9 @@ export class Phase extends CoreSchema {
   reward: PayExtraType[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Category' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Category)
   role: Category[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Collaborator' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Collaborator)
   collaborators: Collaborator[];
 }
 

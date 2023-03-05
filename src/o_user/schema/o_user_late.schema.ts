@@ -1,14 +1,18 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
-import { IsEnum, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EWorkingHour } from 'src/common/util/enumn';
+import { WorkingHourType } from 'src/common/util/schema.type';
 import { Break } from 'src/organization/schema/break.schema';
 
-export class OUserWorkingHour extends CoreSchema {
-  @Prop({ type: String })
-  @IsString()
-  name: string;
+export class OUserLate extends CoreSchema {
+  @Prop({ type: SchemaTypes.Mixed, required: true })
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => WorkingHourType)
+  lateTime: WorkingHourType;
 
   @Prop({ type: String, enum: EWorkingHour, default: EWorkingHour.CheckIn })
   @IsEnum(EWorkingHour)
@@ -18,4 +22,4 @@ export class OUserWorkingHour extends CoreSchema {
   break: Break;
 }
 
-export const OUserWorkingHourSchema = SchemaFactory.createForClass(OUserWorkingHour);
+export const OUserLateSchema = SchemaFactory.createForClass(OUserLate);

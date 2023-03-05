@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Cupon } from '../../er_app/schema/cupon.schema';
@@ -14,13 +13,9 @@ export class OAddonSubscriptionRequest extends CoreSchema {
   numEmployee: number;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Cupon' })
-  @ValidateNested()
-  @Type(() => Cupon)
   cupon: Cupon;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OAddonSubscription' })
-  @ValidateNested()
-  @Type(() => OAddonSubscription)
   addon: OAddonSubscription;
 }
 

@@ -19,13 +19,9 @@ export class Collaborator extends CoreSchema {
   attachments: AttachmentType[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  @ValidateNested({ each: true })
-  @Type(() => OUser)
   colleague: OUser;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
-  @ValidateNested({ each: true })
-  @Type(() => Category)
   role: Category;
 }
 

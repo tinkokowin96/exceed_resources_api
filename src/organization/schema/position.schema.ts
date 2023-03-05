@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { OUser } from 'src/o_user/schema/o_user.schema';
@@ -27,15 +26,11 @@ export class Position extends CoreSchema {
   @IsString()
   remark: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission', required: true })
   @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => Permission)
   permission: Permission;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
-  @ValidateNested({ each: true })
-  @Type(() => OUser)
   colleagues: OUser[];
 }
 

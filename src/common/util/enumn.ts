@@ -80,6 +80,18 @@ export enum EWorkingHour {
   Break = 'Break',
 }
 
+export enum EPosition {
+  DepartmentHead = 'DepartmentHead',
+  TeamLeader = 'TeamLeader',
+  Member = 'Member',
+}
+
+export enum EExecutive {
+  Owner = 'Owner',
+  CEO = 'CEO',
+  Executive = 'Executive',
+}
+
 export enum EAttachment {
   Video = 'Video',
   Image = 'Image',

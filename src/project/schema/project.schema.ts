@@ -46,18 +46,12 @@ export class Project extends CoreSchema {
   reward: PayExtraType[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Quotation' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Quotation)
   quotations: Quotation[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Collaborator' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Collaborator)
   collaborators: Collaborator[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Task' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Task)
   tasks: Task[];
 }
 

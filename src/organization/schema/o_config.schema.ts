@@ -68,8 +68,6 @@ export class OConfig extends CoreSchema {
   remoteWorkingDays: EWeekDay[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
-  @ValidateNested()
-  @Type(() => WorkingHourType)
   organization: Organization;
 }
 

@@ -1,6 +1,5 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Type } from 'class-transformer';
-import { IsDateString, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { LocationType } from 'src/common/util/schema.type';
@@ -26,8 +25,6 @@ export class OUserStatus extends CoreSchema {
   remark: string;
 
   @Prop({ type: SchemaTypes.Mixed })
-  @ValidateNested()
-  @Type(() => LocationType)
   location: LocationType;
 }
 

@@ -37,13 +37,9 @@ export class Quotation extends CoreSchema {
   attachments: AttachmentType[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Category' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Category)
   roles: Category[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Collaborator' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Collaborator)
   collaborators: Collaborator[];
 }
 

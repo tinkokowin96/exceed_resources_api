@@ -39,7 +39,7 @@ type FindType = QueryType & {
 };
 
 type FindByIdType = QueryType & {
-  id: string;
+  id: string | Types.ObjectId;
 };
 
 type FindByIdAndUpdateType = Omit<FindByIdType, 'projection'> & {

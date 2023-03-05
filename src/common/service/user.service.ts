@@ -12,12 +12,10 @@ export abstract class UserService extends CoreService {
   async login(dto: LoginAccountDto, req: AppRequest, res: Response, audit: Omit<Audit, '_id' | 'updatedAt'>) {
     return this.makeTransaction({
       action: async () => {
-        const user = await this.findOne(
-          { $or: [{ userName: dto.userName }, { email: dto.email }] },
-          null,
-          null,
-          { lean: false },
-        );
+        const user = await this.findOne({
+          filter: { $or: [{ userName: dto.userName }, { email: dto.email }] },
+          options: { lean: false },
+        });
         const matchPassword = compareSync(dto.password, user.password);
         if (user.type === EUser.ErApp && !user.active) throw new ForbiddenException('User is not active');
 
@@ -53,7 +51,7 @@ export abstract class UserService extends CoreService {
   async logout(req: AppRequest, res: Response, audit: Omit<Audit, '_id' | 'updatedAt'>) {
     return this.makeTransaction({
       action: async () => {
-        const user = await this.findById(req.user._id, null, null, { lean: false });
+        const user = await this.findById({ id: req.user._id, options: { lean: false } });
         await user.updateOne({ $set: { loggedIn: false } });
         res.clearCookie('user');
         return 'Successfully logged out';

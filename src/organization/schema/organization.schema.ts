@@ -26,28 +26,18 @@ export class Organization extends CoreSchema {
   attachments: AttachmentType[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  @ValidateNested()
-  @Type(() => OUser)
   superAdmin: OUser;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
-  @ValidateNested()
-  @Type(() => Category)
   type: Category;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OConfig' })
-  @ValidateNested()
-  @Type(() => OConfig)
   config: OConfig;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Department' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Department)
   departments: Department[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
-  @ValidateNested({ each: true })
-  @Type(() => OUser)
   colleagues: OUser[];
 }
 

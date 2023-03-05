@@ -19,18 +19,12 @@ export class Bank extends CoreSchema {
   attachment: AttachmentType;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
-  @ValidateNested()
-  @Type(() => Category)
   bank: Category;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'ErUser' })
-  @ValidateNested()
-  @Type(() => ErUser)
   erUser: ErUser;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  @ValidateNested()
-  @Type(() => OUser)
   oUser: OUser;
 }
 

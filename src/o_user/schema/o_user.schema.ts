@@ -1,15 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hashSync } from 'bcryptjs';
-import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsDateString,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsPhoneNumber,
-  ValidateNested,
-} from 'class-validator';
+import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
 import { UserSchema } from 'src/common/schema/user.shema';
@@ -44,38 +35,24 @@ export class OUser extends UserSchema {
   basicSalary: number;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OUserStatus' })
-  @ValidateNested()
-  @Type(() => OUserStatus)
   status: OUserStatus;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Bank' })
-  @ValidateNested()
-  @Type(() => Bank)
   bank: Bank;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OAssociated' })
-  @ValidateNested({ each: true })
-  @Type(() => OAssociated)
   currentOrganization: OAssociated;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'SalaryCategory' }] })
-  @ValidateNested({ each: true })
-  @Type(() => SalaryCategory)
   earnings: SalaryCategory[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'SalaryCategory' }] })
-  @ValidateNested({ each: true })
-  @Type(() => SalaryCategory)
   deductions: SalaryCategory[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Project' }] })
-  @ValidateNested({ each: true })
-  @Type(() => Project)
   projects: Project[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OAssociated' }] })
-  @ValidateNested({ each: true })
-  @Type(() => OAssociated)
   associatedOrganizations: OAssociated[];
 }
 

@@ -15,6 +15,9 @@ import { PermissionModule } from './permission/permission.module';
 import { ProjectModule } from './project/project.module';
 import { ReportModule } from './report/report.module';
 import { SalaryModule } from './salary/salary.module';
+import { LateModule } from './late/late.module';
+import { LeaveModule } from './leave/leave.module';
+import { OvertimeModule } from './overtime/overtime.module';
 
 @Module({
   imports: [
@@ -32,6 +35,9 @@ import { SalaryModule } from './salary/salary.module';
     OUserModule,
     BankModule,
     ProjectModule,
+    LateModule,
+    LeaveModule,
+    OvertimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

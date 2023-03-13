@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { EWeekDay } from 'src/common/util/enumn';
+import { EPosition, EWeekDay } from 'src/common/util/enumn';
 import { PayExtraType, WorkingHourType } from 'src/common/util/schema.type';
 import { Organization } from './organization.schema';
 
@@ -39,16 +39,23 @@ export class OConfig extends CoreSchema {
   @Type(() => WorkingHourType)
   checkInTime: WorkingHourType;
 
+  @Prop({ type: [{ type: String, enum: EPosition }] })
+  @IsEnum(EPosition, { each: true })
+  overtimeAssignablePositions: [EPosition];
+
+  @Prop({ type: [{ type: String, enum: EPosition }] })
+  @IsEnum(EPosition, { each: true })
+  overtimeApprovablePositions: [EPosition];
+
+  @Prop({ type: [{ type: String, enum: EPosition }] })
+  @IsEnum(EPosition, { each: true })
+  overtimeNotifyPositions: [EPosition];
+
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => WorkingHourType)
   checkOutTime: WorkingHourType;
-
-  @Prop({ type: [SchemaTypes.Mixed] })
-  @ValidateNested({ each: true })
-  @Type(() => PayExtraType)
-  latePenalty: PayExtraType[];
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })

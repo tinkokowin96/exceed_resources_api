@@ -1,9 +1,11 @@
+import { PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from 'class-validator';
-import { Department } from 'src/organization/schema/department.schema';
 import { Cupon } from 'src/er_app/schema/cupon.schema';
-import { EAttachment, EExtra, EField, EPaymentMethod, ETrigger } from './enumn';
-import { PickType } from '@nestjs/mapped-types';
+import { OLeave } from 'src/leave/schema/o_leave.schema';
+import { Department } from 'src/organization/schema/department.schema';
+import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
+import { EAttachment, EExtraAllowance, EField, EPaymentMethod, ETrigger } from './enumn';
 
 export class WorkingHourType {
   @IsNotEmpty()
@@ -94,20 +96,35 @@ export class ExtraType extends PickType(TriggerType, ['amount']) {
   isPoint: boolean;
 
   @IsNotEmpty()
-  @IsEnum(EExtra)
-  type: EExtra;
+  @IsEnum(EExtraAllowance)
+  type: EExtraAllowance;
+
+  @IsNumber()
+  extreaAmount?: number;
+
+  @ValidateNested()
+  @Type(() => OLeave)
+  extraLeave?: OLeave;
+
+  @ValidateNested()
+  @Type(() => SalaryCategory)
+  extraSalaryCategory?: SalaryCategory;
 }
 
-export class PayExtraType extends ExtraType {
+export class PayExtraType {
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => TriggerType)
   trigger: TriggerType;
 
   @IsNotEmpty()
+  @IsBoolean()
+  reward: boolean;
+
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => ExtraType)
-  reward: ExtraType;
+  extra: ExtraType;
 }
 
 export class LeaveAllowedDepartmentType {

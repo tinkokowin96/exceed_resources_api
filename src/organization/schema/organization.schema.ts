@@ -37,6 +37,15 @@ export class Organization extends CoreSchema {
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Department' }] })
   departments: Department[];
 
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
+  owner: OUser;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
+  ceo: OUser;
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
+  topManagements: OUser[];
+
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
   colleagues: OUser[];
 }

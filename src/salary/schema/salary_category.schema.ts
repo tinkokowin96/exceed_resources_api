@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsBoolean, IsDateString, IsNotEmpty, IsString } from 'class-validator';
-import { SchemaTypes } from 'mongoose';
-import { Field } from 'src/common/schema/field.schema';
+import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { EExtra, ETrigger } from 'src/common/util/enumn';
 
 @Schema()
 export class SalaryCategory {
@@ -20,12 +19,27 @@ export class SalaryCategory {
   @IsBoolean()
   earning: boolean;
 
+  @Prop({ type: String, enum: ETrigger, required: true })
+  @IsNotEmpty()
+  @IsEnum(ETrigger)
+  activeOnEvery: ETrigger;
+
+  @Prop({ type: String, enum: EExtra, required: true })
+  @IsNotEmpty()
+  @IsEnum(EExtra)
+  extra: EExtra;
+
+  @Prop({ type: Number, required: true })
+  @IsNotEmpty()
+  @IsNumber()
+  amount: number;
+
   @Prop({ type: String })
   @IsString()
   remark: string;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Field' }] })
-  fields: Field[];
+  // @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Field' }] })
+  // fields: Field[];
 }
 
 export const SalaryCategorySchema = SchemaFactory.createForClass(SalaryCategory);

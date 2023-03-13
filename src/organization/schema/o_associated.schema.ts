@@ -4,6 +4,7 @@ import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { WorkingHourType } from 'src/common/util/schema.type';
+import { OUserLate } from 'src/late/schema/o_user_late.schema';
 import { Permission } from 'src/permission/permission.schema';
 import { Break } from './break.schema';
 import { Department } from './department.schema';
@@ -49,6 +50,9 @@ export class OAssociated extends CoreSchema {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Department' }] })
   departments: Department[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUserLate' }] })
+  lates: OUserLate[];
 }
 
 export const OAssociatedSchema = SchemaFactory.createForClass(OAssociated);

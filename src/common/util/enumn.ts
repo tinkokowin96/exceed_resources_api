@@ -28,11 +28,21 @@ export enum ETrigger {
   Week = 'Week',
   Month = 'Month',
   Year = 'Year',
+  Count = 'Count',
 }
 
 export enum EExtra {
   Percentage = 'Percentage',
   Absolute = 'Absolute',
+  BaseSalaryPercentage = 'BaseSalaryPercentage',
+}
+
+export enum EExtraAllowance {
+  Percentage = 'Percentage',
+  Absolute = 'Absolute',
+  BaseSalaryPercentage = 'BaseSalaryPercentage',
+  Leave = 'Leave',
+  Allowance = 'Allowance',
 }
 
 export enum ESubscriptionStatus {
@@ -72,6 +82,7 @@ export enum ECategory {
   ErUserRole = 'ErUserRole',
   OUserRole = 'OUserRole',
   Bank = 'Bank',
+  Leave = 'Leave',
 }
 
 export enum EWorkingHour {
@@ -80,16 +91,19 @@ export enum EWorkingHour {
   Break = 'Break',
 }
 
+export enum EExecutivePosition {
+  Owner = 'Owner',
+  CEO = 'CEO',
+  TopManagement = 'TopManagement',
+}
+
 export enum EPosition {
+  Owner = 'Owner',
+  CEO = 'CEO',
+  TopManagement = 'TopManagement',
   DepartmentHead = 'DepartmentHead',
   TeamLeader = 'TeamLeader',
   Member = 'Member',
-}
-
-export enum EExecutive {
-  Owner = 'Owner',
-  CEO = 'CEO',
-  Executive = 'Executive',
 }
 
 export enum EAttachment {

@@ -3,8 +3,11 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { EPosition, EWeekDay } from 'src/common/util/enumn';
+import { EWeekDay } from 'src/common/util/enumn';
 import { PayExtraType, WorkingHourType } from 'src/common/util/schema.type';
+import { OLate } from 'src/late/schema/o_late.schema';
+import { OLeave } from 'src/leave/schema/o_leave.schema';
+import { OOvertime } from 'src/overtime/schema/o_overtime';
 import { Organization } from './organization.schema';
 
 @Schema()
@@ -39,18 +42,6 @@ export class OConfig extends CoreSchema {
   @Type(() => WorkingHourType)
   checkInTime: WorkingHourType;
 
-  @Prop({ type: [{ type: String, enum: EPosition }] })
-  @IsEnum(EPosition, { each: true })
-  overtimeAssignablePositions: [EPosition];
-
-  @Prop({ type: [{ type: String, enum: EPosition }] })
-  @IsEnum(EPosition, { each: true })
-  overtimeApprovablePositions: [EPosition];
-
-  @Prop({ type: [{ type: String, enum: EPosition }] })
-  @IsEnum(EPosition, { each: true })
-  overtimeNotifyPositions: [EPosition];
-
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
@@ -73,6 +64,15 @@ export class OConfig extends CoreSchema {
   @Prop({ type: [{ type: String, enum: EWeekDay }] })
   @IsEnum(EWeekDay, { each: true })
   remoteWorkingDays: EWeekDay[];
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'OLate' })
+  late: OLate;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'OOvertime' })
+  overtime: OOvertime;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'OLeave' })
+  leave: OLeave;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
   organization: Organization;

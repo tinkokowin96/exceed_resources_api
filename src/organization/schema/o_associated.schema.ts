@@ -5,6 +5,8 @@ import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { WorkingHourType } from 'src/common/util/schema.type';
 import { OUserLate } from 'src/late/schema/o_user_late.schema';
+import { OUserLeave } from 'src/leave/schema/o_user_leave.schema';
+import { OUserOvertime } from 'src/overtime/schema/o_user_overtime';
 import { Permission } from 'src/permission/permission.schema';
 import { Break } from './break.schema';
 import { Department } from './department.schema';
@@ -53,6 +55,12 @@ export class OAssociated extends CoreSchema {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUserLate' }] })
   lates: OUserLate[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUserOvertime' }] })
+  overtimes: OUserOvertime[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUserLeave' }] })
+  leaves: OUserLeave[];
 }
 
 export const OAssociatedSchema = SchemaFactory.createForClass(OAssociated);

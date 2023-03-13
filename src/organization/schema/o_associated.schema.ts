@@ -8,10 +8,10 @@ import { OUserLate } from 'src/late/schema/o_user_late.schema';
 import { OUserLeave } from 'src/leave/schema/o_user_leave.schema';
 import { OUserOvertime } from 'src/overtime/schema/o_user_overtime';
 import { Permission } from 'src/permission/permission.schema';
-import { Break } from './break.schema';
-import { Department } from './department.schema';
+import { Break } from '../../break/schema/break.schema';
+import { Department } from '../../department/schema/department.schema';
 import { Organization } from './organization.schema';
-import { Position } from './position.schema';
+import { Position } from '../../position/schema/position.schema';
 
 //NOTE: flexibleworkinghour, checkin, checkout and break will null for non custom(use value from config)
 @Schema()

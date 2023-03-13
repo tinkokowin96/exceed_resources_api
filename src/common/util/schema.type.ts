@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from 'class-validator';
 import { Cupon } from 'src/er_app/schema/cupon.schema';
 import { OLeave } from 'src/leave/schema/o_leave.schema';
-import { Department } from 'src/organization/schema/department.schema';
+import { Department } from 'src/department/schema/department.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 import { EAttachment, EExtraAllowance, EField, EPaymentMethod, ETrigger } from './enumn';
 

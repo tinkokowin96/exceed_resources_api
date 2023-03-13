@@ -6,7 +6,7 @@ import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { AttachmentType } from 'src/common/util/schema.type';
 import { OUser } from 'src/o_user/schema/o_user.schema';
-import { Department } from './department.schema';
+import { Department } from '../../department/schema/department.schema';
 import { OConfig } from './o_config.schema';
 
 @Schema()

@@ -18,6 +18,10 @@ import { SalaryModule } from './salary/salary.module';
 import { LateModule } from './late/late.module';
 import { LeaveModule } from './leave/leave.module';
 import { OvertimeModule } from './overtime/overtime.module';
+import { DepartmentModule } from './department/department.module';
+import { BreakModule } from './break/break.module';
+import { PositionModule } from './position/position.module';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
@@ -38,6 +42,10 @@ import { OvertimeModule } from './overtime/overtime.module';
     LateModule,
     LeaveModule,
     OvertimeModule,
+    DepartmentModule,
+    BreakModule,
+    PositionModule,
+    TeamModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,17 +5,16 @@ import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { ESubscriptionStatus } from 'src/common/util/enumn';
 import { PaymentType } from 'src/common/util/schema.type';
-import { Organization } from './organization.schema';
-import { OAddonSubscriptionRequest } from './o_addon_subscription_request.schema';
+import { Cupon } from 'src/er_app/schema/cupon.schema';
+import { Organization } from '../../organization/schema/organization.schema';
 
 @Schema()
-export class OSubscription extends CoreSchema {
+export class SubscriptionRequest extends CoreSchema {
   @Prop({ type: Number, required: true })
   @IsNotEmpty()
   @IsNumber()
   numDay: number;
 
-  //NOTE: this is nullable on addon subscription
   @Prop({ type: Number })
   @IsNumber()
   numEmployee: number;
@@ -35,11 +34,11 @@ export class OSubscription extends CoreSchema {
   @Type(() => PaymentType)
   payment: PaymentType;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OAddonSubscriptionRequest' }] })
-  addons: OAddonSubscriptionRequest[];
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Cupon' })
+  cupon: Cupon;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
   organization: Organization;
 }
 
-export const OSubscriptionSchema = SchemaFactory.createForClass(OSubscription);
+export const SubscriptionRequestSchema = SchemaFactory.createForClass(SubscriptionRequest);

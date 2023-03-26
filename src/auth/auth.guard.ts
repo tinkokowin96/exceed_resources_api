@@ -10,7 +10,7 @@ import { ErConfig } from 'src/er_app/schema/er_config.schema';
 import { ErUser } from 'src/er_app/schema/er_user.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
-import { OSubscription } from 'src/organization/schema/o_subscription.schema';
+import { Subscription } from 'src/organization/schema/o_subscription.schema';
 import { OUser } from 'src/o_user/schema/o_user.schema';
 import { AllowedAddon } from './addon.decorator';
 import { AllowedUser } from './user.decorator';
@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector,
     @InjectModel(ErUser.name) private readonly erUserModel: Model<ErUser>,
     @InjectModel(OUser.name) private readonly oUserModel: Model<OUser>,
-    @InjectModel(OSubscription.name) private readonly oSubscriptionModel: Model<OSubscription>,
+    @InjectModel(Subscription.name) private readonly oSubscriptionModel: Model<Subscription>,
     @InjectModel(ErConfig.name) private readonly erConfigModel: Model<ErConfig>,
     @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
   ) {}
@@ -89,7 +89,7 @@ export class AuthGuard implements CanActivate {
         if (!allowedInActive && (!user.currentOrganization || !allowedUsers.includes(EUser.Organization)))
           return false;
 
-        let activeSubscription: OSubscription;
+        let activeSubscription: Subscription;
         if (user.currentOrganization)
           activeSubscription = await this.oSubscriptionModel
             .findOne({ active: true, organizations: user.currentOrganization._id }, null)

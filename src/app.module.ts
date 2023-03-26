@@ -22,6 +22,7 @@ import { DepartmentModule } from './department/department.module';
 import { BreakModule } from './break/break.module';
 import { PositionModule } from './position/position.module';
 import { TeamModule } from './team/team.module';
+import { SubscriptionModule } from './subscription/o_subscription.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { TeamModule } from './team/team.module';
     BreakModule,
     PositionModule,
     TeamModule,
+    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -91,16 +91,9 @@ export enum EWorkingHour {
   Break = 'Break',
 }
 
-export enum EExecutivePosition {
-  Owner = 'Owner',
-  CEO = 'CEO',
-  TopManagement = 'TopManagement',
-}
-
 export enum EPosition {
   Owner = 'Owner',
   CEO = 'CEO',
-  TopManagement = 'TopManagement',
   DepartmentHead = 'DepartmentHead',
   TeamLeader = 'TeamLeader',
   Member = 'Member',

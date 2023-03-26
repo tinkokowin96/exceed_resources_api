@@ -183,15 +183,11 @@ export abstract class CoreService {
           if (req.user.type === EUser.ErApp) user['submittedErUser'] = req.user;
           else user['submittedOUser'] = req.user;
         } else user['submittedIP'] = req.ip;
-        // this.create(
-        //   {
-        //     ...audit,
-        //     ...user,
-        //     prev: res?.prev,
-        //     next: res?.next,
-        //   },
-        //   this.auditModel,
-        // );
+        this.create({
+          dto: { ...audit, ...user, prev: res?.prev, next: res?.next },
+          custom: this.auditModel,
+          session,
+        });
       }
 
       const responseObj: any = {};

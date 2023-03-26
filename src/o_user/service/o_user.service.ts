@@ -5,7 +5,7 @@ import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
 import { UserService } from 'src/common/service/user.service';
 import { EModule, EUser } from 'src/common/util/enumn';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest, ServiceTrigger } from 'src/common/util/type';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Project } from 'src/project/schema/project.schema';
 import { CreateEmployeeDto, CreateOwnerDto } from '../dto/create_o_user.dto';
@@ -23,16 +23,15 @@ export class OUserService extends UserService {
     super(connection, model);
   }
 
-  async createOwner(dto: CreateOwnerDto, req: AppRequest, res: Response) {
+  async createOwner(dto: CreateOwnerDto, req: AppRequest, res: Response, trigger?: ServiceTrigger) {
     return this.makeTransaction({
       action: async (session) => {
         return await this.create({
           dto: {
             ...dto,
-            joiningDate: new Date(),
             type: EUser.Organization,
           },
-          session,
+          session: trigger?.session ?? session,
         });
       },
       res,

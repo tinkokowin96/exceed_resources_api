@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { ClientSession } from 'mongoose';
 import { ErConfig } from 'src/er_app/schema/er_config.schema';
 import { ErUser } from 'src/er_app/schema/er_user.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
@@ -9,3 +10,8 @@ export interface AppRequest extends Request {
   user: ErUser | OUser;
   config: ErConfig | OConfig;
 }
+
+export type ServiceTrigger = {
+  triggerBy: string;
+  session: ClientSession;
+};

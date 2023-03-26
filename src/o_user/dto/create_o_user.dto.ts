@@ -1,9 +1,8 @@
 import { OmitType } from '@nestjs/mapped-types';
 import { IsBoolean, IsDateString, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
-import { UserSchema } from 'src/common/schema/user.shema';
 import { OUser } from '../schema/o_user.schema';
 
-export class CreateOwnerDto extends OmitType(UserSchema, ['type', 'loggedIn']) {
+export class CreateOwnerDto extends OmitType(OUser, ['type', 'loggedIn']) {
   @IsNotEmpty()
   @IsPhoneNumber()
   phone: string;

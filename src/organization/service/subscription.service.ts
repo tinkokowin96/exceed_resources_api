@@ -12,6 +12,4 @@ export class SubscriptionService extends CoreService {
   ) {
     super(connection, model);
   }
-
-  async createSubscription(dto);
 }

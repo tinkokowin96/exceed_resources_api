@@ -44,9 +44,6 @@ export class Organization extends CoreSchema {
   ceo: OUser;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
-  topManagements: OUser[];
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
   colleagues: OUser[];
 }
 

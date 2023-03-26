@@ -13,6 +13,10 @@ export class Audit extends CoreSchema {
   @IsString()
   name: string;
 
+  @Prop({ type: String })
+  @IsString()
+  triggerBy?: string;
+
   @Prop({ type: String, enum: EModule })
   @IsNotEmpty()
   @IsEnum(EModule)

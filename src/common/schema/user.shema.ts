@@ -1,8 +1,6 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 
 import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { SchemaTypes } from 'mongoose';
-import { Category } from 'src/category/schema/category.schema';
 import { EUser } from '../util/enumn';
 import { CoreSchema } from './core.shema';
 
@@ -52,7 +50,4 @@ export class UserSchema extends CoreSchema {
   @IsNotEmpty()
   @IsEnum(EUser)
   type: EUser;
-
-  @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } })
-  role: Category;
 }

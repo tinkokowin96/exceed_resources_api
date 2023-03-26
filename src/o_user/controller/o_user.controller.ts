@@ -12,7 +12,7 @@ import { OUserService } from '../service/o_user.service';
 export class OUserController {
   constructor(private readonly service: OUserService) {}
 
-  @Throttle(1, 120)
+  @Users(['Organization'])
   @Post('create-owner')
   async createOwner(@Body() dto: CreateOwnerDto, @Req() req: AppRequest, @Res() res: Response) {
     return this.service.createOwner(dto, req, res);

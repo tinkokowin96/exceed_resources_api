@@ -18,5 +18,6 @@ import { OUserService } from './service/o_user.service';
   ],
   controllers: [OUserController],
   providers: [OUserService],
+  exports: [OUserService],
 })
 export class OUserModule {}

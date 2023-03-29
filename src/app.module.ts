@@ -22,7 +22,7 @@ import { DepartmentModule } from './department/department.module';
 import { BreakModule } from './break/break.module';
 import { PositionModule } from './position/position.module';
 import { TeamModule } from './team/team.module';
-import { SubscriptionModule } from './subscription/o_subscription.module';
+import { SubscriptionModule } from './subscription/subscription_request.module';
 
 @Module({
   imports: [

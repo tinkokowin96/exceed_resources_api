@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsDateString, IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { ECupon } from 'src/common/util/enumn';
-import { CuponCodeType, ExtraType } from 'src/common/util/schema.type';
+import { ExtraType } from 'src/common/util/schema.type';
+import { CuponCode } from './cupon_code.schema';
 
 @Schema()
 export class Cupon extends CoreSchema {
@@ -29,22 +29,16 @@ export class Cupon extends CoreSchema {
   @IsString()
   remark: string;
 
-  @Prop({ type: String, enum: ECupon, required: true })
-  @IsNotEmpty()
-  @IsEnum(ECupon)
-  for: ECupon;
-
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => ExtraType)
   allowance: ExtraType;
 
-  @Prop({ type: [SchemaTypes.Mixed], required: true })
-  @IsNotEmpty()
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'CuponCode' }] })
   @ValidateNested({ each: true })
-  @Type(() => CuponCodeType)
-  cuponCodes: CuponCodeType[];
+  @Type(() => CuponCode)
+  cuponCodes: CuponCode[];
 
   @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } })
   @ValidateNested()

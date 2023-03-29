@@ -1,9 +1,8 @@
 import { PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from 'class-validator';
-import { Cupon } from 'src/er_app/schema/cupon.schema';
-import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { Department } from 'src/department/schema/department.schema';
+import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 import { EAttachment, EExtraAllowance, EField, EPaymentMethod, ETrigger } from './enumn';
 
@@ -17,16 +16,6 @@ export class WorkingHourType {
   @Min(0)
   @Max(60)
   minute: number;
-}
-
-export class CuponCodeType {
-  @IsNotEmpty()
-  @IsString()
-  code: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  numCupon: number;
 }
 
 export class AttachmentType {
@@ -59,25 +48,8 @@ export class PaymentType {
   amount: number;
 
   @IsNotEmpty()
-  @IsBoolean()
-  onlyStandard: boolean;
-
-  @IsNotEmpty()
   @IsEnum(EPaymentMethod)
   paymentMethod: EPaymentMethod;
-
-  @ValidateNested()
-  cupon: Cupon;
-}
-
-export class CommentTextType {
-  @IsNotEmpty()
-  @IsString()
-  text: string;
-
-  @IsNotEmpty()
-  @IsString()
-  colleagueId: string;
 }
 
 export class TriggerType {

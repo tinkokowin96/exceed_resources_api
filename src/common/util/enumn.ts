@@ -19,6 +19,7 @@ export enum EModule {
   Project = 'Project',
   Report = 'Report',
   Salary = 'Salary',
+  Subscription = 'Subscription',
 }
 
 export enum ETrigger {
@@ -134,12 +135,6 @@ export enum EWeekDay {
 
 export enum EAddon {
   VideoCall = 'VideoCall',
-}
-
-export enum ECupon {
-  Addon = 'Addon',
-  Standard = 'Standard',
-  Amount = 'Amount',
 }
 
 // export enum EPermission {

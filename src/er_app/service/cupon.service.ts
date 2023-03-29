@@ -5,28 +5,74 @@ import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { CreateCuponDto } from '../dto/create_cupon.dto';
+import { CreateCuponDto, UpdateCuponCodeDto } from '../dto/create_cupon.dto';
 import { Cupon } from '../schema/cupon.schema';
+import { CuponCode } from '../schema/cupon_code.schema';
 
 @Injectable()
 export class CuponService extends CoreService {
-  constructor(@InjectConnection() connection: Connection, @InjectModel(Cupon.name) model: Model<Cupon>) {
+  constructor(
+    @InjectConnection() connection: Connection,
+    @InjectModel(Cupon.name) model: Model<Cupon>,
+    @InjectModel(CuponCode.name) private readonly cuponCodeModel: Model<CuponCode>,
+  ) {
     super(connection, model);
   }
 
-  async createCupon({ category, ...dto }: CreateCuponDto, req: AppRequest, res: Response) {
+  async createCupon({ category, cuponCodeIds, ...dto }: CreateCuponDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
         if (dto.active_until && new Date(dto.active_until).getTime() <= Date.now())
           throw new BadRequestException('End date must be in the future');
+        const cuponDto = { ...dto, category: { ...category, type: ECategory.Cupon, name: 'type' } };
+        if (cuponCodeIds) {
+          const cuponCodes = await this.find({
+            filter: { _id: { $in: cuponCodeIds } },
+            options: { lean: false },
+            projection: { _id: 1 },
+          });
+          cuponDto['cuponCodes'] = cuponCodes;
+        }
         return await this.create({
-          dto: { ...dto, category: { ...category, type: ECategory.Cupon, name: 'type' } },
+          dto: cuponDto,
           session,
         });
       },
       req,
       res,
       audit: { name: 'cupon_create', module: EModule.ErApp, payload: { category, ...dto } },
+    });
+  }
+
+  async createCuponCode(dto: CreateCuponDto, req: AppRequest, res: Response) {
+    return this.makeTransaction({
+      action: async (session) => {
+        return await this.create({ dto, custom: this.cuponCodeModel, session });
+      },
+      req,
+      res,
+      audit: { name: 'cupon-code_create', module: EModule.ErApp, payload: dto },
+    });
+  }
+
+  async updateCuponCode({ cuponId, codes }: UpdateCuponCodeDto, req: AppRequest, res: Response) {
+    return this.makeTransaction({
+      action: async (session) => {
+        for (const code of codes) {
+          await this.findById({ id: code.codeId, custom: this.cuponCodeModel });
+          const update = {};
+          if (code.add) {
+            update['$push'] = { cuponCodes: code.codeId };
+          } else {
+            update['$pull'] = { cuponCodes: code.codeId };
+          }
+          await this.findByIdAndUpdate({ id: cuponId, session, update });
+        }
+        return await this.findById({ id: cuponId });
+      },
+      req,
+      res,
+      audit: { name: 'cupon_update-cupon-code', module: EModule.ErApp, payload: { cuponId, codes } },
     });
   }
 }

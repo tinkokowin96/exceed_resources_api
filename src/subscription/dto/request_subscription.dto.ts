@@ -1,6 +1,7 @@
 import { OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { EAddon } from 'src/common/util/enumn';
 import { PaymentType } from 'src/common/util/schema.type';
 import { SubscriptionRequest } from '../schema/subscription_request.schema';
 
@@ -19,5 +20,8 @@ export class RequestSubscriptionDto extends OmitType(SubscriptionRequest, [
   payment: Omit<PaymentType, 'amount'>;
 
   @IsString()
-  cuponId: string;
+  cuponCode: string;
+
+  @IsEnum(EAddon)
+  addon: EAddon;
 }

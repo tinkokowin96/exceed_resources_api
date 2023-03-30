@@ -19,11 +19,6 @@ export class CuponCode extends CoreSchema {
   @IsBoolean()
   isUsed: boolean;
 
-  @Prop({ type: Number, required: true })
-  @IsNotEmpty()
-  @IsNumber()
-  numCupon: number;
-
   @Prop({ type: Number })
   @IsNumber()
   numUsable: number;

@@ -4,7 +4,9 @@ import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
+import { PaymentType } from 'src/common/util/schema.type';
 import { AppRequest } from 'src/common/util/type';
+import { GetPaymentDto } from '../dto/check_payment.dto';
 import { CreateCuponDto, UpdateCuponCodeDto } from '../dto/create_cupon.dto';
 import { Cupon } from '../schema/cupon.schema';
 import { CuponCode } from '../schema/cupon_code.schema';
@@ -74,5 +76,37 @@ export class CuponService extends CoreService {
       res,
       audit: { name: 'cupon_update-cupon-code', module: EModule.ErApp, payload: { cuponId, codes } },
     });
+  }
+
+  async getPayment({
+    originalAmount,
+    cuponCode,
+    paymentMethod,
+    paymentProof,
+  }: GetPaymentDto): Promise<PaymentType> {
+    const payment: PaymentType = {
+      amount: originalAmount,
+      originalAmount: originalAmount,
+      paymentMethod,
+      paymentProof,
+    };
+    const filter = { active: true };
+    if (cuponCode)
+      filter['cuponCodes'] = { $eleMatch: { code: cuponCode, active: true, numUsable: { $gt: 0 } } };
+    else filter['$max'] = { activeOnAmount: { $gt: originalAmount } };
+    const cupon: Cupon = await this.findOne({
+      filter,
+      errorOnNotFound: false,
+      options: {
+        populate: 'cuponCodes',
+      },
+    });
+    if (cupon) {
+      const amount =
+        originalAmount +
+        (cupon.isPercentage ? originalAmount * cupon.allowanceAmount : cupon.allowanceAmount);
+      payment.amount = amount;
+    }
+    return payment;
   }
 }

@@ -21,6 +21,7 @@ type QueryType = {
   custom?: Model<any>;
   options?: QueryOptions<any>;
   projection?: ProjectionType<any>;
+  errorOnNotFound?: boolean;
 };
 
 type CreateType = Pick<QueryType, 'custom'> & {
@@ -97,24 +98,26 @@ export abstract class CoreService {
     return { next: saved };
   }
 
-  async find({ filter, custom, options, projection }: FindType) {
+  async find({ filter, custom, options, projection, errorOnNotFound = true }: FindType) {
     const model = custom ?? this.model;
     const docs = await model.find(filter, projection, {
       ...options,
       lean: true,
     });
     if (docs) return docs;
-    else throw new NotFoundException('Documents not found with this query');
+    else if (errorOnNotFound) throw new NotFoundException('Documents not found with this query');
+    else return null;
   }
 
-  async findOne({ filter, custom, options, projection }: FindType) {
+  async findOne({ filter, custom, options, projection, errorOnNotFound = true }: FindType) {
     const model = custom ?? this.model;
     const doc = await model.findOne(filter, projection, {
       lean: true,
       ...options,
     });
     if (doc) return doc;
-    else throw new NotFoundException('Document not found with this query');
+    else if (errorOnNotFound) throw new NotFoundException('Document not found with this query');
+    else return null;
   }
 
   async findById({ id, custom, options, projection }: FindByIdType) {

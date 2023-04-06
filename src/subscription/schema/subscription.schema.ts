@@ -9,6 +9,11 @@ export class Subscription extends CoreSchema {
   @Prop({ type: Number, required: true })
   @IsNotEmpty()
   @IsNumber()
+  numDay: number;
+
+  @Prop({ type: Number, required: true })
+  @IsNotEmpty()
+  @IsNumber()
   numEmployee: number;
 
   @Prop({ type: Date, required: true })

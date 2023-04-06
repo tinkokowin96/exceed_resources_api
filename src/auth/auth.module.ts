@@ -7,8 +7,12 @@ import { ExceedLimit, ExceedLimitSchema } from 'src/common/schema/exceed_limit.s
 import { ErConfig, ErConfigSchema } from 'src/er_app/schema/er_config.schema';
 import { ErUser, ErUserSchema } from 'src/er_app/schema/er_user.schema';
 import { OConfig, OConfigSchema } from 'src/organization/schema/o_config.schema';
-import { Subscription, SubscriptionSchema } from 'src/organization/schema/o_subscription.schema';
 import { OUser, OUserSchema } from 'src/o_user/schema/o_user.schema';
+import {
+  AddonSubscription,
+  AddonSubscriptionSchema,
+} from 'src/subscription/schema/addon_subscription.schema';
+import { Subscription, SubscriptionSchema } from 'src/subscription/schema/subscription.schema';
 import { AuthGuard } from './auth.guard';
 import { CustomThrottleGuard } from './custom_throttle.guard';
 
@@ -24,6 +28,7 @@ import { CustomThrottleGuard } from './custom_throttle.guard';
       { name: ErUser.name, schema: ErUserSchema },
       { name: OUser.name, schema: OUserSchema },
       { name: Subscription.name, schema: SubscriptionSchema },
+      { name: AddonSubscription.name, schema: AddonSubscriptionSchema },
       { name: ErConfig.name, schema: ErConfigSchema },
       { name: OConfig.name, schema: OConfigSchema },
       { name: ExceedLimit.name, schema: ExceedLimitSchema },

@@ -1,8 +1,7 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
-import { intersection, union } from 'lodash';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { decrypt } from 'src/common/util/encrypt';
 import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
@@ -10,8 +9,9 @@ import { ErConfig } from 'src/er_app/schema/er_config.schema';
 import { ErUser } from 'src/er_app/schema/er_user.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
-import { Subscription } from 'src/organization/schema/o_subscription.schema';
 import { OUser } from 'src/o_user/schema/o_user.schema';
+import { AddonSubscription } from 'src/subscription/schema/addon_subscription.schema';
+import { Subscription } from 'src/subscription/schema/subscription.schema';
 import { AllowedAddon } from './addon.decorator';
 import { AllowedUser } from './user.decorator';
 
@@ -21,7 +21,8 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector,
     @InjectModel(ErUser.name) private readonly erUserModel: Model<ErUser>,
     @InjectModel(OUser.name) private readonly oUserModel: Model<OUser>,
-    @InjectModel(Subscription.name) private readonly oSubscriptionModel: Model<Subscription>,
+    @InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>,
+    @InjectModel(AddonSubscription.name) private readonly addonSubscriptionModel: Model<AddonSubscription>,
     @InjectModel(ErConfig.name) private readonly erConfigModel: Model<ErConfig>,
     @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
   ) {}
@@ -91,29 +92,23 @@ export class AuthGuard implements CanActivate {
 
         let activeSubscription: Subscription;
         if (user.currentOrganization)
-          activeSubscription = await this.oSubscriptionModel
+          activeSubscription = await this.subscriptionModel
             .findOne({ active: true, organizations: user.currentOrganization._id }, null)
             .populate('addons');
         if (activeSubscription) {
           if (new Date(activeSubscription.activeUntil).getTime() < Date.now()) {
-            this.oSubscriptionModel.findByIdAndUpdate(user.currentOrganization.id, {
+            this.subscriptionModel.findByIdAndUpdate(user.currentOrganization.id, {
               $set: { active: false },
             });
             if (!allowedInActive) throw new ForbiddenException('Subscription is expired');
           }
         } else if (!allowedInActive) throw new ForbiddenException('No active subscription');
         if (addons) {
-          const subscriptedAddons = activeSubscription.addons?.map((each) => each.type);
-          const matchedAddonTypes = intersection(addons, subscriptedAddons);
-          if (matchedAddonTypes.length) {
-            const matchedAddons = activeSubscription.addons?.filter((each) =>
-              matchedAddonTypes.includes(each.type),
-            );
-            if (matchedAddons.find((each) => each.allowEveryEmployee)) return true;
-            const allowedUsers = union(...matchedAddons.map((each) => each.allowedOusers));
-            return allowedUsers.some((each) => (each as unknown as Types.ObjectId).equals(id));
-          }
-          return false;
+          const subscriptedAddons = await this.addonSubscriptionModel.find({
+            addon: { $in: addons },
+            $or: [{ allowedOUsers: { $eleMatch: id } }, { allowEveryEmployee: true }],
+          });
+          return !!subscriptedAddons.length;
         }
 
         if (allowedUsers.includes(EUser.OAny)) return true;

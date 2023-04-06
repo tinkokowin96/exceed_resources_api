@@ -7,6 +7,7 @@ import { CuponController } from './controller/cupon.controller';
 import { ErUserController } from './controller/er_user.controller';
 import { PromotionController } from './controller/promotion.controller';
 import { Cupon, CuponSchema } from './schema/cupon.schema';
+import { CuponCode, CuponCodeSchema } from './schema/cupon_code.schema';
 import { ErUser, ErUserSchema } from './schema/er_user.schema';
 import { Promotion, PromotionSchema } from './schema/promotion.schema';
 import { CuponService } from './service/cupon.service';
@@ -22,6 +23,7 @@ import { PromotionService } from './service/promotion.service';
       { name: Promotion.name, schema: PromotionSchema },
       { name: Category.name, schema: CategorySchema },
       { name: Cupon.name, schema: CuponSchema },
+      { name: CuponCode.name, schema: CuponCodeSchema },
     ]),
   ],
   controllers: [ErUserController, PromotionController, CuponController],

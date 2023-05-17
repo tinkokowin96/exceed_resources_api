@@ -87,14 +87,15 @@ export class AuthGuard implements CanActivate {
         return user.permission.allowedRoutes.includes(url);
       } else {
         const allowedInActive = allowedUsers.some((each) => each === EUser.OInActive || each === EUser.OAny);
-        if (!allowedInActive && (!user.currentOrganization || !allowedUsers.includes(EUser.Organization)))
-          return false;
+
+        if (!allowedInActive && !user.currentOrganization) return false;
 
         let activeSubscription: Subscription;
         if (user.currentOrganization)
-          activeSubscription = await this.subscriptionModel
-            .findOne({ active: true, organizations: user.currentOrganization._id }, null)
-            .populate('addons');
+          activeSubscription = await this.subscriptionModel.findOne(
+            { active: true, organizations: user.currentOrganization._id },
+            null,
+          );
         if (activeSubscription) {
           if (new Date(activeSubscription.activeUntil).getTime() < Date.now()) {
             this.subscriptionModel.findByIdAndUpdate(user.currentOrganization.id, {

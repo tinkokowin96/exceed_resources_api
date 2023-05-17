@@ -10,7 +10,7 @@ import { ToggleActiveDto } from '../dto/toggle_active.dto';
 import { UpdatePermissionDto } from '../dto/update_permission.dto';
 import { ErUserService } from '../service/er_user.service';
 
-@Controller('er-user')
+@Controller('er-app/user')
 export class ErUserController {
   constructor(private readonly service: ErUserService) {}
 

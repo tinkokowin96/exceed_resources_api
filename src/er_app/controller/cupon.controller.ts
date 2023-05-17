@@ -5,7 +5,7 @@ import { AppRequest } from 'src/common/util/type';
 import { CreateCuponDto } from '../dto/create_cupon.dto';
 import { CuponService } from '../service/cupon.service';
 
-@Controller('cupon')
+@Controller('er-app/cupon')
 export class CuponController {
   constructor(private readonly service: CuponService) {}
 

@@ -13,7 +13,7 @@ import { AddonSubscriptionRequest } from './schema/addon_subscription_request.sc
 import { SubscriptionRequest } from './schema/subscription_request.schema';
 
 @Injectable()
-export class SubscriptionRequestService extends CoreService {
+export class SubscriptionService extends CoreService {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(SubscriptionRequest.name) model: Model<SubscriptionRequest>,

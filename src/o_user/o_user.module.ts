@@ -3,9 +3,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Bank, BankSchema } from 'src/bank/schema/bank.schema';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { Project, ProjectSchema } from 'src/project/schema/project.schema';
-import { OUserController } from './controller/o_user.controller';
+import { OUserController } from './o_user.controller';
 import { OUser, OUserSchema } from './schema/o_user.schema';
-import { OUserService } from './service/o_user.service';
+import { OUserService } from './o_user.service';
 
 @Module({
   imports: [

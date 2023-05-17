@@ -5,7 +5,7 @@ import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { AttachmentType } from 'src/common/util/schema.type';
-import { ErUser } from 'src/er_app/schema/er_user.schema';
+import { ErUser } from 'src/er_app/er_user/schema/er_user.schema';
 import { OUser } from 'src/o_user/schema/o_user.schema';
 
 export class Bank extends CoreSchema {

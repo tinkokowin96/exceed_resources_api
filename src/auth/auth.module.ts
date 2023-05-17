@@ -4,15 +4,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import * as cookieParser from 'cookie-parser';
 import { ExceedLimit, ExceedLimitSchema } from 'src/common/schema/exceed_limit.schema';
-import { ErConfig, ErConfigSchema } from 'src/er_app/schema/er_config.schema';
-import { ErUser, ErUserSchema } from 'src/er_app/schema/er_user.schema';
+import { ErConfig, ErConfigSchema } from 'src/er_app/er_config/schema/er_config.schema';
+import { ErUser, ErUserSchema } from 'src/er_app/er_user/schema/er_user.schema';
 import { OConfig, OConfigSchema } from 'src/organization/schema/o_config.schema';
 import { OUser, OUserSchema } from 'src/o_user/schema/o_user.schema';
 import {
   AddonSubscription,
   AddonSubscriptionSchema,
-} from 'src/subscription/schema/addon_subscription.schema';
-import { Subscription, SubscriptionSchema } from 'src/subscription/schema/subscription.schema';
+} from 'src/er_app/subscription/schema/addon_subscription.schema';
+import { Subscription, SubscriptionSchema } from 'src/er_app/subscription/schema/subscription.schema';
 import { AuthGuard } from './auth.guard';
 import { CustomThrottleGuard } from './custom_throttle.guard';
 

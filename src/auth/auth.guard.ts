@@ -5,13 +5,13 @@ import { Model } from 'mongoose';
 import { decrypt } from 'src/common/util/encrypt';
 import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { ErConfig } from 'src/er_app/schema/er_config.schema';
-import { ErUser } from 'src/er_app/schema/er_user.schema';
+import { ErConfig } from 'src/er_app/er_config/schema/er_config.schema';
+import { ErUser } from 'src/er_app/er_user/schema/er_user.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { OUser } from 'src/o_user/schema/o_user.schema';
-import { AddonSubscription } from 'src/subscription/schema/addon_subscription.schema';
-import { Subscription } from 'src/subscription/schema/subscription.schema';
+import { AddonSubscription } from 'src/er_app/subscription/schema/addon_subscription.schema';
+import { Subscription } from 'src/er_app/subscription/schema/subscription.schema';
 import { AllowedAddon } from './addon.decorator';
 import { AllowedUser } from './user.decorator';
 

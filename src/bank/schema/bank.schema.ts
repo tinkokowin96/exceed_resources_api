@@ -5,8 +5,7 @@ import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { AttachmentType } from 'src/common/util/schema.type';
-import { ErUser } from 'src/er_app/er_user/schema/er_user.schema';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 
 export class Bank extends CoreSchema {
   @Prop({ type: String })
@@ -21,11 +20,8 @@ export class Bank extends CoreSchema {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
   bank: Category;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'ErUser' })
-  erUser: ErUser;
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  oUser: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  oUser: User;
 }
 
 export const BankSchema = SchemaFactory.createForClass(Bank);

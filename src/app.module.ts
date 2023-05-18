@@ -9,7 +9,7 @@ import { CommonModule } from './common/common.module';
 import { ErAppModule } from './er_app/er_app.module';
 import { OrganizationModule } from './organization/organization.module';
 import { OAdminAppModule } from './o_admin_app/o_admin_app.module';
-import { OUserModule } from './o_user/o_user.module';
+import { UserModule } from './user/user.module';
 import { PermissionModule } from './permission/permission.module';
 import { ProjectModule } from './project/project.module';
 import { ReportModule } from './report/report.module';
@@ -34,7 +34,7 @@ import { TeamModule } from './team/team.module';
     AuthModule,
     CategoryModule,
     PermissionModule,
-    OUserModule,
+    UserModule,
     ProjectModule,
     LateModule,
     LeaveModule,

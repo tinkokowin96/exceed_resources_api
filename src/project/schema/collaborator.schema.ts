@@ -5,7 +5,7 @@ import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { AttachmentType } from 'src/common/util/schema.type';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 
 @Schema()
 export class Collaborator extends CoreSchema {
@@ -18,8 +18,8 @@ export class Collaborator extends CoreSchema {
   @Type(() => AttachmentType)
   attachments: AttachmentType[];
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  colleague: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  colleague: User;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
   role: Category;

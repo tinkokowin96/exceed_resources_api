@@ -1,14 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { intersection, pull } from 'lodash';
 import { Connection, Model } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreService } from 'src/common/service/core.service';
-import { ECategory, EModule, EUser } from 'src/common/util/enumn';
+import { ECategory, EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { ErUser } from 'src/er_app/er_user/schema/er_user.schema';
-import { OUser } from 'src/o_user/schema/o_user.schema';
 import { CreatePermissionDto } from './dto/create_permission.dto';
 import { UpdatePermissionDto } from './dto/update_permission.dto';
 import { Permission } from './permission.schema';
@@ -26,30 +24,28 @@ export class PermissionService extends CoreService {
   async createPermission({ assignableRoleIds, ...dto }: CreatePermissionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const superAdmin =
-          req.user.type === EUser.ErApp
-            ? (req.user as ErUser).superAdmin
-            : (req.user as OUser).currentOrganization.superAdmin;
-
         const includeRestricted = intersection(req.config.restrictedRoutes, dto.allowedRoutes);
         if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
 
         const assignableRoles = (await this.find({
           filter: {
             _id: { $in: assignableRoleIds },
-            type: req.user.type === EUser.ErApp ? ECategory.ErUserRole : ECategory.OUserRole,
+            type: ECategory.UserRole,
           },
           custom: this.categoryModel,
           projection: { _id: 1 },
         })) as unknown as Category[];
 
-        if (!superAdmin) {
-          const permission =
-            req.user.type === EUser.ErApp
-              ? (req.user as ErUser).permission
-              : (req.user as OUser).currentOrganization.permission;
+        if (!req.superAdmin) {
+          if (!req.user.currentOrganization)
+            throw new ForbiddenException("User don't have current associated organization");
 
-          if (pull(assignableRoleIds, ...permission.assignableRoles.map((each) => each.toString())).length)
+          if (
+            pull(
+              assignableRoleIds,
+              ...req.user.currentOrganization.permission.assignableRoles.map((each) => each.toString()),
+            ).length
+          )
             throw new BadRequestException('Included forbidden assignable roles');
         }
 

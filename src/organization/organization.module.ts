@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Category, CategorySchema } from 'src/category/schema/category.schema';
-import { OUser, OUserSchema } from 'src/o_user/schema/o_user.schema';
+import { User, UserSchema } from 'src/user/schema/user.schema';
 import { OrganizationController } from './organization.controller';
 import { Organization, OrganizationSchema } from './schema/organization.schema';
 import { OAssociated, OAssociatedSchema } from './schema/o_associated.schema';
@@ -15,7 +15,7 @@ import { OrganizationService } from './organization.service';
       { name: Category.name, schema: CategorySchema },
       { name: OConfig.name, schema: OConfigSchema },
       { name: OAssociated.name, schema: OAssociatedSchema },
-      { name: OUser.name, schema: OUserSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [OrganizationController],

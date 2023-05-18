@@ -13,7 +13,7 @@ import {
 import { Category } from 'src/category/schema/category.schema';
 import { Audit } from '../schema/audit.schema';
 import { AUDIT_MODEL } from '../util/constant';
-import { ECategory, EUser } from '../util/enumn';
+import { ECategory } from '../util/enumn';
 import { responseError } from '../util/response_error';
 import { AppRequest } from '../util/type';
 
@@ -91,7 +91,7 @@ export abstract class CoreService {
       payload[category.name ?? 'category'] = cat;
     }
     const doc = new model({
-      payload,
+      ...payload,
       _id: new Types.ObjectId(),
     });
     const saved = await doc.save({ session });
@@ -182,10 +182,8 @@ export abstract class CoreService {
 
       if (audit) {
         const user = {};
-        if (req.user) {
-          if (req.user.type === EUser.ErApp) user['submittedErUser'] = req.user;
-          else user['submittedOUser'] = req.user;
-        } else user['submittedIP'] = req.ip;
+        if (req.user) user['submittedUser'] = req.user;
+        else user['submittedIP'] = req.ip;
         this.create({
           dto: { ...audit, ...user, prev: res?.prev, next: res?.next },
           custom: this.auditModel,

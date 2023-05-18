@@ -10,7 +10,7 @@ import { OrganizationService } from './organization.service';
 export class OrganizationController {
   constructor(private readonly service: OrganizationService) {}
 
-  @Users(['OAny'])
+  @Users(['Any'])
   @Throttle(1, 120)
   @Post('create')
   async createOrganization(@Body() dto: CreateOrganizationDto, @Req() req: AppRequest, @Res() res: Response) {

@@ -9,6 +9,7 @@ import { OLate } from 'src/late/schema/o_late.schema';
 import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { OOvertime } from 'src/overtime/schema/o_overtime';
 import { Organization } from './organization.schema';
+import { User } from 'src/user/schema/user.schema';
 
 @Schema()
 export class OConfig extends CoreSchema {
@@ -64,6 +65,9 @@ export class OConfig extends CoreSchema {
   @Prop({ type: [{ type: String, enum: EWeekDay }] })
   @IsEnum(EWeekDay, { each: true })
   remoteWorkingDays: EWeekDay[];
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  superAdmin: User;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OLate' })
   late: OLate;

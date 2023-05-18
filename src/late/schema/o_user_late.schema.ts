@@ -5,10 +5,10 @@ import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
 import { ExtraType, WorkingHourType } from 'src/common/util/schema.type';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 
 @Schema()
-export class OUserLate extends CoreSchema {
+export class UserLate extends CoreSchema {
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
@@ -25,8 +25,8 @@ export class OUserLate extends CoreSchema {
   @Type(() => Field)
   form: Field[];
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  approvedBy: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  approvedBy: User;
 }
 
-export const OUserLateSchema = SchemaFactory.createForClass(OUserLate);
+export const UserLateSchema = SchemaFactory.createForClass(UserLate);

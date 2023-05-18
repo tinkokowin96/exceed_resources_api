@@ -1,17 +1,66 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hashSync } from 'bcryptjs';
-import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsPhoneNumber,
+  IsString,
+} from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
-import { UserSchema } from 'src/common/schema/user.shema';
+import { CoreSchema } from 'src/common/schema/core.shema';
 import { ERequestStatus } from 'src/common/util/enumn';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { Project } from 'src/project/schema/project.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
-import { OUserStatus } from './o_user_status.schema';
+import { UserStatus } from './user_status.schema';
 
 @Schema()
-export class OUser extends UserSchema {
+export class User extends CoreSchema {
+  @Prop({ type: String, required: true })
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @Prop({ type: String })
+  @IsString()
+  image: string;
+
+  @Prop({ type: String, required: true, unique: true })
+  @IsNotEmpty()
+  @IsString()
+  userName: string;
+
+  @Prop({ type: String, required: true, unique: true })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @Prop({ type: String, required: true })
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+
+  @Prop({ type: Boolean, default: false })
+  @IsBoolean()
+  deleted: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  @IsBoolean()
+  loggedIn: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  @IsBoolean()
+  blocked: boolean;
+
+  @Prop({ type: String })
+  @IsString()
+  blockReason: string;
+
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsPhoneNumber()
@@ -28,14 +77,14 @@ export class OUser extends UserSchema {
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
-  accessAdminApp: boolean;
+  accessErApp: boolean;
 
   @Prop({ type: Number })
   @IsNumber()
   basicSalary: number;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUserStatus' })
-  status: OUserStatus;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'UserStatus' })
+  status: UserStatus;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Bank' })
   bank: Bank;
@@ -56,9 +105,9 @@ export class OUser extends UserSchema {
   associatedOrganizations: OAssociated[];
 }
 
-export const OUserSchema = SchemaFactory.createForClass(OUser);
+export const UserSchema = SchemaFactory.createForClass(User);
 
-OUserSchema.pre('save', function (next) {
+UserSchema.pre('save', function (next) {
   this.password = hashSync(this.password, 12);
   next();
 });

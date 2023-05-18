@@ -4,11 +4,11 @@ import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 
 @Schema()
-export class OUserLeave extends CoreSchema {
+export class UserLeave extends CoreSchema {
   @Prop({ type: SchemaTypes.Number, required: true })
   @IsNotEmpty()
   @IsNumber()
@@ -24,11 +24,11 @@ export class OUserLeave extends CoreSchema {
   @Type(() => Field)
   form: Field[];
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  assignedBy: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  assignedBy: User;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  approvedBy: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  approvedBy: User;
 }
 
-export const OUserLeaveSchema = SchemaFactory.createForClass(OUserLeave);
+export const UserLeaveSchema = SchemaFactory.createForClass(UserLeave);

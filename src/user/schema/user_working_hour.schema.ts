@@ -5,7 +5,7 @@ import { CoreSchema } from 'src/common/schema/core.shema';
 import { EWorkingHour } from 'src/common/util/enumn';
 import { Break } from 'src/break/schema/break.schema';
 
-export class OUserWorkingHour extends CoreSchema {
+export class UserWorkingHour extends CoreSchema {
   @Prop({ type: String })
   @IsString()
   name: string;
@@ -18,4 +18,4 @@ export class OUserWorkingHour extends CoreSchema {
   break: Break;
 }
 
-export const OUserWorkingHourSchema = SchemaFactory.createForClass(OUserWorkingHour);
+export const UserWorkingHourSchema = SchemaFactory.createForClass(UserWorkingHour);

@@ -23,9 +23,9 @@ export class OLate extends CoreSchema {
 
   @Prop({ type: [{ type: String, enum: EPosition }] })
   @IsEnum(EPosition, { each: true })
-  lateApprovablePositions: [EPosition];
+  lateApprovablePositions: EPosition[];
 
   @Prop({ type: [{ type: String, enum: EPosition }] })
   @IsEnum(EPosition, { each: true })
-  lateNotifyPositions: [EPosition];
+  lateNotifyPositions: EPosition[];
 }

@@ -3,8 +3,7 @@ import { IsEnum, IsIP, IsNotEmpty, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EModule } from 'src/common/util/enumn';
-import { ErUser } from 'src/er_app/er_user/schema/er_user.schema';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 
 @Schema()
 export class Audit extends CoreSchema {
@@ -35,11 +34,8 @@ export class Audit extends CoreSchema {
   @IsIP()
   submittedIP?: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'ErUser' })
-  submittedErUser?: ErUser;
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  submittedOUser?: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  submittedUser?: User;
 }
 
 export const AuditSchema = SchemaFactory.createForClass(Audit);

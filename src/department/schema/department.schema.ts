@@ -5,7 +5,7 @@ import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { AttachmentType } from 'src/common/util/schema.type';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 import { Permission } from 'src/permission/permission.schema';
 
 @Schema()
@@ -33,11 +33,11 @@ export class Department extends CoreSchema {
   @IsNotEmpty()
   permission: Permission;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  head: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  head: User;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
-  colleagues: OUser[];
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
+  colleagues: User[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Department' }] })
   departments: Department[];

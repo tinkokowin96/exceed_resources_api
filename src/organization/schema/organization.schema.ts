@@ -5,7 +5,7 @@ import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { AttachmentType } from 'src/common/util/schema.type';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 import { Department } from '../../department/schema/department.schema';
 import { OConfig } from './o_config.schema';
 
@@ -25,8 +25,8 @@ export class Organization extends CoreSchema {
   @Type(() => AttachmentType)
   attachments: AttachmentType[];
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  superAdmin: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  superAdmin: User;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
   type: Category;
@@ -37,14 +37,14 @@ export class Organization extends CoreSchema {
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Department' }] })
   departments: Department[];
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  owner: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  owner: User;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OUser' })
-  ceo: OUser;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  ceo: User;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
-  colleagues: OUser[];
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
+  colleagues: User[];
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);

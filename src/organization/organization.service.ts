@@ -6,7 +6,7 @@ import { Category } from 'src/category/schema/category.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 import { CreateOrganizationDto } from './dto/create_organization.dto';
 import { Organization } from './schema/organization.schema';
 import { OAssociated } from './schema/o_associated.schema';
@@ -20,7 +20,7 @@ export class OrganizationService extends CoreService {
     @InjectModel(Category.name) categoryModel: Model<Category>,
     @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
     @InjectModel(OAssociated.name) private readonly oAssociatedModel: Model<OAssociated>,
-    @InjectModel(OUser.name) private readonly oUserModel: Model<OUser>,
+    @InjectModel(User.name) private readonly oUserModel: Model<User>,
   ) {
     super(connection, model, categoryModel);
   }
@@ -78,8 +78,8 @@ export class OrganizationService extends CoreService {
       req,
       res,
       audit: {
-        name: 'o-user_create',
-        module: EModule.OUser,
+        name: 'organization_create',
+        module: EModule.User,
         payload: { category, checkInTime, checkOutTime, ...dto },
       },
     });

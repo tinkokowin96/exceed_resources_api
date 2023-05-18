@@ -4,7 +4,7 @@ import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { LocationType } from 'src/common/util/schema.type';
 
-export class OUserStatus extends CoreSchema {
+export class UserStatus extends CoreSchema {
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsString()
@@ -28,4 +28,4 @@ export class OUserStatus extends CoreSchema {
   location: LocationType;
 }
 
-export const OUserStatusSchema = SchemaFactory.createForClass(OUserStatus);
+export const UserStatusSchema = SchemaFactory.createForClass(UserStatus);

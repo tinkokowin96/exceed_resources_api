@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { OUser } from 'src/o_user/schema/o_user.schema';
+import { User } from 'src/user/schema/user.schema';
 import { Permission } from 'src/permission/permission.schema';
 
 @Schema()
@@ -30,8 +30,8 @@ export class Position extends CoreSchema {
   @IsNotEmpty()
   permission: Permission;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OUser' }] })
-  colleagues: OUser[];
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
+  colleagues: User[];
 }
 
 export const PositionSchema = SchemaFactory.createForClass(Position);

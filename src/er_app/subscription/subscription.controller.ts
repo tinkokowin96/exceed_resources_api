@@ -10,7 +10,7 @@ import { Response } from 'express';
 export class SubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 
-  @Users([EUser.OAny])
+  @Users([EUser.Any])
   @Post('request')
   async request(@Body() dto: RequestSubscriptionDto, @Req() req: AppRequest, @Res() res: Response) {
     return this.service.requestSubscription(dto, req, res);

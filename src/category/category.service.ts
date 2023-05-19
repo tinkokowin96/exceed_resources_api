@@ -26,7 +26,7 @@ export class CategoryService extends CoreService {
       },
       req,
       res,
-      audit: { name: 'category_create', module: EModule.Category },
+      audit: { name: 'create-category', module: EModule.Category },
     });
   }
 }

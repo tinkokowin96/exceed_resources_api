@@ -78,7 +78,7 @@ export class OrganizationService extends CoreService {
       req,
       res,
       audit: {
-        name: 'organization_create',
+        name: 'create-organization',
         module: EModule.User,
         payload: { category, checkInTime, checkOutTime, ...dto },
       },

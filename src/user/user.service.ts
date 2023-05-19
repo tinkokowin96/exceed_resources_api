@@ -10,7 +10,7 @@ import { EModule, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Project } from 'src/project/schema/project.schema';
-import { CreateUserDto, LoginUserDto } from './dto/user.dto';
+import { CreateUserDto, LoginUserDto, ToggleErAppAccessDto } from './dto/user.dto';
 import { User } from './schema/user.schema';
 
 @Injectable()
@@ -68,7 +68,7 @@ export class UserService extends CoreService {
       req,
       res,
       audit: {
-        name: 'user_create-employee',
+        name: 'create-user',
         module: EModule.User,
         payload: dto,
       },
@@ -111,9 +111,28 @@ export class UserService extends CoreService {
       res,
       req,
       audit: {
-        name: 'user_login',
+        name: 'login-user',
         module: EModule.User,
         payload: dto,
+      },
+    });
+  }
+
+  async toggleErAppAccess({ id, accessErApp }: ToggleErAppAccessDto, req: AppRequest, res: Response) {
+    return this.makeTransaction({
+      action: async (session) =>
+        await this.findByIdAndUpdate({
+          id,
+          update: {
+            $set: { accessErApp },
+          },
+          session,
+        }),
+      req,
+      res,
+      audit: {
+        name: 'toggle-erapp-access',
+        module: EModule.User,
       },
     });
   }
@@ -129,7 +148,7 @@ export class UserService extends CoreService {
       req,
       res,
       audit: {
-        name: 'user_logout',
+        name: 'logout-user',
         module: EModule.User,
       },
     });

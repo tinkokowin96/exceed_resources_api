@@ -54,7 +54,7 @@ export class PermissionService extends CoreService {
       req,
       res,
       audit: {
-        name: 'permission_create',
+        name: 'create-permission',
         module: EModule.Permission,
         payload: { assignableRoleIds, ...dto },
       },
@@ -82,7 +82,7 @@ export class PermissionService extends CoreService {
       res,
       req,
       audit: {
-        name: 'permission_update',
+        name: 'update-permission',
         module: EModule.Permission,
         payload: { id, add, remove },
       },

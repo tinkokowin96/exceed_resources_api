@@ -32,6 +32,16 @@ export class LoginUserDto extends PartialType(PickType(User, ['password', 'userN
   organizationId: string;
 }
 
+export class ToggleErAppAccessDto {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  accessErApp: boolean;
+}
+
 export class ChangePasswordDto extends PickType(User, ['email', 'password']) {
   @IsNotEmpty()
   @IsString()

@@ -42,7 +42,7 @@ export class CuponService extends CoreService {
       },
       req,
       res,
-      audit: { name: 'cupon_create', module: EModule.ErApp, payload: { category, ...dto } },
+      audit: { name: 'create-cupon', module: EModule.ErApp, payload: { category, ...dto } },
     });
   }
 
@@ -53,7 +53,7 @@ export class CuponService extends CoreService {
       },
       req,
       res,
-      audit: { name: 'cupon-code_create', module: EModule.ErApp, payload: dto },
+      audit: { name: 'create-cupon-code', module: EModule.ErApp, payload: dto },
     });
   }
 
@@ -74,7 +74,7 @@ export class CuponService extends CoreService {
       },
       req,
       res,
-      audit: { name: 'cupon_update-cupon-code', module: EModule.ErApp, payload: { cuponId, codes } },
+      audit: { name: 'update-cupon-code', module: EModule.ErApp, payload: { cuponId, codes } },
     });
   }
 

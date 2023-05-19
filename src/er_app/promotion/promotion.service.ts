@@ -25,7 +25,7 @@ export class PromotionService extends CoreService {
       },
       req,
       res,
-      audit: { name: 'promotion_create', module: EModule.ErApp, payload: dto },
+      audit: { name: 'create-promotion', module: EModule.ErApp, payload: dto },
     });
   }
 }

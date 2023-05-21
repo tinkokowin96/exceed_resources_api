@@ -168,15 +168,10 @@ export abstract class CoreService {
     };
   }
 
-  async startTransaction() {
-    const session = await this.connection.startSession();
-    session.startTransaction();
-    return session;
-  }
-
   async makeTransaction({ action, req, res: response, callback, audit }: MakeTransactionType) {
-    const session = await this.startTransaction();
+    const session = await this.connection.startSession();
     try {
+      session.startTransaction();
       const res = await action(session);
       if (callback) await callback();
 
@@ -184,7 +179,7 @@ export abstract class CoreService {
         const user = {};
         if (req.user) user['submittedUser'] = req.user;
         else user['submittedIP'] = req.ip;
-        this.create({
+        await this.create({
           dto: { ...audit, ...user, prev: res?.prev, next: res?.next },
           custom: this.auditModel,
           session,
@@ -194,11 +189,12 @@ export abstract class CoreService {
       const responseObj: any = {};
       if (typeof res === 'string') responseObj['message'] = res;
       else responseObj['data'] = res;
-      if (response) response.send(responseObj);
 
       await session.commitTransaction();
       session.endSession();
+      if (response) response.send(responseObj);
     } catch (error) {
+      console.log('err', error);
       await session.abortTransaction();
       session.endSession();
       responseError(response, error);

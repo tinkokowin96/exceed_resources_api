@@ -27,9 +27,14 @@ export class CreateUserDto extends PickType(User, [
   associatedOrganizationIds: string[];
 }
 
-export class LoginUserDto extends PartialType(PickType(User, ['password', 'userName', 'email'])) {
+export class LoginUserDto extends PartialType(PickType(User, ['userName', 'email'])) {
+  @IsNotEmpty()
   @IsString()
-  organizationId: string;
+  password: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  erUser: boolean;
 }
 
 export class ToggleErAppAccessDto {

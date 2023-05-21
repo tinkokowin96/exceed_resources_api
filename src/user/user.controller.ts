@@ -27,7 +27,7 @@ export class UserController {
   }
 
   @Throttle(1, 120)
-  @Users(['Organization'])
+  @Users(['Organization', 'ErApp'])
   @Get('logout')
   async logout(@Req() req, @Res() res: Response) {
     return this.service.logoutUser(req, res);

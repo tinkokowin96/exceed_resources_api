@@ -78,14 +78,15 @@ export class UserService extends CoreService {
   async loginUser(dto: LoginUserDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async () => {
+        const { erUser, userName, email, password } = dto;
         const user = await this.findOne({
-          filter: { $or: [{ userName: dto.userName }, { email: dto.email }] },
+          filter: { $or: [{ userName }, { email }] },
           options: { lean: false },
         });
-        const matchPassword = compareSync(dto.password, user.password);
-        if (user.type === EUser.ErApp && !user.active) throw new ForbiddenException('User is not active');
-
+        const matchPassword = compareSync(password, user.password);
         if (!user || !matchPassword) throw new NotFoundException('Wrong userName or password');
+
+        if (erUser && !user.accessErApp) throw new ForbiddenException("User don't have access to ER App");
 
         if (user.loggedIn) throw new BadRequestException('User already logged in');
 
@@ -95,7 +96,7 @@ export class UserService extends CoreService {
           process.env.ENC_PASSWORD,
           JSON.stringify({
             id: user._id,
-            type: user.type,
+            type: erUser ? EUser.ErApp : EUser.Organization,
           }),
         );
 

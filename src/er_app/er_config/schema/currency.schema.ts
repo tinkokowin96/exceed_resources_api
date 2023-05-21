@@ -9,6 +9,11 @@ export class Currency extends CoreSchema {
   @IsString()
   name: string;
 
+  @Prop({ type: String })
+  @IsString()
+  @MaxLength(5)
+  shortName: string;
+
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsString()

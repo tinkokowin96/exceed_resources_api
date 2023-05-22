@@ -4,6 +4,7 @@ import { ErConfig } from 'src/er_app/er_config/schema/er_config.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { User } from 'src/user/schema/user.schema';
 import { EUser } from './enumn';
+import { Permission } from 'src/permission/permission.schema';
 
 export interface AppRequest extends Request {
   id: string;
@@ -11,6 +12,7 @@ export interface AppRequest extends Request {
   user: User;
   config: ErConfig | OConfig;
   superAdmin: boolean;
+  permission: Permission;
 }
 
 export type ServiceTrigger = {

@@ -1,6 +1,7 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
 import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 import { User } from '../schema/user.schema';
+import { FindDto } from 'src/common/dto/find.dto';
 
 export class CreateUserDto extends PickType(User, [
   'name',
@@ -51,4 +52,15 @@ export class ChangePasswordDto extends PickType(User, ['email', 'password']) {
   @IsNotEmpty()
   @IsString()
   newPassword: string;
+}
+
+export class GetUsersDto extends FindDto {
+  @IsBoolean()
+  erAppUsers: boolean;
+
+  @IsString()
+  organizationId: string;
+
+  @IsBoolean()
+  oAdminAppUsers: boolean;
 }

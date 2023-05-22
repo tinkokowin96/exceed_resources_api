@@ -37,6 +37,8 @@ type CreateType = Pick<QueryType, 'custom'> & {
 
 type FindType = QueryType & {
   filter: FilterQuery<any>;
+  pagination?: { take: number; page: number };
+  sort?: string;
 };
 
 type FindByIdType = QueryType & {
@@ -98,14 +100,24 @@ export abstract class CoreService {
     return { next: saved };
   }
 
-  async find({ filter, custom, options, projection, errorOnNotFound = true }: FindType) {
+  async find({ filter, custom, options, projection, pagination, sort, errorOnNotFound = true }: FindType) {
     const model = custom ?? this.model;
+    const opt = { lean: true, ...options };
+    if (sort) opt.sort = sort;
+    if (pagination) {
+      opt.skip = pagination.take * pagination.page;
+      opt.limit = pagination.take;
+    }
     const docs = await model.find(filter, projection, {
-      ...options,
       lean: true,
+      ...options,
     });
-    if (docs) return docs;
-    else if (errorOnNotFound) throw new NotFoundException('Documents not found with this query');
+
+    if (docs) {
+      const data = { ...docs };
+      if (pagination) data['numItems'] = await model.countDocuments();
+      return data;
+    } else if (errorOnNotFound) throw new NotFoundException('Documents not found with this query');
     else return null;
   }
 
@@ -176,14 +188,14 @@ export abstract class CoreService {
       if (callback) await callback();
 
       if (audit) {
-        const user = {};
-        if (req.user) user['submittedUser'] = req.user;
-        else user['submittedIP'] = req.ip;
-        await this.create({
-          dto: { ...audit, ...user, prev: res?.prev, next: res?.next },
-          custom: this.auditModel,
-          session,
-        });
+        // const user = {};
+        // if (req.user) user['submittedUser'] = req.user;
+        // else user['submittedIP'] = req.ip;
+        // await this.create({
+        //   dto: { ...audit, ...user, prev: res?.prev, next: res?.next },
+        //   custom: this.auditModel,
+        //   session,
+        // });
       }
 
       const responseObj: any = {};
@@ -194,7 +206,6 @@ export abstract class CoreService {
       session.endSession();
       if (response) response.send(responseObj);
     } catch (error) {
-      console.log('err', error);
       await session.abortTransaction();
       session.endSession();
       responseError(response, error);

@@ -10,7 +10,8 @@ import {
   AddonSubscriptionSchema,
 } from 'src/er_app/subscription/schema/addon_subscription.schema';
 import { Subscription, SubscriptionSchema } from 'src/er_app/subscription/schema/subscription.schema';
-import { OConfig, OConfigSchema } from 'src/organization/schema/o_config.schema';
+import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
+import { Position, PositionSchema } from 'src/position/schema/position.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
 import { AuthGuard } from './auth.guard';
 import { CustomThrottleGuard } from './custom_throttle.guard';
@@ -28,8 +29,9 @@ import { CustomThrottleGuard } from './custom_throttle.guard';
       { name: Subscription.name, schema: SubscriptionSchema },
       { name: AddonSubscription.name, schema: AddonSubscriptionSchema },
       { name: ErConfig.name, schema: ErConfigSchema },
-      { name: OConfig.name, schema: OConfigSchema },
+      { name: Organization.name, schema: OrganizationSchema },
       { name: ExceedLimit.name, schema: ExceedLimitSchema },
+      { name: Position.name, schema: PositionSchema },
     ]),
   ],
   providers: [

@@ -41,10 +41,7 @@ export class PermissionService extends CoreService {
             throw new ForbiddenException("User don't have current associated organization");
 
           if (
-            pull(
-              assignableRoleIds,
-              ...req.user.currentOrganization.permission.assignableRoles.map((each) => each.toString()),
-            ).length
+            pull(assignableRoleIds, ...req.permission.assignableRoles.map((each) => each.toString())).length
           )
             throw new BadRequestException('Included forbidden assignable roles');
         }

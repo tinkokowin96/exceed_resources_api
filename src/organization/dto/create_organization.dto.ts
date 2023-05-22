@@ -12,13 +12,11 @@ export class CreateOrganizationDto extends PickType(Organization, ['name', 'logo
   category: CategoryDto;
 
   @IsNotEmpty()
-  @Type(() => WorkingHourType)
   @ValidateNested()
   @Type(() => WorkingHourType)
   checkInTime: WorkingHourType;
 
   @IsNotEmpty()
-  @Type(() => WorkingHourType)
   @ValidateNested()
   @Type(() => WorkingHourType)
   checkOutTime: WorkingHourType;

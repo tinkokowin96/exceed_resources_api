@@ -10,7 +10,7 @@ import { EModule, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Project } from 'src/project/schema/project.schema';
-import { CreateUserDto, LoginUserDto, ToggleErAppAccessDto } from './dto/user.dto';
+import { CreateUserDto, GetUsersDto, LoginUserDto, ToggleErAppAccessDto } from './dto/user.dto';
 import { User } from './schema/user.schema';
 
 @Injectable()
@@ -152,6 +152,33 @@ export class UserService extends CoreService {
         name: 'logout-user',
         module: EModule.User,
       },
+    });
+  }
+
+  async getUsers(
+    { erAppUsers, oAdminAppUsers, organizationId, take, page, sort }: GetUsersDto,
+    req: AppRequest,
+    res: Response,
+  ) {
+    return this.makeTransaction({
+      action: async () => {
+        const opt: any = {};
+        if (take)
+          opt['pagination'] = {
+            take,
+            page,
+          };
+        if (sort) opt['sort'] = sort;
+        const filter: any = {};
+        if (erAppUsers) filter['accessErApp'] = true;
+
+        if (oAdminAppUsers && !organizationId)
+          throw new BadRequestException('Require orgainzation id to get organization admin app users');
+        return await this.find({ filter: {}, ...opt });
+      },
+      req,
+      res,
+      audit: { name: 'get-users', module: EModule.User },
     });
   }
 }

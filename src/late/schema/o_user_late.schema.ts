@@ -4,7 +4,7 @@ import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
-import { ExtraType, WorkingHourType } from 'src/common/util/schema.type';
+import { Extra, WorkingHour } from 'src/common/schema/common.schema';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()
@@ -12,13 +12,13 @@ export class UserLate extends CoreSchema {
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => WorkingHourType)
-  lateTime: WorkingHourType;
+  @Type(() => WorkingHour)
+  lateTime: WorkingHour;
 
   @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested()
-  @Type(() => ExtraType)
-  penalty: ExtraType;
+  @Type(() => Extra)
+  penalty: Extra;
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })

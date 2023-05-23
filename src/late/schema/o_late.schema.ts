@@ -5,7 +5,7 @@ import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
 import { EPosition } from 'src/common/util/enumn';
-import { ExtraType } from 'src/common/util/schema.type';
+import { Extra } from 'src/common/schema/common.schema';
 
 @Schema()
 export class OLate extends CoreSchema {
@@ -15,8 +15,8 @@ export class OLate extends CoreSchema {
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
-  @Type(() => ExtraType)
-  late_penalties: ExtraType[];
+  @Type(() => Extra)
+  late_penalties: Extra[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Field' }] })
   form: Field[];

@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
-import { PaymentType } from 'src/common/util/schema.type';
+import { Payment } from 'src/common/schema/common.schema';
 import { AppRequest } from 'src/common/util/type';
 import { CuponService } from 'src/er_app/cupon/cupon.service';
 import { Organization } from 'src/organization/schema/organization.schema';
@@ -31,7 +31,7 @@ export class SubscriptionService extends CoreService {
   ) {
     return this.makeTransaction({
       action: async (session) => {
-        const payment: PaymentType = await this.cuponService.getPayment({ ...paymentMethod, cuponCode });
+        const payment: Payment = await this.cuponService.getPayment({ ...paymentMethod, cuponCode });
         const organization = await this.findById({ id: organizationId, custom: this.organizationModel });
         return await this.create({
           dto: { ...dto, organization, payment, addon: addon ?? undefined },

@@ -5,6 +5,22 @@ export enum EUser {
   Any = 'Any',
 }
 
+export enum EChatGroup {
+  Project = 'Project',
+  Channel = 'Channel',
+  Group = 'Group',
+  Department = 'Department',
+}
+
+export enum EMessage {
+  Mention = 'Mention',
+  Bold = 'Bold',
+  Italic = 'Italic',
+  StrikeThrough = 'StrikeThrough',
+  Link = 'Link',
+  Code = 'Code',
+}
+
 export enum EModule {
   Audit = 'Audit',
   Auth = 'Auth',

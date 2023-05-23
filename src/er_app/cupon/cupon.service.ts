@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
-import { PaymentType } from 'src/common/util/schema.type';
+import { Payment } from 'src/common/schema/common.schema';
 import { AppRequest } from 'src/common/util/type';
 import { GetPaymentDto } from './dto/get_payment.dto';
 import { CreateCuponDto, UpdateCuponCodeDto } from './dto/create_cupon.dto';
@@ -83,8 +83,8 @@ export class CuponService extends CoreService {
     cuponCode,
     paymentMethod,
     paymentProof,
-  }: GetPaymentDto): Promise<PaymentType> {
-    const payment: PaymentType = {
+  }: GetPaymentDto): Promise<Payment> {
+    const payment: Payment = {
       amount: originalAmount,
       originalAmount: originalAmount,
       paymentMethod,

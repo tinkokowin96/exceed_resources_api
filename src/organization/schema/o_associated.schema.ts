@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { WorkingHourType } from 'src/common/util/schema.type';
+import { WorkingHour } from 'src/common/schema/common.schema';
 
 //NOTE: flexibleworkinghour, checkin, checkout and break will null for non custom(use value from config)
 
@@ -16,12 +16,12 @@ export class OAssociated {
   remark: string;
 
   @ValidateNested()
-  @Type(() => WorkingHourType)
-  checkInTime: WorkingHourType;
+  @Type(() => WorkingHour)
+  checkInTime: WorkingHour;
 
   @ValidateNested()
-  @Type(() => WorkingHourType)
-  checkOutTime: WorkingHourType;
+  @Type(() => WorkingHour)
+  checkOutTime: WorkingHour;
 
   @IsString()
   organizationId: string;

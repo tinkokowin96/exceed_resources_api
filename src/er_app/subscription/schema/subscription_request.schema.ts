@@ -4,7 +4,7 @@ import { IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-va
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { ESubscriptionStatus } from 'src/common/util/enumn';
-import { PaymentType } from 'src/common/util/schema.type';
+import { Payment } from 'src/common/schema/common.schema';
 import { Organization } from '../../../organization/schema/organization.schema';
 import { Cupon } from 'src/er_app/cupon/schema/cupon.schema';
 
@@ -31,8 +31,8 @@ export class SubscriptionRequest extends CoreSchema {
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => PaymentType)
-  payment: PaymentType;
+  @Type(() => Payment)
+  payment: Payment;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Cupon' })
   cupon: Cupon;

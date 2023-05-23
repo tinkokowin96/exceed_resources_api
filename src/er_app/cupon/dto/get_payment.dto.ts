@@ -1,8 +1,8 @@
 import { OmitType } from '@nestjs/mapped-types';
 import { IsString } from 'class-validator';
-import { PaymentType } from 'src/common/util/schema.type';
+import { Payment } from 'src/common/schema/common.schema';
 
-export class GetPaymentDto extends OmitType(PaymentType, ['amount']) {
+export class GetPaymentDto extends OmitType(Payment, ['amount']) {
   @IsString()
   cuponCode: string;
 }

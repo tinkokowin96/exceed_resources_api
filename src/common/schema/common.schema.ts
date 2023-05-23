@@ -1,12 +1,24 @@
 import { PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+  Validate,
+  ValidateNested,
+} from 'class-validator';
 import { Department } from 'src/department/schema/department.schema';
 import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
-import { EAttachment, EExtraAllowance, EField, EPaymentMethod, ETrigger } from './enumn';
+import { EAttachment, EExtraAllowance, EMessage, EPaymentMethod, ETrigger } from '../util/enumn';
+import { IsEmoji } from '../util/is_emoji.validator';
 
-export class WorkingHourType {
+export class WorkingHour {
   @IsNotEmpty()
   @Min(0)
   @Max(23)
@@ -18,7 +30,7 @@ export class WorkingHourType {
   minute: number;
 }
 
-export class AttachmentType {
+export class Attachment {
   @IsNotEmpty()
   @IsEnum(EAttachment)
   type: EAttachment;
@@ -34,7 +46,45 @@ export class AttachmentType {
   data: any;
 }
 
-export class PaymentType {
+export class Text {
+  @IsNotEmpty()
+  @IsEnum(EMessage)
+  type: EMessage;
+
+  @IsNotEmpty()
+  @IsString()
+  text: string;
+}
+
+export class Emoji {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(64)
+  @Validate(IsEmoji)
+  emoji: string;
+
+  @IsNotEmpty()
+  @IsString()
+  reactedUserName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  reactedUserId: string;
+}
+
+export class Message {
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => Text)
+  text: Text;
+
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => Emoji)
+  reactions: Emoji[];
+}
+
+export class Payment {
   @IsNotEmpty()
   @IsString()
   paymentProof: string;
@@ -52,7 +102,7 @@ export class PaymentType {
   paymentMethod: EPaymentMethod;
 }
 
-export class TriggerType {
+export class Trigger {
   @IsNotEmpty()
   @IsEnum(ETrigger)
   type: ETrigger;
@@ -62,7 +112,7 @@ export class TriggerType {
   amount: number;
 }
 
-export class ExtraType extends PickType(TriggerType, ['amount']) {
+export class Extra extends PickType(Trigger, ['amount']) {
   @IsNotEmpty()
   @IsBoolean()
   isPoint: boolean;
@@ -83,11 +133,11 @@ export class ExtraType extends PickType(TriggerType, ['amount']) {
   extraSalaryCategory?: SalaryCategory;
 }
 
-export class PayExtraType {
+export class PayExtra {
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => TriggerType)
-  trigger: TriggerType;
+  @Type(() => Trigger)
+  trigger: Trigger;
 
   @IsNotEmpty()
   @IsBoolean()
@@ -95,11 +145,11 @@ export class PayExtraType {
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => ExtraType)
-  extra: ExtraType;
+  @Type(() => Extra)
+  extra: Extra;
 }
 
-export class LeaveAllowedDepartmentType {
+export class LeaveAllowedDepartment {
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => Department)
@@ -110,16 +160,7 @@ export class LeaveAllowedDepartmentType {
   num_allowed: number;
 }
 
-export class ReportTypeType {
-  @IsNotEmpty()
-  @IsEnum(EField)
-  type: EField.CUser | EField.Position | EField.Department;
-
-  @IsNotEmpty()
-  value: any;
-}
-
-export class LocationType {
+export class Location {
   @IsNotEmpty()
   @IsNumber()
   lat: number;

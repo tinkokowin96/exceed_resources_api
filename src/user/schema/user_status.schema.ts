@@ -2,7 +2,7 @@ import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { LocationType } from 'src/common/util/schema.type';
+import { Location } from 'src/common/schema/common.schema';
 
 export class UserStatus extends CoreSchema {
   @Prop({ type: String, required: true })
@@ -25,7 +25,7 @@ export class UserStatus extends CoreSchema {
   remark: string;
 
   @Prop({ type: SchemaTypes.Mixed })
-  location: LocationType;
+  location: Location;
 }
 
 export const UserStatusSchema = SchemaFactory.createForClass(UserStatus);

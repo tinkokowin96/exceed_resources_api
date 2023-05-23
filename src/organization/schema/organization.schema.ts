@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { AttachmentType } from 'src/common/util/schema.type';
+import { Attachment } from 'src/common/schema/common.schema';
 import { User } from 'src/user/schema/user.schema';
 import { Department } from '../../department/schema/department.schema';
 import { OConfig } from './o_config.schema';
@@ -22,8 +22,8 @@ export class Organization extends CoreSchema {
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
-  @Type(() => AttachmentType)
-  attachments: AttachmentType[];
+  @Type(() => Attachment)
+  attachments: Attachment[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   superAdmin: User;

@@ -4,7 +4,7 @@ import { IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-v
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EWeekDay } from 'src/common/util/enumn';
-import { PayExtraType, WorkingHourType } from 'src/common/util/schema.type';
+import { PayExtra, WorkingHour } from 'src/common/schema/common.schema';
 import { OLate } from 'src/late/schema/o_late.schema';
 import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { OOvertime } from 'src/overtime/schema/o_overtime';
@@ -40,19 +40,19 @@ export class OConfig extends CoreSchema {
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => WorkingHourType)
-  checkInTime: WorkingHourType;
+  @Type(() => WorkingHour)
+  checkInTime: WorkingHour;
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => WorkingHourType)
-  checkOutTime: WorkingHourType;
+  @Type(() => WorkingHour)
+  checkOutTime: WorkingHour;
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
-  @Type(() => PayExtraType)
-  ontimeReward: PayExtraType[];
+  @Type(() => PayExtra)
+  ontimeReward: PayExtra[];
 
   @Prop({ type: [{ type: String, enum: EWeekDay }] })
   @IsEnum(EWeekDay, { each: true })

@@ -4,7 +4,7 @@ import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsString, ValidateNested }
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EAddon } from 'src/common/util/enumn';
-import { ExtraType } from 'src/common/util/schema.type';
+import { Extra } from 'src/common/schema/common.schema';
 
 @Schema()
 export class Promotion extends CoreSchema {
@@ -32,8 +32,8 @@ export class Promotion extends CoreSchema {
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => ExtraType)
-  allowance: ExtraType;
+  @Type(() => Extra)
+  allowance: Extra;
 }
 
 export const PromotionSchema = SchemaFactory.createForClass(Promotion);

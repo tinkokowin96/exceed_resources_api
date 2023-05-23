@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { AttachmentType, PayExtraType } from 'src/common/util/schema.type';
+import { Attachment, PayExtra } from 'src/common/schema/common.schema';
 import { Collaborator } from './collaborator.schema';
 import { Quotation } from './quotation.schema';
 import { Task } from './task.schema';
@@ -37,13 +37,13 @@ export class Project extends CoreSchema {
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
-  @Type(() => AttachmentType)
-  attachments: AttachmentType[];
+  @Type(() => Attachment)
+  attachments: Attachment[];
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
-  @Type(() => PayExtraType)
-  reward: PayExtraType[];
+  @Type(() => PayExtra)
+  reward: PayExtra[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Quotation' }] })
   quotations: Quotation[];

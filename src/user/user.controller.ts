@@ -1,9 +1,15 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
 import { AppRequest } from 'src/common/util/type';
-import { CreateUserDto, LoginUserDto, ToggleErAppAccessDto } from './dto/user.dto';
+import {
+  AddAssociatedOrganizationDto,
+  CreateUserDto,
+  GetUsersDto,
+  LoginUserDto,
+  ToggleErAppAccessDto,
+} from './dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -31,5 +37,21 @@ export class UserController {
   @Get('logout')
   async logout(@Req() req, @Res() res: Response) {
     return this.service.logoutUser(req, res);
+  }
+
+  @Users(['Any'])
+  @Get('get-users')
+  async getUser(@Param() dto: GetUsersDto, @Req() req, @Res() res: Response) {
+    return this.service.getUsers(dto, req, res);
+  }
+
+  @Users(['Organization', 'ErApp'])
+  @Get('add-associated-organization')
+  async addAssociatedOrganization(
+    @Body() dto: AddAssociatedOrganizationDto,
+    @Req() req: AppRequest,
+    @Res() res: Response,
+  ) {
+    return this.service.addAssociatedOrganization(dto, req, res);
   }
 }

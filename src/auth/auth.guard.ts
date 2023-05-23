@@ -44,7 +44,7 @@ export class AuthGuard implements CanActivate {
         throw new ForbiddenException("User don't have access to ER App");
       if (user.currentOrganization)
         permission = (
-          await this.positionModel.findById(user.currentOrganization.position, null, {
+          await this.positionModel.findById(user.currentOrganization.positionId, null, {
             lean: true,
             populate: ['permission'],
           })
@@ -61,7 +61,7 @@ export class AuthGuard implements CanActivate {
         });
         req.config = config;
       } else {
-        orgainzation = await this.organizationModel.findById(user.currentOrganization.organization, null, {
+        orgainzation = await this.organizationModel.findById(user.currentOrganization.organizationId, null, {
           lean: true,
           populate: 'config',
         });
@@ -73,7 +73,10 @@ export class AuthGuard implements CanActivate {
 
     if (allowedUsers) {
       if (!req.cookies.user) return false;
-      if (type === EUser.ErApp && !allowedUsers.includes(EUser.ErApp)) return false;
+
+      if (EUser.ErApp && !allowedUsers.includes(EUser.ErApp || EUser.Any)) return false;
+      if (EUser.Organization && !allowedUsers.includes(EUser.Organization || EUser.Any || EUser.InActive))
+        return false;
       const allowedInActive = allowedUsers.some((each) => each === EUser.InActive || each === EUser.Any);
 
       if (!allowedInActive && !user.currentOrganization) return false;

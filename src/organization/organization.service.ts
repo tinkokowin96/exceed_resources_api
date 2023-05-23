@@ -6,9 +6,10 @@ import { Category } from 'src/category/schema/category.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { CreateOrganizationDto } from './dto/create_organization.dto';
+import { CreateOrganizationDto } from './dto/organization.dto';
 import { OConfig } from './schema/o_config.schema';
 import { Organization } from './schema/organization.schema';
+import { FindDto } from 'src/common/dto/find.dto';
 
 @Injectable()
 export class OrganizationService extends CoreService {
@@ -57,6 +58,15 @@ export class OrganizationService extends CoreService {
         module: EModule.User,
         payload: dto,
       },
+    });
+  }
+
+  async getOrganizations(dto: FindDto, req: AppRequest, res: Response) {
+    return this.makeTransaction({
+      action: async () => await this.find({ ...dto }),
+      req,
+      res,
+      audit: { name: 'get-organizations', module: EModule.User },
     });
   }
 }

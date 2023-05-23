@@ -5,12 +5,6 @@ export enum EUser {
   Any = 'Any',
 }
 
-// export enum EApp {
-//   ErApp = 'ErApp',
-//   OApp = 'OApp',
-//   OAdminApp = 'OAdminApp',
-// }
-
 export enum EModule {
   Audit = 'Audit',
   Auth = 'Auth',

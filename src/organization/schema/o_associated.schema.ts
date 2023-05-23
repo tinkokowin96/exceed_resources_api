@@ -1,11 +1,14 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsMongoId, IsString, ValidateNested } from 'class-validator';
-import { Types } from 'mongoose';
+import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { WorkingHourType } from 'src/common/util/schema.type';
 
 //NOTE: flexibleworkinghour, checkin, checkout and break will null for non custom(use value from config)
 
 export class OAssociated {
+  @IsNotEmpty()
+  @IsBoolean()
+  accessAdminApp: boolean;
+
   @IsBoolean()
   flexibleWorkingHour: boolean;
 
@@ -20,24 +23,21 @@ export class OAssociated {
   @Type(() => WorkingHourType)
   checkOutTime: WorkingHourType;
 
-  @IsMongoId()
-  organization: Types.ObjectId;
+  @IsString()
+  organizationId: string;
 
-  @IsMongoId()
-  position: Types.ObjectId;
+  @IsString()
+  organizationName: string;
 
-  @IsMongoId({ each: true })
-  breaks: Types.ObjectId[];
+  @IsString()
+  positionId: string;
 
-  @IsMongoId({ each: true })
-  departments: Types.ObjectId[];
+  @IsString()
+  positionName: string;
 
-  @IsMongoId({ each: true })
-  lates: Types.ObjectId[];
+  @IsString({ each: true })
+  breaks: string[];
 
-  @IsMongoId({ each: true })
-  overtimes: Types.ObjectId[];
-
-  @IsMongoId({ each: true })
-  leaves: Types.ObjectId[];
+  @IsString({ each: true })
+  departments: string[];
 }

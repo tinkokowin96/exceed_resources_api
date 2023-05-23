@@ -36,8 +36,9 @@ type CreateType = Pick<QueryType, 'custom'> & {
 };
 
 type FindType = QueryType & {
-  filter: FilterQuery<any>;
-  pagination?: { take: number; page: number };
+  filter?: FilterQuery<any>;
+  take?: number;
+  page?: number;
   sort?: string;
 };
 
@@ -96,17 +97,25 @@ export abstract class CoreService {
       ...payload,
       _id: new Types.ObjectId(),
     });
-    const saved = await doc.save({ session });
-    return { next: saved };
+    return await doc.save({ session });
   }
 
-  async find({ filter, custom, options, projection, pagination, sort, errorOnNotFound = true }: FindType) {
+  async find({
+    filter,
+    custom,
+    options,
+    projection,
+    take,
+    page = 1,
+    sort,
+    errorOnNotFound = true,
+  }: FindType) {
     const model = custom ?? this.model;
     const opt = { lean: true, ...options };
     if (sort) opt.sort = sort;
-    if (pagination) {
-      opt.skip = pagination.take * pagination.page;
-      opt.limit = pagination.take;
+    if (take) {
+      opt.skip = take * page;
+      opt.limit = take;
     }
     const docs = await model.find(filter, projection, {
       lean: true,
@@ -114,8 +123,8 @@ export abstract class CoreService {
     });
 
     if (docs) {
-      const data = { ...docs };
-      if (pagination) data['numItems'] = await model.countDocuments();
+      const data = { items: docs };
+      if (take) data['numItems'] = await model.countDocuments();
       return data;
     } else if (errorOnNotFound) throw new NotFoundException('Documents not found with this query');
     else return null;
@@ -125,6 +134,7 @@ export abstract class CoreService {
     const model = custom ?? this.model;
     const doc = await model.findOne(filter, projection, {
       lean: true,
+
       ...options,
     });
     if (doc) return doc;

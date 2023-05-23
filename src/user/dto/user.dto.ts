@@ -1,7 +1,9 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { User } from '../schema/user.schema';
 import { FindDto } from 'src/common/dto/find.dto';
+import { OAssociated } from 'src/organization/schema/o_associated.schema';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto extends PickType(User, [
   'name',
@@ -55,12 +57,22 @@ export class ChangePasswordDto extends PickType(User, ['email', 'password']) {
 }
 
 export class GetUsersDto extends FindDto {
-  @IsBoolean()
-  erAppUsers: boolean;
-
-  @IsString()
-  organizationId: string;
+  @IsString({ each: true })
+  organizationIds?: string[];
 
   @IsBoolean()
-  oAdminAppUsers: boolean;
+  chat?: boolean;
+}
+
+export class AddAssociatedOrganizationDto {
+  @IsNotEmpty()
+  @IsString({ each: true })
+  userIds: string[];
+
+  @IsBoolean()
+  isCurrentOrganization: boolean;
+
+  @ValidateNested()
+  @Type(() => OAssociated)
+  orgainzation: OAssociated;
 }

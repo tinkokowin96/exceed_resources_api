@@ -1,9 +1,10 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
-import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { User } from '../schema/user.schema';
-import { FindDto } from 'src/common/dto/find.dto';
-import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { Type } from 'class-transformer';
+import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { FindDto } from 'src/common/dto/find.dto';
+import { DepartmentDto } from 'src/department/dto/department.dto';
+import { OAssociated } from 'src/organization/schema/o_associated.schema';
+import { User } from '../schema/user.schema';
 
 export class CreateUserDto extends PickType(User, [
   'name',
@@ -21,13 +22,14 @@ export class CreateUserDto extends PickType(User, [
   accessUserApp: boolean;
 
   @IsString()
-  currentOrganizationId: string;
+  positionId: string;
 
   @IsString({ each: true })
-  projectIds: string[];
+  breaks: string[];
 
-  @IsString({ each: true })
-  associatedOrganizationIds: string[];
+  @ValidateNested({ each: true })
+  @Type(() => DepartmentDto)
+  departments: DepartmentDto[];
 }
 
 export class LoginUserDto extends PartialType(PickType(User, ['userName', 'email'])) {

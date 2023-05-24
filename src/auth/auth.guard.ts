@@ -58,11 +58,11 @@ export class AuthGuard implements CanActivate {
       });
       if (type === EUser.ErApp && !user.accessErApp)
         throw new ForbiddenException("User don't have access to ER App");
-      orgainzation = user.currentOrganization.organization;
+      orgainzation = user.currentOrganization?.organization;
       req.id = id;
       req.type = type;
       req.user = user;
-      req.permission = user.currentOrganization.position.permission;
+      req.permission = user.currentOrganization?.position?.permission;
       if (type === EUser.ErApp) {
         const config = await this.erConfigModel.findById(process.env.CONFIG_ID, null, {
           lean: true,
@@ -76,15 +76,16 @@ export class AuthGuard implements CanActivate {
     if (allowedUsers) {
       if (!req.cookies.user) return false;
 
-      if (EUser.ErApp && !allowedUsers.includes(EUser.ErApp || EUser.Any)) return false;
-      if (EUser.Organization && !allowedUsers.includes(EUser.Organization || EUser.Any || EUser.InActive))
-        return false;
       const allowedInActive = allowedUsers.some((each) => each === EUser.InActive || each === EUser.Any);
+      const allowErApp = allowedUsers.some((each) => each === EUser.ErApp || each === EUser.Any);
+      const allowOrganization = allowedUsers.some((each) => each === EUser.Organization || allowedInActive);
 
-      if (!allowedInActive && !user.currentOrganization) return false;
+      if (type === EUser.ErApp && !allowErApp) return false;
+      if (type === EUser.Organization && !allowOrganization) return false;
+      if (!allowedInActive && !orgainzation) return false;
 
       let activeSubscription: Subscription;
-      if (user.currentOrganization)
+      if (orgainzation)
         activeSubscription = await this.subscriptionModel.findOne(
           { active: true, organization: orgainzation._id },
           null,

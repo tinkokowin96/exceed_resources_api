@@ -1,25 +1,16 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsMongoId, IsNotEmpty } from 'class-validator';
+import { Prop, Schema } from '@nestjs/mongoose';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { User } from 'src/user/schema/user.schema';
-import { ChatGroup } from './chat_group.shema';
-import { DirectMessage } from './direct_message.schema';
+import { ChatMessage } from './chat_message.shema';
 
 @Schema()
 export class Chat extends CoreSchema {
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-  @IsNotEmpty()
-  @IsMongoId()
-  user: User;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'ChatMessage' })
+  lastMessage: ChatMessage;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ChatGroup' }] })
-  @IsMongoId({ each: true })
-  chatGroups: ChatGroup[];
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ChatMessage' }] })
+  unreadMessages: ChatMessage[];
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'DirectMessage' }] })
-  @IsMongoId({ each: true })
-  directMessages: DirectMessage[];
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ChatMessage' }] })
+  messages: ChatMessage[];
 }
-
-export const ChatSchema = SchemaFactory.createForClass(Chat);

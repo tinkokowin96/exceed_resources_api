@@ -40,6 +40,8 @@ type FindType = QueryType & {
   take?: number;
   page?: number;
   sort?: string;
+  startDate?: string;
+  endDate?: string;
 };
 
 type FindByIdType = QueryType & {
@@ -108,6 +110,8 @@ export abstract class CoreService {
     take,
     page = 1,
     sort,
+    startDate,
+    endDate,
     errorOnNotFound = true,
   }: FindType) {
     const model = custom ?? this.model;
@@ -116,6 +120,9 @@ export abstract class CoreService {
     if (take) {
       opt.skip = take * page;
       opt.limit = take;
+    }
+    if (startDate) {
+      filter['createdAt'] = { $gte: startDate, $lte: endDate ?? startDate };
     }
     const docs = await model.find(filter, projection, {
       lean: true,
@@ -198,9 +205,9 @@ export abstract class CoreService {
       if (callback) await callback();
 
       if (audit) {
-        // const user = {};
-        // if (req.user) user['submittedUser'] = req.user;
-        // else user['submittedIP'] = req.ip;
+        const user = {};
+        if (req.user) user['submittedUser'] = req.user;
+        else user['submittedIP'] = req.ip;
         // await this.create({
         //   dto: { ...audit, ...user, prev: res?.prev, next: res?.next },
         //   custom: this.auditModel,

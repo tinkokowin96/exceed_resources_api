@@ -1,6 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsMongoId, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { WorkingHour } from 'src/common/schema/common.schema';
+import { Organization } from './organization.schema';
+import { Position } from 'src/position/schema/position.schema';
+import { Break } from 'src/break/schema/break.schema';
+import { Department } from 'src/department/schema/department.schema';
 
 //NOTE: flexibleworkinghour, checkin, checkout and break will null for non custom(use value from config)
 
@@ -23,21 +27,15 @@ export class OAssociated {
   @Type(() => WorkingHour)
   checkOutTime: WorkingHour;
 
-  @IsString()
-  organizationId: string;
+  @IsMongoId()
+  organization: Organization;
 
-  @IsString()
-  organizationName: string;
+  @IsMongoId()
+  position: Position;
 
-  @IsString()
-  positionId: string;
+  @IsMongoId({ each: true })
+  breaks: Break[];
 
-  @IsString()
-  positionName: string;
-
-  @IsString({ each: true })
-  breaks: string[];
-
-  @IsString({ each: true })
-  departments: string[];
+  @IsMongoId({ each: true })
+  departments: Department[];
 }

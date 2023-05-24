@@ -161,17 +161,22 @@ export class UserService extends CoreService {
     });
   }
 
-  async getUsers({ organizationIds, ...pagination }: GetUsersDto, req: AppRequest, res: Response) {
+  async getUsers({ organizationId, ...pagination }: GetUsersDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async () => {
-        if (organizationIds.length && req.type !== EUser.ErApp)
-          throw new ForbiddenException("Only current organization's users can access");
-        const filter: any = {};
-        if (erAppUsers) filter['accessErApp'] = true;
+        if (req.type !== EUser.ErApp && !req.user.currentOrganization.organization._id.equals(organizationId))
+          throw new ForbiddenException("Can't access other organization or user");
 
-        if (oAdminAppUsers && !organizationId)
-          throw new BadRequestException('Require orgainzation id to get organization admin app users');
-        return await this.find({ filter, ...pagination });
+        return this.find({
+          filter: {
+            currentOrganization: {
+              $eleMatch: {
+                orgainzation: organizationId ?? req.user.currentOrganization.organization._id,
+              },
+            },
+          },
+          ...pagination,
+        });
       },
       req,
       res,

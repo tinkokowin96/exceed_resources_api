@@ -3,9 +3,9 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Attachment } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
 import { EChatGroup } from 'src/common/util/enumn';
 import { User } from 'src/user/schema/user.schema';
+import { Chat } from './chat.schema';
 import { ChatMessage } from './chat_message.shema';
 
 class Pin {
@@ -19,7 +19,7 @@ class Pin {
 }
 
 @Schema()
-export class ChatGroup extends CoreSchema {
+export class ChatGroup extends Chat {
   @Prop({ type: String })
   @IsString()
   name: string;
@@ -37,9 +37,6 @@ export class ChatGroup extends CoreSchema {
   @ValidateNested({ each: true })
   @Type(() => Pin)
   pins: Pin[];
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ChatMessage' }] })
-  messages: ChatMessage[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
   admins: User[];

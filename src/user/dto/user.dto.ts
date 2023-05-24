@@ -57,11 +57,8 @@ export class ChangePasswordDto extends PickType(User, ['email', 'password']) {
 }
 
 export class GetUsersDto extends FindDto {
-  @IsString({ each: true })
-  organizationIds?: string[];
-
-  @IsBoolean()
-  chat?: boolean;
+  @IsString()
+  organizationId?: string;
 }
 
 export class AddAssociatedOrganizationDto {

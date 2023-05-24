@@ -18,6 +18,8 @@ import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { Project } from 'src/project/schema/project.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 import { UserStatus } from './user_status.schema';
+import { ChatGroup } from 'src/chat/schema/chat_group.shema';
+import { DirectMessage } from 'src/chat/schema/direct_message.schema';
 
 @Schema()
 export class User extends CoreSchema {
@@ -103,6 +105,12 @@ export class User extends CoreSchema {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OAssociated' }] })
   associatedOrganizations: OAssociated[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ChatGroup' }] })
+  chatGroups: ChatGroup[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'DirectMessage' }] })
+  directMessages: DirectMessage[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
-import { Department } from './schema/department.schema';
-import { AppRequest } from 'src/common/util/type';
-import { CreateDepartmentDto } from './dto/department.dto';
 import { EModule } from 'src/common/util/enumn';
-import { Response } from 'express';
+import { AppRequest, ServiceTrigger } from 'src/common/util/type';
 import { User } from 'src/user/schema/user.schema';
+import { AddUserToDepartmentDto, CreateDepartmentDto } from './dto/department.dto';
+import { Department } from './schema/department.schema';
 
 @Injectable()
 export class DepartmentService extends CoreService {
@@ -32,6 +32,28 @@ export class DepartmentService extends CoreService {
       req,
       res,
       audit: { name: 'create-department', module: EModule.Department, payload: dto },
+    });
+  }
+
+  async addUser(dto: AddUserToDepartmentDto, req: AppRequest, res: Response, trigger?: ServiceTrigger) {
+    return this.makeTransaction({
+      action: async (ses) => {
+        const session = trigger?.session ?? ses;
+        const { departmentId, isHead, userId } = dto;
+        const user = await this.findById({ id: userId, custom: this.userModel });
+        const update = { $push: { colleagues: user } };
+        if (isHead) update['$set'] = { head: user };
+        return await this.findByIdAndUpdate({ id: departmentId, update, session });
+      },
+      req,
+      res: trigger ? res : undefined,
+      audit: {
+        name: 'add-user',
+        module: EModule.Department,
+        triggerBy: trigger?.triggerBy ?? undefined,
+        triggerType: trigger?.type ?? undefined,
+        payload: dto,
+      },
     });
   }
 }

@@ -1,10 +1,11 @@
-import { PartialType, PickType } from '@nestjs/mapped-types';
+import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { FindDto } from 'src/common/dto/find.dto';
-import { DepartmentDto } from 'src/department/dto/department.dto';
+import { AddUserToDepartmentDto } from 'src/department/dto/department.dto';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { User } from '../schema/user.schema';
+import { WorkingHour } from 'src/common/schema/common.schema';
 
 export class CreateUserDto extends PickType(User, [
   'name',
@@ -15,11 +16,26 @@ export class CreateUserDto extends PickType(User, [
   'phone',
   'joiningDate',
 ]) {
-  @IsString()
-  bankId: string;
+  @IsNotEmpty()
+  @IsBoolean()
+  accessOAdminApp: boolean;
 
   @IsBoolean()
-  accessUserApp: boolean;
+  flexibleWorkingHour: boolean;
+
+  @IsString()
+  remark: string;
+
+  @ValidateNested()
+  @Type(() => WorkingHour)
+  checkInTime: WorkingHour;
+
+  @ValidateNested()
+  @Type(() => WorkingHour)
+  checkOutTime: WorkingHour;
+
+  @IsString()
+  bankId: string;
 
   @IsString()
   positionId: string;
@@ -28,8 +44,8 @@ export class CreateUserDto extends PickType(User, [
   breaks: string[];
 
   @ValidateNested({ each: true })
-  @Type(() => DepartmentDto)
-  departments: DepartmentDto[];
+  @Type(() => OmitType(AddUserToDepartmentDto, ['userId']))
+  departments: Omit<AddUserToDepartmentDto, 'userId'>[];
 }
 
 export class LoginUserDto extends PartialType(PickType(User, ['userName', 'email'])) {

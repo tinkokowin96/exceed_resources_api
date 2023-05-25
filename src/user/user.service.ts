@@ -6,10 +6,11 @@ import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { encrypt } from 'src/common/util/encrypt';
-import { EModule, EUser } from 'src/common/util/enumn';
+import { EModule, EServiceTrigger, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
+import { DepartmentService } from 'src/department/department.service';
 import { Organization } from 'src/organization/schema/organization.schema';
-import { Project } from 'src/project/schema/project.schema';
+import { Position } from 'src/position/schema/position.schema';
 import {
   AddAssociatedOrganizationDto,
   CreateUserDto,
@@ -18,6 +19,7 @@ import {
   ToggleErAppAccessDto,
 } from './dto/user.dto';
 import { User } from './schema/user.schema';
+import { OAssociated } from 'src/organization/schema/o_associated.schema';
 
 @Injectable()
 export class UserService extends CoreService {
@@ -26,50 +28,63 @@ export class UserService extends CoreService {
     @InjectModel(User.name) model: Model<User>,
     @InjectModel(Organization.name) private readonly organizationModel: Model<Organization>,
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
-    @InjectModel(Project.name) private readonly projectModel: Model<Project>,
+    @InjectModel(Position.name) private readonly positionModel: Model<Position>,
+    private readonly departmentService: DepartmentService,
   ) {
     super(connection, model);
   }
 
-  async createUser(
-    { bankId, currentOrganizationId, projectIds, associatedOrganizationIds, ...dto }: CreateUserDto,
-    req: AppRequest,
-    res: Response,
-  ) {
+  async createUser(dto: CreateUserDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        let bank, currentOrganization, projects, associatedOrganizations;
+        const {
+          bankId,
+          accessOAdminApp,
+          flexibleWorkingHour,
+          remark,
+          checkInTime,
+          checkOutTime,
+          positionId,
+          breaks,
+          departments: departmentsDto,
+          ...payload
+        } = dto;
+        let bank, position;
+        const departments = [];
         if (bankId)
           bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
-        if (currentOrganizationId)
-          currentOrganization = await this.findById({
-            id: currentOrganizationId,
-            custom: this.organizationModel,
+        if (req.type === EUser.ErApp && (!positionId || !departmentsDto))
+          throw new BadRequestException('Require position and department to create a user');
+        if (positionId)
+          position = await this.findById({
+            id: positionId,
+            custom: this.positionModel,
             projection: { _id: 1 },
           });
-        if (projectIds)
-          projects = await this.find({
-            filter: { _id: { $in: projectIds } },
-            custom: this.projectModel,
-            projection: { _id: 1 },
+        const user = await this.create({ dto: { bank, position, ...payload }, session });
+        for (const dep of departmentsDto) {
+          const department = await this.departmentService.addUser({ ...dep, userId: user._id }, req, res, {
+            triggerBy: 'create-user',
+            session,
+            type: EServiceTrigger.Update,
           });
-        if (associatedOrganizationIds)
-          associatedOrganizations = await this.find({
-            filter: { _id: { $in: associatedOrganizationIds } },
-            custom: this.organizationModel,
-            projection: { _id: 1 },
-          });
-        return await this.create({
-          dto: {
-            ...dto,
-            type: EUser.Organization,
-            bank,
-            currentOrganization,
-            projects,
-            associatedOrganizations,
-          },
-          session,
-        });
+          departments.push(department);
+        }
+        const associatedOrganization: OAssociated = {
+          accessOAdminApp,
+          flexibleWorkingHour,
+        };
+        // return await this.create({
+        //   dto: {
+        //     ...dto,
+        //     type: EUser.Organization,
+        //     bank,
+        //     currentOrganization,
+        //     projects,
+        //     associatedOrganizations,
+        //   },
+        //   session,
+        // });
       },
       req,
       res,

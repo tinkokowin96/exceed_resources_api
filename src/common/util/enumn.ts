@@ -57,6 +57,12 @@ export enum EExtra {
   BaseSalaryPercentage = 'BaseSalaryPercentage',
 }
 
+export enum EServiceTrigger {
+  Find = 'Find',
+  Create = 'Create',
+  Update = 'Update',
+}
+
 export enum EExtraAllowance {
   Percentage = 'Percentage',
   Absolute = 'Absolute',

@@ -13,7 +13,7 @@ import {
 import { Category } from 'src/category/schema/category.schema';
 import { Audit } from '../schema/audit.schema';
 import { AUDIT_MODEL } from '../util/constant';
-import { ECategory } from '../util/enumn';
+import { ECategory, EServiceTrigger } from '../util/enumn';
 import { responseError } from '../util/response_error';
 import { AppRequest } from '../util/type';
 
@@ -64,7 +64,7 @@ type MakeTransactionType = {
   req: AppRequest;
   res?: Response;
   callback?: () => any;
-  audit?: Pick<Audit, 'name' | 'module' | 'payload'>;
+  audit?: Pick<Audit, 'name' | 'module' | 'payload' | 'triggerBy' | 'triggerType'>;
 };
 
 export abstract class CoreService {
@@ -222,6 +222,10 @@ export abstract class CoreService {
       await session.commitTransaction();
       session.endSession();
       if (response) response.send(responseObj);
+      else if (audit.triggerBy) {
+        if (audit.triggerType === EServiceTrigger.Update) return res.next;
+        else return res;
+      }
     } catch (error) {
       await session.abortTransaction();
       session.endSession();

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsEnum, IsIP, IsNotEmpty, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { EModule } from 'src/common/util/enumn';
+import { EModule, EServiceTrigger } from 'src/common/util/enumn';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()
@@ -15,6 +15,10 @@ export class Audit extends CoreSchema {
   @Prop({ type: String })
   @IsString()
   triggerBy?: string;
+
+  @Prop({ type: String, enum: EServiceTrigger })
+  @IsEnum(EServiceTrigger)
+  triggerType?: EServiceTrigger;
 
   @Prop({ type: String, enum: EModule })
   @IsNotEmpty()

@@ -14,5 +14,6 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
   ],
   controllers: [DepartmentController],
   providers: [DepartmentService],
+  exports: [DepartmentService],
 })
 export class DepartmentModule {}

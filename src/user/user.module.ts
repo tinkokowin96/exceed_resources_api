@@ -6,6 +6,7 @@ import { Project, ProjectSchema } from 'src/project/schema/project.schema';
 import { UserController } from './user.controller';
 import { User, UserSchema } from './schema/user.schema';
 import { UserService } from './user.service';
+import { DepartmentModule } from 'src/department/department.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UserService } from './user.service';
       { name: Bank.name, schema: BankSchema },
       { name: Project.name, schema: ProjectSchema },
     ]),
+    DepartmentModule,
   ],
   controllers: [UserController],
   providers: [UserService],

@@ -11,7 +11,7 @@ import { Department } from 'src/department/schema/department.schema';
 export class OAssociated {
   @IsNotEmpty()
   @IsBoolean()
-  accessAdminApp: boolean;
+  accessOAdminApp: boolean;
 
   @IsBoolean()
   flexibleWorkingHour: boolean;
@@ -27,9 +27,11 @@ export class OAssociated {
   @Type(() => WorkingHour)
   checkOutTime: WorkingHour;
 
+  @IsNotEmpty()
   @IsMongoId()
   organization: Organization;
 
+  @IsNotEmpty()
   @IsMongoId()
   position: Position;
 

@@ -9,7 +9,7 @@ import { CreateCategoryDto } from './dto/create_category.dto';
 import { Category } from './schema/category.schema';
 
 @Injectable()
-export class CategoryService extends CoreService {
+export class CategoryService extends CoreService<Category> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Category.name) model: Model<Category>,
@@ -22,7 +22,6 @@ export class CategoryService extends CoreService {
       action: async (session) => {
         if (!type) throw new BadRequestException('Category type is required');
         await this.create({ dto: { ...dto, type }, session });
-        // throw new BadRequestException('Exception Occured..');
       },
       req,
       res,

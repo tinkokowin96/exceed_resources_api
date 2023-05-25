@@ -10,5 +10,9 @@ export class CoreSchema {
 
   @Prop({ type: Date })
   @IsDateString()
+  createdAt: Date;
+
+  @Prop({ type: Date })
+  @IsDateString()
   updatedAt: Date;
 }

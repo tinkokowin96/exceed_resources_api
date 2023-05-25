@@ -21,7 +21,7 @@ export class CuponCode extends CoreSchema {
 
   @Prop({ type: Number })
   @IsNumber()
-  numUsable: number;
+  numUsable?: number;
 }
 
 export const CuponCodeSchema = SchemaFactory.createForClass(CuponCode);

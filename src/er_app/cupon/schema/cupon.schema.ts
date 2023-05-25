@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
@@ -8,25 +7,26 @@ import { CuponCode } from './cupon_code.schema';
 
 @Schema()
 export class Cupon extends CoreSchema {
-  @Prop({ type: String })
+  @Prop({ type: String, required: true })
+  @IsNotEmpty()
   @IsString()
   name: string;
 
   @Prop({ type: Date })
   @IsDateString()
-  active_until: Date;
+  active_until?: Date;
 
   @Prop({ type: Boolean, default: true })
   @IsNumber()
-  active: boolean;
+  active?: boolean;
 
   @Prop({ type: Number })
   @IsNumber()
-  activeOnAmount: number;
+  activeOnAmount?: number;
 
   @Prop({ type: String })
   @IsString()
-  remark: string;
+  remark?: string;
 
   @Prop({ type: Number, required: true })
   @IsNotEmpty()
@@ -39,14 +39,11 @@ export class Cupon extends CoreSchema {
   isPercentage: boolean;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'CuponCode' }] })
-  @ValidateNested({ each: true })
-  @Type(() => CuponCode)
+  @IsNotEmpty()
   cuponCodes: CuponCode[];
 
   @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } })
-  @ValidateNested()
-  @Type(() => Category)
-  type: Category;
+  category?: Category;
 }
 
 export const CuponSchema = SchemaFactory.createForClass(Cupon);

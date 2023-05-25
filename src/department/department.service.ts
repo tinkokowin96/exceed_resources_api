@@ -10,7 +10,7 @@ import { AddUserToDepartmentDto, CreateDepartmentDto } from './dto/department.dt
 import { Department } from './schema/department.schema';
 
 @Injectable()
-export class DepartmentService extends CoreService {
+export class DepartmentService extends CoreService<Department> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Department.name) model: Model<Department>,
@@ -26,7 +26,7 @@ export class DepartmentService extends CoreService {
         let departments;
         const head = await this.findById({ id: headId, custom: this.userModel });
         if (childDepartmentIds)
-          departments = await this.find({ filter: { _id: { $in: childDepartmentIds } } });
+          departments = (await this.find({ filter: { _id: { $in: childDepartmentIds } } })).items;
         return this.create({ dto: { ...payload, head, departments }, session });
       },
       req,

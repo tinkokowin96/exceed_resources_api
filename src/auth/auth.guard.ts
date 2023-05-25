@@ -58,11 +58,11 @@ export class AuthGuard implements CanActivate {
       });
       if (type === EUser.ErApp && !user.accessErApp)
         throw new ForbiddenException("User don't have access to ER App");
-      orgainzation = user.currentOrganization?.organization;
+      orgainzation = user.currentOrganization.organization;
       req.id = id;
       req.type = type;
       req.user = user;
-      req.permission = user.currentOrganization?.position?.permission;
+      req.permission = user.currentOrganization.position.permission;
       if (type === EUser.ErApp) {
         const config = await this.erConfigModel.findById(process.env.CONFIG_ID, null, {
           lean: true,

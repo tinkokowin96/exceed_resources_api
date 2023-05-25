@@ -2,40 +2,39 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
+import { PayExtra, WorkingHour } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EWeekDay } from 'src/common/util/enumn';
-import { PayExtra, WorkingHour } from 'src/common/schema/common.schema';
 import { OLate } from 'src/late/schema/o_late.schema';
 import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { OOvertime } from 'src/overtime/schema/o_overtime';
-import { Organization } from './organization.schema';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()
 export class OConfig extends CoreSchema {
   @Prop({ type: Boolean, default: true })
   @IsBoolean()
-  showOwnerPhone: boolean;
+  showOwnerPhone?: boolean;
 
   @Prop({ type: Boolean, default: true })
   @IsBoolean()
-  showOwnerEmail: boolean;
+  showOwnerEmail?: boolean;
 
   @Prop({ type: Boolean, default: true })
   @IsBoolean()
-  showCUserPhone: boolean;
+  showCUserPhone?: boolean;
 
   @Prop({ type: Boolean, default: true })
   @IsBoolean()
-  requireCheckIn: boolean;
+  requireCheckIn?: boolean;
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
-  allowedLateAsOntime: boolean;
+  allowedLateAsOntime?: boolean;
 
   @Prop({ type: [String], default: ['organization/change-super-admin'] })
   @IsString({ each: true })
-  restrictedRoutes: string[];
+  restrictedRoutes?: string[];
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
@@ -49,37 +48,34 @@ export class OConfig extends CoreSchema {
   @Type(() => WorkingHour)
   checkOutTime: WorkingHour;
 
-  @Prop({ type: [SchemaTypes.Mixed] })
+  @Prop({ type: [SchemaTypes.Mixed], default: [] })
   @ValidateNested({ each: true })
   @Type(() => PayExtra)
-  ontimeReward: PayExtra[];
+  ontimeReward?: PayExtra[];
 
-  @Prop({ type: [{ type: String, enum: EWeekDay }] })
+  @Prop({ type: [{ type: String, enum: EWeekDay }], default: [] })
   @IsEnum(EWeekDay, { each: true })
-  workingDays: EWeekDay[];
+  workDays?: EWeekDay[];
 
-  @Prop({ type: [{ type: String, enum: EWeekDay }] })
+  @Prop({ type: [{ type: String, enum: EWeekDay }], default: [] })
   @IsEnum(EWeekDay, { each: true })
-  inOfficeWorkingDays: EWeekDay[];
+  inOfficeWorkDays?: EWeekDay[];
 
-  @Prop({ type: [{ type: String, enum: EWeekDay }] })
+  @Prop({ type: [{ type: String, enum: EWeekDay }], default: [] })
   @IsEnum(EWeekDay, { each: true })
-  remoteWorkingDays: EWeekDay[];
+  remoteWorkDays?: EWeekDay[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   superAdmin: User;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OLate' })
-  late: OLate;
+  late?: OLate;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OOvertime' })
-  overtime: OOvertime;
+  overtime?: OOvertime;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OLeave' })
-  leave: OLeave;
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
-  organization: Organization;
+  leave?: OLeave;
 }
 
 export const OConfigSchema = SchemaFactory.createForClass(OConfig);

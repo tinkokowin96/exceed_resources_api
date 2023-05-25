@@ -12,8 +12,7 @@ export class Permission extends CoreSchema {
   @IsString()
   name: string;
 
-  @Prop({ type: [String], required: true })
-  @IsNotEmpty()
+  @Prop({ type: [String], default: [] })
   @IsString({ each: true })
   allowedRoutes: string[];
 

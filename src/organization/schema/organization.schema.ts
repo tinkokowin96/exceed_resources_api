@@ -3,9 +3,8 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
 import { Attachment } from 'src/common/schema/common.schema';
-import { User } from 'src/user/schema/user.schema';
+import { CoreSchema } from 'src/common/schema/core.shema';
 import { Department } from '../../department/schema/department.schema';
 import { OConfig } from './o_config.schema';
 
@@ -18,33 +17,22 @@ export class Organization extends CoreSchema {
 
   @Prop({ type: String })
   @IsString()
-  logo: string;
+  logo?: string;
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
   @Type(() => Attachment)
-  attachments: Attachment[];
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-  superAdmin: User;
+  attachments?: Attachment[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
-  type: Category;
+  type?: Category;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OConfig' })
+  @IsNotEmpty()
   config: OConfig;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Department' }] })
-  departments: Department[];
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-  owner: User;
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-  ceo: User;
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
-  colleagues: User[];
+  departments?: Department[];
 }
 
 export const OrganizationSchema = SchemaFactory.createForClass(Organization);

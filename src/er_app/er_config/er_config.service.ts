@@ -12,7 +12,7 @@ import { Currency } from './schema/currency.schema';
 import { ErConfig } from './schema/er_config.schema';
 
 @Injectable()
-export class ErConfigService extends CoreService {
+export class ErConfigService extends CoreService<ErConfig> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(ErConfig.name) model: Model<ErConfig>,

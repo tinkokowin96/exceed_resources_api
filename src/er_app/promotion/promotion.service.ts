@@ -8,7 +8,7 @@ import { AppRequest } from 'src/common/util/type';
 import { Promotion } from './schema/promotion.schema';
 
 @Injectable()
-export class PromotionService extends CoreService {
+export class PromotionService extends CoreService<Promotion> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Promotion.name) model: Model<Promotion>,

@@ -1,44 +1,24 @@
-import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
+import { IntersectionType, OmitType, PartialType, PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { FindDto } from 'src/common/dto/find.dto';
 import { AddUserToDepartmentDto } from 'src/department/dto/department.dto';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { User } from '../schema/user.schema';
-import { WorkingHour } from 'src/common/schema/common.schema';
 
-export class CreateUserDto extends PickType(User, [
-  'name',
-  'image',
-  'userName',
-  'email',
-  'password',
-  'phone',
-  'joiningDate',
-]) {
-  @IsNotEmpty()
-  @IsBoolean()
-  accessOAdminApp: boolean;
-
-  @IsBoolean()
-  flexibleWorkingHour: boolean;
-
-  @IsString()
-  remark: string;
-
-  @ValidateNested()
-  @Type(() => WorkingHour)
-  checkInTime: WorkingHour;
-
-  @ValidateNested()
-  @Type(() => WorkingHour)
-  checkOutTime: WorkingHour;
-
+export class CreateUserDto extends IntersectionType(
+  PickType(User, ['name', 'image', 'userName', 'email', 'password', 'phone', 'joiningDate']),
+  OmitType(OAssociated, ['position', 'breaks', 'departments', 'organization']),
+) {
   @IsString()
   bankId: string;
 
   @IsString()
   positionId: string;
+
+  //NOTE: This will accept is not logged in which mean owner account
+  @IsString()
+  organizationId: string;
 
   @IsString({ each: true })
   breaks: string[];

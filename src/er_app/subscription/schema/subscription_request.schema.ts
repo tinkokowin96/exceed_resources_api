@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { ESubscriptionStatus } from 'src/common/util/enumn';
+import { EAddon, ESubscriptionStatus } from 'src/common/util/enumn';
 import { Payment } from 'src/common/schema/common.schema';
 import { Organization } from '../../../organization/schema/organization.schema';
 import { Cupon } from 'src/er_app/cupon/schema/cupon.schema';
@@ -17,16 +17,21 @@ export class SubscriptionRequest extends CoreSchema {
 
   @Prop({ type: Number })
   @IsNumber()
-  numEmployee: number;
+  numEmployee?: number;
 
-  @Prop({ type: String, required: true, enum: ESubscriptionStatus })
+  @Prop({ type: String, enum: ESubscriptionStatus, required: true })
   @IsNotEmpty()
   @IsEnum(ESubscriptionStatus)
   status: ESubscriptionStatus;
 
+  @Prop({ type: String, enum: EAddon, required: true })
+  @IsNotEmpty()
+  @IsEnum(EAddon)
+  addon: EAddon;
+
   @Prop({ type: String })
   @IsString()
-  remark: string;
+  remark?: string;
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
@@ -35,9 +40,10 @@ export class SubscriptionRequest extends CoreSchema {
   payment: Payment;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Cupon' })
-  cupon: Cupon;
+  cupon?: Cupon;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
+  @IsNotEmpty()
   organization: Organization;
 }
 

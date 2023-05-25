@@ -20,15 +20,17 @@ import {
 } from './dto/user.dto';
 import { User } from './schema/user.schema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
+import { Permission } from 'src/permission/permission.schema';
 
 @Injectable()
-export class UserService extends CoreService {
+export class UserService extends CoreService<User> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(User.name) model: Model<User>,
     @InjectModel(Organization.name) private readonly organizationModel: Model<Organization>,
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
     @InjectModel(Position.name) private readonly positionModel: Model<Position>,
+    @InjectModel(Permission.name) private readonly permissionModel: Model<Permission>,
     private readonly departmentService: DepartmentService,
   ) {
     super(connection, model);
@@ -46,21 +48,45 @@ export class UserService extends CoreService {
           checkOutTime,
           positionId,
           breaks,
+          organizationId,
           departments: departmentsDto,
           ...payload
         } = dto;
-        let bank, position;
+        // let bank, orgainzation, position;
         const departments = [];
-        if (bankId)
-          bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
-        if (req.type === EUser.ErApp && (!positionId || !departmentsDto))
-          throw new BadRequestException('Require position and department to create a user');
-        if (positionId)
-          position = await this.findById({
-            id: positionId,
-            custom: this.positionModel,
-            projection: { _id: 1 },
+        if (req.user && (organizationId || positionId))
+          throw new ForbiddenException("Can't create user for other organization");
+
+        if (bankId) {
+          const bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
+        }
+
+        if (!req.user) {
+          const orgainzation = await this.findById<Organization>({
+            id: organizationId,
+            custom: this.organizationModel,
           });
+          const users = await this.find({
+            filter: { currentOrganization: { orgainzation: orgainzation._id } },
+          });
+          if (users.items.length) throw new ForbiddenException('Organization already had owner account');
+          const permission = await this.create({
+            dto: { name: `${orgainzation.name} owner permission` },
+            session,
+            custom: this.permissionModel,
+          });
+          const position = await this.create({
+            dto: { name: `${orgainzation.name} Owner`, shortName: 'Owner', permission },
+            session,
+            custom: this.positionModel,
+          });
+        } else {
+        }
+        // const position = await this.findById({
+        //   id: positionId,
+        //   custom: this.positionModel,
+        //   projection: { _id: 1 },
+        // });
         const user = await this.create({ dto: { bank, position, ...payload }, session });
         for (const dep of departmentsDto) {
           const department = await this.departmentService.addUser({ ...dep, userId: user._id }, req, res, {

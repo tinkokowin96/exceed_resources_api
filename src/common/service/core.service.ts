@@ -16,16 +16,19 @@ import { AUDIT_MODEL } from '../util/constant';
 import { ECategory, EServiceTrigger } from '../util/enumn';
 import { responseError } from '../util/response_error';
 import { AppRequest } from '../util/type';
+import { CoreSchema } from '../schema/core.shema';
 
-type QueryType = {
-  custom?: Model<any>;
-  options?: QueryOptions<any>;
-  projection?: ProjectionType<any>;
+type Type<K, T> = K extends T ? T : K;
+
+type QueryType<T> = {
+  custom?: Model<T>;
+  options?: QueryOptions<T>;
+  projection?: ProjectionType<T>;
   errorOnNotFound?: boolean;
 };
 
-type CreateType = Pick<QueryType, 'custom'> & {
-  dto: any;
+type CreateType<T> = Pick<QueryType<T>, 'custom'> & {
+  dto: Omit<T, '_id' | 'createdAt' | 'updatedAt'>;
   session: ClientSession;
   category?: {
     categoryId?: string;
@@ -35,8 +38,8 @@ type CreateType = Pick<QueryType, 'custom'> & {
   };
 };
 
-type FindType = QueryType & {
-  filter?: FilterQuery<any>;
+type FindType<T> = QueryType<T> & {
+  filter?: FilterQuery<T>;
   take?: number;
   page?: number;
   sort?: string;
@@ -44,18 +47,18 @@ type FindType = QueryType & {
   endDate?: string;
 };
 
-type FindByIdType = QueryType & {
+type FindByIdType<T> = QueryType<T> & {
   id: string | Types.ObjectId;
 };
 
-type FindByIdAndUpdateType = Omit<FindByIdType, 'projection'> & {
-  update: UpdateQuery<any>;
+type FindByIdAndUpdateType<T> = Omit<FindByIdType<T>, 'projection'> & {
+  update: UpdateQuery<T>;
   session: ClientSession;
 };
 
-type UpdateManyByIdType = Omit<FindByIdAndUpdateType, 'id'> & {
+type UpdateManyByIdType<T> = Omit<FindByIdAndUpdateType<T>, 'id'> & {
   ids: string[];
-  update: UpdateQuery<any>;
+  update: UpdateQuery<T>;
   session: ClientSession;
 };
 
@@ -67,16 +70,16 @@ type MakeTransactionType = {
   audit?: Pick<Audit, 'name' | 'module' | 'payload' | 'triggerBy' | 'triggerType'>;
 };
 
-export abstract class CoreService {
+export abstract class CoreService<T extends CoreSchema> {
   @Inject(AUDIT_MODEL) private readonly auditModel: Model<Audit>;
   constructor(
     protected readonly connection: Connection,
-    protected readonly model?: Model<any>,
-    protected readonly categoryModel?: Model<Category>,
+    protected readonly model?: Model<T>,
+    protected readonly categoryModel?: Model<Type<Category, T>>,
   ) {}
 
-  async create({ dto, session, category, custom }: CreateType) {
-    const model = custom ?? this.model;
+  async create<K extends CoreSchema = T>({ dto, session, category, custom }: CreateType<Type<K, T>>) {
+    const model: Model<Type<K, T>> = (custom ?? this.model) as any;
     const payload = dto;
     if (category) {
       let cat;
@@ -86,13 +89,11 @@ export abstract class CoreService {
       if (category.categoryId)
         cat = await this.findById({ id: category.categoryId, custom: this.categoryModel });
       else
-        cat = await (
-          await this.create({
-            dto: { name: category, type: category.type },
-            session,
-            custom: this.categoryModel,
-          })
-        ).next;
+        cat = await this.create({
+          dto: { name: category.category, type: category.type } as any,
+          session,
+          custom: this.categoryModel,
+        });
       payload[category.name ?? 'category'] = cat;
     }
     const doc = new model({
@@ -102,7 +103,7 @@ export abstract class CoreService {
     return await doc.save({ session });
   }
 
-  async find({
+  async find<K extends CoreSchema = T>({
     filter,
     custom,
     options,
@@ -113,8 +114,8 @@ export abstract class CoreService {
     startDate,
     endDate,
     errorOnNotFound = true,
-  }: FindType) {
-    const model = custom ?? this.model;
+  }: FindType<Type<K, T>>) {
+    const model: Model<Type<K, T>> = (custom ?? this.model) as any;
     const opt = { lean: true, ...options };
     if (sort) opt.sort = sort;
     if (take) {
@@ -122,7 +123,7 @@ export abstract class CoreService {
       opt.limit = take;
     }
     if (startDate) {
-      filter['createdAt'] = { $gte: startDate, $lte: endDate ?? startDate };
+      filter.createdAt = { $gte: startDate, $lte: endDate ?? startDate };
     }
     const docs = await model.find(filter, projection, {
       lean: true,
@@ -137,11 +138,16 @@ export abstract class CoreService {
     else return null;
   }
 
-  async findOne({ filter, custom, options, projection, errorOnNotFound = true }: FindType) {
-    const model = custom ?? this.model;
+  async findOne<K extends CoreSchema = T>({
+    filter,
+    custom,
+    options,
+    projection,
+    errorOnNotFound = true,
+  }: FindType<Type<K, T>>) {
+    const model: Model<Type<K, T>> = (custom ?? this.model) as any;
     const doc = await model.findOne(filter, projection, {
       lean: true,
-
       ...options,
     });
     if (doc) return doc;
@@ -149,8 +155,8 @@ export abstract class CoreService {
     else return null;
   }
 
-  async findById({ id, custom, options, projection }: FindByIdType) {
-    const model = custom ?? this.model;
+  async findById<K extends CoreSchema = T>({ id, custom, options, projection }: FindByIdType<Type<K, T>>) {
+    const model: Model<Type<K, T>> = (custom ?? this.model) as any;
     const doc = await model.findById(id, projection, {
       lean: true,
       ...options,
@@ -159,8 +165,14 @@ export abstract class CoreService {
     else throw new NotFoundException('Document not found with this id');
   }
 
-  async findByIdAndUpdate({ id, update, session, custom, options }: FindByIdAndUpdateType) {
-    const model = custom ?? this.model;
+  async findByIdAndUpdate<K extends CoreSchema = T>({
+    id,
+    update,
+    session,
+    custom,
+    options,
+  }: FindByIdAndUpdateType<Type<K, T>>) {
+    const model: Model<Type<K, T>> = (custom ?? this.model) as any;
     const prev = await model.findById(id, null, {
       lean: true,
     });
@@ -178,8 +190,14 @@ export abstract class CoreService {
     };
   }
 
-  async updateManyById({ ids, update, session, custom, options }: UpdateManyByIdType) {
-    const model = (this.model ?? custom) as Model<any>;
+  async updateManyById<K extends CoreSchema = T>({
+    ids,
+    update,
+    session,
+    custom,
+    options,
+  }: UpdateManyByIdType<Type<K, T>>) {
+    const model: Model<Type<K, T>> = (custom ?? this.model) as any;
     const prev = await model.find({ _id: { $in: ids } }, null, {
       lean: true,
     });

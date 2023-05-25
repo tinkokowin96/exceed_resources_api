@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { SubscriptionService } from './subscription.service';
 import { Users } from 'src/auth/user.decorator';
 import { EUser } from 'src/common/util/enumn';
-import { RequestSubscriptionDto } from './dto/request_subscription.dto';
+import { RequestSubscriptionDto } from './dto/subscription_request.dto';
 import { AppRequest } from 'src/common/util/type';
 import { Response } from 'express';
 

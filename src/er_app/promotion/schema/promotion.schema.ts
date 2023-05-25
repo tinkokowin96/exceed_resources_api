@@ -15,19 +15,19 @@ export class Promotion extends CoreSchema {
 
   @Prop({ type: Boolean, default: true })
   @IsBoolean()
-  active: boolean;
+  active?: boolean;
 
   @Prop({ type: Date })
   @IsDateString()
-  active_until: Date;
+  active_until?: Date;
 
   @Prop({ type: String, enum: EAddon })
   @IsEnum(EAddon)
-  addon: EAddon;
+  addon?: EAddon;
 
   @Prop({ type: String })
   @IsString()
-  remark: string;
+  remark?: string;
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()

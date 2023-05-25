@@ -10,7 +10,7 @@ import { Response } from 'express';
 import { Permission } from 'src/permission/permission.schema';
 
 @Injectable()
-export class PositionService extends CoreService {
+export class PositionService extends CoreService<Position> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Position.name) model: Model<Position>,

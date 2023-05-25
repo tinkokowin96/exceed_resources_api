@@ -9,7 +9,7 @@ import { CreateBreakDto } from './dto/break.dto';
 import { Break } from './schema/break.schema';
 
 @Injectable()
-export class BreakService extends CoreService {
+export class BreakService extends CoreService<Break> {
   constructor(@InjectConnection() connection: Connection, @InjectModel(Break.name) model: Model<Break>) {
     super(connection, model);
   }

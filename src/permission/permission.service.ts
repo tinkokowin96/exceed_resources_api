@@ -12,7 +12,7 @@ import { UpdatePermissionDto } from './dto/update_permission.dto';
 import { Permission } from './permission.schema';
 
 @Injectable()
-export class PermissionService extends CoreService {
+export class PermissionService extends CoreService<Permission> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Permission.name) model: Model<Permission>,

@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
@@ -15,32 +14,29 @@ export class Department extends CoreSchema {
   @IsString()
   name: string;
 
-  @Prop({ type: String, required: true })
-  @IsNotEmpty()
+  @Prop({ type: String })
   @IsString()
-  shortName: string;
+  shortName?: string;
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })
   @Type(() => Attachment)
-  attachments: Attachment[];
+  attachments?: Attachment[];
 
   @Prop({ type: String })
   @IsString()
-  remark: string;
+  remark?: string;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission', required: true })
   @IsNotEmpty()
   permission: Permission;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  @IsNotEmpty()
   head: User;
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
-  colleagues: User[];
-
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Department' }] })
-  departments: Department[];
+  departments?: Department[];
 }
 
 export const DepartmentSchema = SchemaFactory.createForClass(Department);

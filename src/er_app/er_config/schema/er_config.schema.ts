@@ -13,9 +13,11 @@ export class ErConfig extends CoreSchema {
   restrictedRoutes: string[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  @IsNotEmpty()
   superAdmin: User;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Currency' })
+  @IsNotEmpty()
   baseCurrency: Currency;
 }
 

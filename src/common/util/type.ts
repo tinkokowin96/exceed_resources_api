@@ -6,6 +6,8 @@ import { Permission } from 'src/permission/permission.schema';
 import { User } from 'src/user/schema/user.schema';
 import { EServiceTrigger, EUser } from './enumn';
 
+export type Type<K, T> = K extends T ? T : K;
+
 export interface AppRequest extends Request {
   id: string;
   type: EUser;

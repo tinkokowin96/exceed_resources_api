@@ -10,6 +10,7 @@ import { EModule, EServiceTrigger, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { DepartmentService } from 'src/department/department.service';
 import { Organization } from 'src/organization/schema/organization.schema';
+import { Permission } from 'src/permission/permission.schema';
 import { Position } from 'src/position/schema/position.schema';
 import {
   AddAssociatedOrganizationDto,
@@ -19,8 +20,8 @@ import {
   ToggleErAppAccessDto,
 } from './dto/user.dto';
 import { User } from './schema/user.schema';
+import { Break } from 'src/break/schema/break.schema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
-import { Permission } from 'src/permission/permission.schema';
 
 @Injectable()
 export class UserService extends CoreService<User> {
@@ -31,6 +32,7 @@ export class UserService extends CoreService<User> {
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
     @InjectModel(Position.name) private readonly positionModel: Model<Position>,
     @InjectModel(Permission.name) private readonly permissionModel: Model<Permission>,
+    @InjectModel(Break.name) private readonly breakModel: Model<Break>,
     private readonly departmentService: DepartmentService,
   ) {
     super(connection, model);
@@ -47,24 +49,27 @@ export class UserService extends CoreService<User> {
           checkInTime,
           checkOutTime,
           positionId,
-          breaks,
+          breakIds,
           organizationId,
           departments: departmentsDto,
           ...payload
         } = dto;
-        // let bank, orgainzation, position;
-        const departments = [];
+        let bank: Bank, orgainzation: Organization, position: Position;
         if (req.user && (organizationId || positionId))
           throw new ForbiddenException("Can't create user for other organization");
 
         if (bankId) {
-          const bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
+          bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
         }
 
+        if ((!req.user && payload.accessErApp) || (req.type !== EUser.ErApp && payload.accessErApp))
+          throw new ForbiddenException('Not allow to use user to access erapp');
+
         if (!req.user) {
-          const orgainzation = await this.findById<Organization>({
+          orgainzation = await this.findById({
             id: organizationId,
             custom: this.organizationModel,
+            projection: { _id: 1 },
           });
           const users = await this.find({
             filter: { currentOrganization: { orgainzation: orgainzation._id } },
@@ -75,42 +80,67 @@ export class UserService extends CoreService<User> {
             session,
             custom: this.permissionModel,
           });
-          const position = await this.create({
-            dto: { name: `${orgainzation.name} Owner`, shortName: 'Owner', permission },
+          position = await this.create({
+            dto: { name: `${orgainzation.name} Owner`, shortName: 'Owner', permission, basicSalary: 0 },
             session,
             custom: this.positionModel,
           });
         } else {
+          orgainzation = req.user.currentOrganization.organization;
+          position = req.user.currentOrganization.position;
         }
-        // const position = await this.findById({
-        //   id: positionId,
-        //   custom: this.positionModel,
-        //   projection: { _id: 1 },
-        // });
-        const user = await this.create({ dto: { bank, position, ...payload }, session });
-        for (const dep of departmentsDto) {
-          const department = await this.departmentService.addUser({ ...dep, userId: user._id }, req, res, {
-            triggerBy: 'create-user',
-            session,
-            type: EServiceTrigger.Update,
-          });
-          departments.push(department);
-        }
+
+        const breaks = (
+          await this.find({
+            filter: { $or: [{ _id: { $in: breakIds } }, { orgainzation: orgainzation._id }] },
+            custom: this.breakModel,
+            projection: { _id: 1 },
+          })
+        ).items.reduce((acc, cur) => [...acc, cur._id], []);
+
+        const departments = (
+          await this.find({
+            filter: { _id: { $in: departmentsDto.reduce((acc, cur) => [...acc, cur.departmentId], []) } },
+            projection: { _id: 1 },
+          })
+        ).items.reduce((acc, cur) => [...acc, cur._id], []);
+
         const associatedOrganization: OAssociated = {
           accessOAdminApp,
           flexibleWorkingHour,
+          remark,
+          checkInTime,
+          checkOutTime,
+          organization: orgainzation._id as any,
+          position: position._id as any,
+          breaks,
+          departments,
         };
-        // return await this.create({
-        //   dto: {
-        //     ...dto,
-        //     type: EUser.Organization,
-        //     bank,
-        //     currentOrganization,
-        //     projects,
-        //     associatedOrganizations,
-        //   },
-        //   session,
-        // });
+
+        const user = await this.create({
+          dto: {
+            ...payload,
+            basicSalary: payload.basicSalary ?? position.basicSalary,
+            bank,
+            currentOrganization: associatedOrganization,
+            associatedOrganizations: [associatedOrganization],
+          },
+          session,
+        });
+
+        for (const dep of departmentsDto) {
+          if (dep.isHead)
+            await this.departmentService.changeDepartmentHead(
+              { ...dep, userId: user._id.toString() },
+              req,
+              res,
+              {
+                triggerBy: 'create-user',
+                session,
+                type: EServiceTrigger.Update,
+              },
+            );
+        }
       },
       req,
       res,

@@ -22,5 +22,7 @@ export class AddUserToDepartmentDto {
 
   @IsNotEmpty()
   @IsBoolean()
-  isHead: boolean;
+  isHead: string;
 }
+
+export class ChangeDepartmentHeadDto extends OmitType(AddUserToDepartmentDto, ['isHead']) {}

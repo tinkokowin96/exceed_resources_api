@@ -1,13 +1,13 @@
 import { IntersectionType, OmitType, PartialType, PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { FindDto } from 'src/common/dto/find.dto';
-import { AddUserToDepartmentDto } from 'src/department/dto/department.dto';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { User } from '../schema/user.schema';
+import { AddUserToDepartmentDto } from 'src/department/dto/department.dto';
 
 export class CreateUserDto extends IntersectionType(
-  PickType(User, ['name', 'image', 'userName', 'email', 'password', 'phone', 'joiningDate']),
+  PickType(User, ['name', 'image', 'userName', 'email', 'password', 'phone', 'joiningDate', 'accessErApp']),
   OmitType(OAssociated, ['position', 'breaks', 'departments', 'organization']),
 ) {
   @IsString()
@@ -16,12 +16,15 @@ export class CreateUserDto extends IntersectionType(
   @IsString()
   positionId: string;
 
-  //NOTE: This will accept is not logged in which mean owner account
+  @IsNumber()
+  basicSalary: number;
+
+  //NOTE: This will accept if not logged in which mean owner account
   @IsString()
   organizationId: string;
 
   @IsString({ each: true })
-  breaks: string[];
+  breakIds: string[];
 
   @ValidateNested({ each: true })
   @Type(() => OmitType(AddUserToDepartmentDto, ['userId']))

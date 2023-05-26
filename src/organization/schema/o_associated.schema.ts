@@ -17,15 +17,15 @@ export class OAssociated {
   flexibleWorkingHour: boolean;
 
   @IsString()
-  remark: string;
+  remark?: string;
 
   @ValidateNested()
   @Type(() => WorkingHour)
-  checkInTime: WorkingHour;
+  checkInTime?: WorkingHour;
 
   @ValidateNested()
   @Type(() => WorkingHour)
-  checkOutTime: WorkingHour;
+  checkOutTime?: WorkingHour;
 
   @IsNotEmpty()
   @IsMongoId()

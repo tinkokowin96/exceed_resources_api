@@ -6,7 +6,7 @@ import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
 import { AppRequest, ServiceTrigger } from 'src/common/util/type';
 import { User } from 'src/user/schema/user.schema';
-import { AddUserToDepartmentDto, CreateDepartmentDto } from './dto/department.dto';
+import { ChangeDepartmentHeadDto, CreateDepartmentDto } from './dto/department.dto';
 import { Department } from './schema/department.schema';
 
 @Injectable()
@@ -35,15 +35,18 @@ export class DepartmentService extends CoreService<Department> {
     });
   }
 
-  async addUser(dto: AddUserToDepartmentDto, req: AppRequest, res: Response, trigger?: ServiceTrigger) {
+  async changeDepartmentHead(
+    dto: ChangeDepartmentHeadDto,
+    req: AppRequest,
+    res: Response,
+    trigger?: ServiceTrigger,
+  ) {
     return this.makeTransaction({
       action: async (ses) => {
         const session = trigger?.session ?? ses;
-        const { departmentId, isHead, userId } = dto;
+        const { departmentId, userId } = dto;
         const user = await this.findById({ id: userId, custom: this.userModel });
-        const update = { $push: { colleagues: user } };
-        if (isHead) update['$set'] = { head: user };
-        return await this.findByIdAndUpdate({ id: departmentId, update, session });
+        return await this.findByIdAndUpdate({ id: departmentId, update: { $set: { head: user } }, session });
       },
       req,
       res: trigger ? res : undefined,

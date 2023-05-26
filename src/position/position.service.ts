@@ -5,7 +5,7 @@ import { CoreService } from 'src/common/service/core.service';
 import { AppRequest } from 'src/common/util/type';
 import { EModule } from 'src/common/util/enumn';
 import { Position } from './schema/position.schema';
-import { CreatePositionDto } from './dto/position.dto';
+import { CreatePositionDto, UpdatePositionDto } from './dto/position.dto';
 import { Response } from 'express';
 import { Permission } from 'src/permission/permission.schema';
 
@@ -29,6 +29,18 @@ export class PositionService extends CoreService<Position> {
       req,
       res,
       audit: { name: 'create-position', module: EModule.Position, payload: dto },
+    });
+  }
+
+  async updatePosition(dto: UpdatePositionDto, req: AppRequest, res: Response) {
+    return this.makeTransaction({
+      action: async (session) => {
+        const { id, ...update } = dto;
+        return await this.findByIdAndUpdate({ id, update, session });
+      },
+      req,
+      res,
+      audit: { name: 'update-position', module: EModule.Position, payload: dto },
     });
   }
 }

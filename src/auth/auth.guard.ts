@@ -8,13 +8,13 @@ import { AppRequest } from 'src/common/util/type';
 import { ErConfig } from 'src/er_app/er_config/schema/er_config.schema';
 import { AddonSubscription } from 'src/er_app/subscription/schema/addon_subscription.schema';
 import { Subscription } from 'src/er_app/subscription/schema/subscription.schema';
+import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Permission } from 'src/permission/permission.schema';
+import { Position } from 'src/position/schema/position.schema';
 import { User } from 'src/user/schema/user.schema';
 import { AllowedAddon } from './addon.decorator';
 import { AllowedUser } from './user.decorator';
-import { Position } from 'src/position/schema/position.schema';
-import { OConfig } from 'src/organization/schema/o_config.schema';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -24,8 +24,6 @@ export class AuthGuard implements CanActivate {
     @InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>,
     @InjectModel(AddonSubscription.name) private readonly addonSubscriptionModel: Model<AddonSubscription>,
     @InjectModel(ErConfig.name) private readonly erConfigModel: Model<ErConfig>,
-    @InjectModel(Organization.name) private readonly organizationModel: Model<Organization>,
-    @InjectModel(Position.name) private readonly positionModel: Model<Position>,
   ) {}
 
   async canActivate(context: ExecutionContext) {

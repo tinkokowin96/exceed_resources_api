@@ -6,7 +6,7 @@ import { Connection, Model } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest, Type } from 'src/common/util/type';
 import { CreatePermissionDto } from './dto/create_permission.dto';
 import { UpdatePermissionDto } from './dto/update_permission.dto';
 import { Permission } from './permission.schema';
@@ -16,7 +16,7 @@ export class PermissionService extends CoreService<Permission> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Permission.name) model: Model<Permission>,
-    @InjectModel(Category.name) categoryModel: Model<Category>,
+    @InjectModel(Category.name) categoryModel: Model<Type<Category, Permission>>,
   ) {
     super(connection, model, categoryModel);
   }

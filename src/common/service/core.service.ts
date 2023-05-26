@@ -15,10 +15,8 @@ import { Audit } from '../schema/audit.schema';
 import { AUDIT_MODEL } from '../util/constant';
 import { ECategory, EServiceTrigger } from '../util/enumn';
 import { responseError } from '../util/response_error';
-import { AppRequest } from '../util/type';
+import { AppRequest, Type } from '../util/type';
 import { CoreSchema } from '../schema/core.shema';
-
-type Type<K, T> = K extends T ? T : K;
 
 type QueryType<T> = {
   custom?: Model<T>;

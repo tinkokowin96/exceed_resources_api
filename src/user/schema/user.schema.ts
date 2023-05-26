@@ -4,7 +4,6 @@ import {
   IsBoolean,
   IsDateString,
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsPhoneNumber,
@@ -12,14 +11,13 @@ import {
 } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
+import { ChatGroup } from 'src/chat/schema/chat_group.shema';
+import { DirectMessage } from 'src/chat/schema/direct_message.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { ERequestStatus } from 'src/common/util/enumn';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { Project } from 'src/project/schema/project.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 import { UserStatus } from './user_status.schema';
-import { ChatGroup } from 'src/chat/schema/chat_group.shema';
-import { DirectMessage } from 'src/chat/schema/direct_message.schema';
 
 @Schema()
 export class User extends CoreSchema {
@@ -28,14 +26,14 @@ export class User extends CoreSchema {
   @IsString()
   name: string;
 
-  @Prop({ type: String })
-  @IsString()
-  image: string;
-
   @Prop({ type: String, required: true, unique: true })
   @IsNotEmpty()
   @IsString()
   userName: string;
+
+  @Prop({ type: String })
+  @IsString()
+  image?: string;
 
   @Prop({ type: String, required: true, unique: true })
   @IsNotEmpty()
@@ -49,19 +47,19 @@ export class User extends CoreSchema {
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
-  deleted: boolean;
+  deleted?: boolean;
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
-  loggedIn: boolean;
+  loggedIn?: boolean;
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
-  blocked: boolean;
+  blocked?: boolean;
 
   @Prop({ type: String })
   @IsString()
-  blockReason: string;
+  blockReason?: string;
 
   @Prop({ type: String, required: true })
   @IsNotEmpty()
@@ -73,10 +71,6 @@ export class User extends CoreSchema {
   @IsDateString()
   joiningDate: Date;
 
-  @Prop({ type: String, enum: ERequestStatus })
-  @IsEnum(ERequestStatus)
-  upgradeRequestStatus: ERequestStatus;
-
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
   accessErApp: boolean;
@@ -86,31 +80,33 @@ export class User extends CoreSchema {
   basicSalary: number;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'UserStatus' })
-  status: UserStatus;
+  status?: UserStatus;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Bank' })
-  bank: Bank;
+  bank?: Bank;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OAssociated' })
+  @IsNotEmpty()
   currentOrganization: OAssociated;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'SalaryCategory' }] })
-  earnings: SalaryCategory[];
+  earnings?: SalaryCategory[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'SalaryCategory' }] })
-  deductions: SalaryCategory[];
+  deductions?: SalaryCategory[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Project' }] })
-  projects: Project[];
+  projects?: Project[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OAssociated' }] })
+  @IsNotEmpty()
   associatedOrganizations: OAssociated[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ChatGroup' }] })
-  chatGroups: ChatGroup[];
+  chatGroups?: ChatGroup[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'DirectMessage' }] })
-  directMessages: DirectMessage[];
+  directMessages?: DirectMessage[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

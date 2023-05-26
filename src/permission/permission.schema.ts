@@ -14,12 +14,12 @@ export class Permission extends CoreSchema {
 
   @Prop({ type: [String], default: [] })
   @IsString({ each: true })
-  allowedRoutes: string[];
+  allowedRoutes?: string[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Category' }] })
   @ValidateNested({ each: true })
   @Type(() => Category)
-  assignableRoles: Category[];
+  assignableRoles?: Category[];
 }
 
 export const PermissionSchema = SchemaFactory.createForClass(Permission);

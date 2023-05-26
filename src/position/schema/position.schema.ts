@@ -16,12 +16,13 @@ export class Position extends CoreSchema {
   shortName: string;
 
   @Prop({ type: Number, required: true })
+  @IsNotEmpty()
   @IsNumber()
   basicSalary: number;
 
   @Prop({ type: String })
   @IsString()
-  remark: string;
+  remark?: string;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission', required: true })
   @IsNotEmpty()

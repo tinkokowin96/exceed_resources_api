@@ -10,10 +10,11 @@ import { encrypt } from 'src/common/util/encrypt';
 import { EModule, EServiceTrigger, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { DepartmentService } from 'src/department/department.service';
+import { Department } from 'src/department/schema/department.schema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
-import { Permission } from 'src/permission/permission.schema';
+import { PositionService } from 'src/position/position.service';
 import { Position } from 'src/position/schema/position.schema';
 import {
   AddAssociatedOrganizationDto,
@@ -23,7 +24,6 @@ import {
   ToggleErAppAccessDto,
 } from './dto/user.dto';
 import { User } from './schema/user.schema';
-import { Department } from 'src/department/schema/department.schema';
 
 @Injectable()
 export class UserService extends CoreService<User> {
@@ -33,11 +33,10 @@ export class UserService extends CoreService<User> {
     @InjectModel(Organization.name) private readonly organizationModel: Model<Organization>,
     @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
-    @InjectModel(Position.name) private readonly positionModel: Model<Position>,
-    @InjectModel(Permission.name) private readonly permissionModel: Model<Permission>,
     @InjectModel(Break.name) private readonly breakModel: Model<Break>,
     @InjectModel(Department.name) private readonly departmentModel: Model<Department>,
     private readonly departmentService: DepartmentService,
+    private readonly positionService: PositionService,
   ) {
     super(connection, model);
   }
@@ -83,16 +82,20 @@ export class UserService extends CoreService<User> {
             },
           });
           if (users.items.length) throw new ForbiddenException('Organization already had owner account');
-          const permission = await this.create({
-            dto: { name: `${orgainzation.name} owner permission` },
-            session,
-            custom: this.permissionModel,
-          });
-          position = await this.create({
-            dto: { name: `${orgainzation.name} Owner`, shortName: 'Owner', permission, basicSalary: 0 },
-            session,
-            custom: this.positionModel,
-          });
+          position = await this.positionService.createPosition(
+            {
+              name: `${orgainzation.name} owner permission`,
+              shortName: 'Owner',
+              basicSalary: 0,
+            },
+            req,
+            res,
+            {
+              session,
+              triggerBy: 'create-user',
+              type: EServiceTrigger.Create,
+            },
+          );
         } else {
           orgainzation = req.user.currentOrganization.organization;
           position = req.user.currentOrganization.position;

@@ -3,9 +3,8 @@ import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
 import { AppRequest } from 'src/common/util/type';
-import { CreatePermissionDto } from './dto/create_permission.dto';
-import { UpdatePermissionDto } from './dto/update_permission.dto';
 import { PermissionService } from './permission.service';
+import { CreatePermissionDto, UpdatePermissionDto } from './dto/permission.dto';
 
 @Controller('permission')
 export class PermissionController {

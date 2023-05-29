@@ -49,7 +49,7 @@ export class DepartmentService extends CoreService<Department> {
         return await this.findByIdAndUpdate({ id: departmentId, update: { $set: { head: user } }, session });
       },
       req,
-      res: trigger ? res : undefined,
+      res: trigger ? undefined : res,
       audit: {
         name: 'add-user',
         module: EModule.Department,

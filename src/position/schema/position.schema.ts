@@ -24,9 +24,8 @@ export class Position extends CoreSchema {
   @IsString()
   remark?: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission', required: true })
-  @IsNotEmpty()
-  permission: Permission;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission' })
+  permission?: Permission;
 }
 
 export const PositionSchema = SchemaFactory.createForClass(Position);

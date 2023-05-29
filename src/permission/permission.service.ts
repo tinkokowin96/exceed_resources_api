@@ -6,10 +6,9 @@ import { Connection, Model } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
-import { AppRequest, Type } from 'src/common/util/type';
-import { CreatePermissionDto } from './dto/create_permission.dto';
-import { UpdatePermissionDto } from './dto/update_permission.dto';
+import { AppRequest, ServiceTrigger, Type } from 'src/common/util/type';
 import { Permission } from './permission.schema';
+import { CreatePermissionDto, UpdatePermissionDto } from './dto/permission.dto';
 
 @Injectable()
 export class PermissionService extends CoreService<Permission> {
@@ -21,10 +20,11 @@ export class PermissionService extends CoreService<Permission> {
     super(connection, model, categoryModel);
   }
 
-  async createPermission({ assignableRoleIds, ...dto }: CreatePermissionDto, req: AppRequest, res: Response) {
+  async createPermission(dto: CreatePermissionDto, req: AppRequest, res: Response, trigger?: ServiceTrigger) {
     return this.makeTransaction({
       action: async (session) => {
-        const includeRestricted = intersection(req.config.restrictedRoutes, dto.allowedRoutes);
+        const { assignableRoleIds, ...payload } = dto;
+        const includeRestricted = intersection(req.config.restrictedRoutes, payload.allowedRoutes);
         if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
 
         const assignableRoles = (await this.find({
@@ -46,14 +46,16 @@ export class PermissionService extends CoreService<Permission> {
             throw new BadRequestException('Included forbidden assignable roles');
         }
 
-        return await this.create({ dto: { ...dto, assignableRoles }, session });
+        return await this.create({ dto: { ...payload, assignableRoles }, session });
       },
       req,
-      res,
+      res: trigger ? undefined : res,
       audit: {
         name: 'create-permission',
         module: EModule.Permission,
-        payload: { assignableRoleIds, ...dto },
+        payload: dto,
+        triggerBy: trigger?.triggerBy ?? undefined,
+        triggerType: trigger?.type ?? undefined,
       },
     });
   }

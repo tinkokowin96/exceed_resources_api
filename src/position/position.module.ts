@@ -3,16 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PositionController } from './position.controller';
 import { PositionService } from './position.service';
 import { Position, PositionSchema } from './schema/position.schema';
-import { Permission, PermissionSchema } from 'src/permission/permission.schema';
+import { PermissionModule } from 'src/permission/permission.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: Position.name, schema: PositionSchema },
-      { name: Permission.name, schema: PermissionSchema },
-    ]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: Position.name, schema: PositionSchema }]), PermissionModule],
   controllers: [PositionController],
   providers: [PositionService],
+  exports: [PositionService],
 })
 export class PositionModule {}

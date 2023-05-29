@@ -66,7 +66,7 @@ export class OConfig extends CoreSchema {
   remoteWorkDays?: EWeekDay[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-  superAdmin: User;
+  superAdmin?: User;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OLate' })
   late?: OLate;

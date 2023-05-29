@@ -8,6 +8,7 @@ import {
   IsNumber,
   IsPhoneNumber,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
@@ -18,6 +19,7 @@ import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { Project } from 'src/project/schema/project.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 import { UserStatus } from './user_status.schema';
+import { Type } from 'class-transformer';
 
 @Schema()
 export class User extends CoreSchema {
@@ -85,8 +87,10 @@ export class User extends CoreSchema {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Bank' })
   bank?: Bank;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'OAssociated' })
+  @Prop({ type: SchemaTypes.Mixed })
   @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => OAssociated)
   currentOrganization: OAssociated;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'SalaryCategory' }] })
@@ -98,8 +102,10 @@ export class User extends CoreSchema {
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Project' }] })
   projects?: Project[];
 
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OAssociated' }] })
+  @Prop({ type: [SchemaTypes.Mixed] })
   @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => OAssociated)
   associatedOrganizations: OAssociated[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ChatGroup' }] })

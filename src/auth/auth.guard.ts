@@ -57,6 +57,8 @@ export class AuthGuard implements CanActivate {
       if (type === EUser.ErApp && !user.accessErApp)
         throw new ForbiddenException("User don't have access to ER App");
       orgainzation = user.currentOrganization.organization;
+      if (!orgainzation.approved)
+        throw new ForbiddenException("Organization hasn't approved, please contact support");
       req.id = id;
       req.type = type;
       req.user = user;

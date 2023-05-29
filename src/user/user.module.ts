@@ -9,16 +9,20 @@ import { Position, PositionSchema } from 'src/position/schema/position.schema';
 import { User, UserSchema } from './schema/user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { OConfig, OConfigSchema } from 'src/organization/schema/o_config.schema';
+import { Department, DepartmentSchema } from 'src/department/schema/department.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Organization.name, schema: OrganizationSchema },
+      { name: OConfig.name, schema: OConfigSchema },
       { name: Bank.name, schema: BankSchema },
       { name: Position.name, schema: PositionSchema },
       { name: Permission.name, schema: PermissionSchema },
       { name: Break.name, schema: BreakSchema },
+      { name: Department.name, schema: DepartmentSchema },
     ]),
     DepartmentModule,
   ],

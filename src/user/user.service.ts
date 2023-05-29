@@ -4,11 +4,14 @@ import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/schema/bank.schema';
+import { Break } from 'src/break/schema/break.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { encrypt } from 'src/common/util/encrypt';
 import { EModule, EServiceTrigger, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { DepartmentService } from 'src/department/department.service';
+import { OAssociated } from 'src/organization/schema/o_associated.schema';
+import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Permission } from 'src/permission/permission.schema';
 import { Position } from 'src/position/schema/position.schema';
@@ -20,8 +23,7 @@ import {
   ToggleErAppAccessDto,
 } from './dto/user.dto';
 import { User } from './schema/user.schema';
-import { Break } from 'src/break/schema/break.schema';
-import { OAssociated } from 'src/organization/schema/o_associated.schema';
+import { Department } from 'src/department/schema/department.schema';
 
 @Injectable()
 export class UserService extends CoreService<User> {
@@ -29,10 +31,12 @@ export class UserService extends CoreService<User> {
     @InjectConnection() connection: Connection,
     @InjectModel(User.name) model: Model<User>,
     @InjectModel(Organization.name) private readonly organizationModel: Model<Organization>,
+    @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
     @InjectModel(Position.name) private readonly positionModel: Model<Position>,
     @InjectModel(Permission.name) private readonly permissionModel: Model<Permission>,
     @InjectModel(Break.name) private readonly breakModel: Model<Break>,
+    @InjectModel(Department.name) private readonly departmentModel: Model<Department>,
     private readonly departmentService: DepartmentService,
   ) {
     super(connection, model);
@@ -58,21 +62,25 @@ export class UserService extends CoreService<User> {
         if (req.user && (organizationId || positionId))
           throw new ForbiddenException("Can't create user for other organization");
 
-        if (bankId) {
+        if (bankId)
           bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
-        }
 
         if ((!req.user && payload.accessErApp) || (req.type !== EUser.ErApp && payload.accessErApp))
           throw new ForbiddenException('Not allow to use user to access erapp');
 
         if (!req.user) {
+          if (!organizationId)
+            throw new BadRequestException('Require organization id to create owner account');
           orgainzation = await this.findById({
             id: organizationId,
             custom: this.organizationModel,
             projection: { _id: 1 },
+            options: { populate: { path: 'config', select: '_id' } },
           });
           const users = await this.find({
-            filter: { currentOrganization: { orgainzation: orgainzation._id } },
+            filter: {
+              currentOrganization: { orgainzation: orgainzation._id },
+            },
           });
           if (users.items.length) throw new ForbiddenException('Organization already had owner account');
           const permission = await this.create({
@@ -98,12 +106,15 @@ export class UserService extends CoreService<User> {
           })
         ).items.reduce((acc, cur) => [...acc, cur._id], []);
 
-        const departments = (
-          await this.find({
-            filter: { _id: { $in: departmentsDto.reduce((acc, cur) => [...acc, cur.departmentId], []) } },
-            projection: { _id: 1 },
-          })
-        ).items.reduce((acc, cur) => [...acc, cur._id], []);
+        const departments = departmentsDto
+          ? (
+              await this.find({
+                filter: { _id: { $in: departmentsDto.reduce((acc, cur) => [...acc, cur.departmentId], []) } },
+                projection: { _id: 1 },
+                custom: this.departmentModel,
+              })
+            ).items.reduce((acc, cur) => [...acc, cur._id], [])
+          : [];
 
         const associatedOrganization: OAssociated = {
           accessOAdminApp,
@@ -128,19 +139,29 @@ export class UserService extends CoreService<User> {
           session,
         });
 
-        for (const dep of departmentsDto) {
-          if (dep.isHead)
-            await this.departmentService.changeDepartmentHead(
-              { ...dep, userId: user._id.toString() },
-              req,
-              res,
-              {
-                triggerBy: 'create-user',
-                session,
-                type: EServiceTrigger.Update,
-              },
-            );
-        }
+        if (departmentsDto)
+          for (const dep of departmentsDto) {
+            if (dep.isHead)
+              await this.departmentService.changeDepartmentHead(
+                { ...dep, userId: user._id.toString() },
+                req,
+                res,
+                {
+                  triggerBy: 'create-user',
+                  session,
+                  type: EServiceTrigger.Update,
+                },
+              );
+          }
+
+        if (!req.user)
+          await this.findByIdAndUpdate({
+            id: orgainzation.config._id,
+            update: { $set: { superAdmin: user } },
+            custom: this.oConfigModel,
+            session,
+          });
+        return user;
       },
       req,
       res,

@@ -30,7 +30,6 @@ export class OrganizationService extends CoreService<Organization> {
           dto: {
             checkInTime,
             checkOutTime,
-            superAdmin: req.user,
           },
           session,
           custom: this.oConfigModel,

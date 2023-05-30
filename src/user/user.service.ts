@@ -73,7 +73,7 @@ export class UserService extends CoreService<User> {
           orgainzation = await this.findById({
             id: organizationId,
             custom: this.organizationModel,
-            projection: { _id: 1 },
+            projection: { _id: 1, name: 1 },
             options: { populate: { path: 'config', select: '_id' } },
           });
           const users = await this.find({
@@ -84,7 +84,7 @@ export class UserService extends CoreService<User> {
           if (users.items.length) throw new ForbiddenException('Organization already had owner account');
           position = await this.positionService.createPosition(
             {
-              name: `${orgainzation.name} owner permission`,
+              name: `${orgainzation.name} Owner`,
               shortName: 'Owner',
               basicSalary: 0,
             },

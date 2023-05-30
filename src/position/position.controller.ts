@@ -35,4 +35,14 @@ export class PositionController {
   ) {
     return this.service.updatePosition(dto, req, res);
   }
+
+  @Users(['Organization'])
+  @Post('update-permission')
+  async updatePermission(
+    @Body() dto: Pick<UpdatePositionDto, 'allowedRoutes' | 'id'>,
+    @Req() req: AppRequest,
+    @Res() res: Response,
+  ) {
+    return this.service.updatePosition(dto, req, res);
+  }
 }

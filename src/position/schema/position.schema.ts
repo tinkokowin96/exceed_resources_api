@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { Permission } from 'src/permission/permission.schema';
 
 @Schema()
 export class Position extends CoreSchema {
@@ -24,8 +22,9 @@ export class Position extends CoreSchema {
   @IsString()
   remark?: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission' })
-  permission?: Permission;
+  @Prop({ type: [String], default: [] })
+  @IsString({ each: true })
+  allowedRoutes?: string[];
 }
 
 export const PositionSchema = SchemaFactory.createForClass(Position);

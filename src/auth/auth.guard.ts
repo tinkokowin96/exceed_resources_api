@@ -10,7 +10,6 @@ import { AddonSubscription } from 'src/er_app/subscription/schema/addon_subscrip
 import { Subscription } from 'src/er_app/subscription/schema/subscription.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
-import { Permission } from 'src/permission/permission.schema';
 import { Position } from 'src/position/schema/position.schema';
 import { User } from 'src/user/schema/user.schema';
 import { AllowedAddon } from './addon.decorator';
@@ -49,8 +48,6 @@ export class AuthGuard implements CanActivate {
           {
             path: 'position',
             model: Position.name,
-            select: '_id permission',
-            populate: [{ path: 'permission', model: Permission.name }],
           },
         ],
       });
@@ -62,7 +59,6 @@ export class AuthGuard implements CanActivate {
       req.id = id;
       req.type = type;
       req.user = user;
-      req.permission = user.currentOrganization.position.permission;
       if (type === EUser.ErApp) {
         const config = await this.erConfigModel.findById(process.env.CONFIG_ID, null, {
           lean: true,
@@ -107,8 +103,7 @@ export class AuthGuard implements CanActivate {
       }
       if (allowedUsers.includes(EUser.Any)) return true;
       if (req.superAdmin) return true;
-      if (req.permission) req.permission.allowedRoutes.includes(path);
-      else false;
+      return req.user.currentOrganization.position.allowedRoutes.includes(path);
     }
 
     return true;

@@ -2,10 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { CoreSchema } from 'src/common/schema/core.shema';
 import { Attachment } from 'src/common/schema/common.schema';
+import { CoreSchema } from 'src/common/schema/core.shema';
 import { User } from 'src/user/schema/user.schema';
-import { Permission } from 'src/permission/permission.schema';
 
 @Schema()
 export class Department extends CoreSchema {
@@ -26,10 +25,6 @@ export class Department extends CoreSchema {
   @Prop({ type: String })
   @IsString()
   remark?: string;
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Permission', required: true })
-  @IsNotEmpty()
-  permission: Permission;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   @IsNotEmpty()

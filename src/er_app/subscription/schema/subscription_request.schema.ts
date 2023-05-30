@@ -1,12 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { EAddon, ESubscriptionStatus } from 'src/common/util/enumn';
 import { Payment } from 'src/common/schema/common.schema';
+import { CoreSchema } from 'src/common/schema/core.shema';
+import { ESubscriptionStatus } from 'src/common/util/enumn';
+import { User } from 'src/user/schema/user.schema';
 import { Organization } from '../../../organization/schema/organization.schema';
-import { Cupon } from 'src/er_app/cupon/schema/cupon.schema';
+import { AddonSubscription } from './addon_subscription.schema';
+import { Subscription } from './subscription.schema';
 
 @Schema()
 export class SubscriptionRequest extends CoreSchema {
@@ -15,7 +25,7 @@ export class SubscriptionRequest extends CoreSchema {
   @IsNumber()
   numDay: number;
 
-  @Prop({ type: Number })
+  @Prop({ type: Number, required: true })
   @IsNumber()
   numEmployee?: number;
 
@@ -24,10 +34,14 @@ export class SubscriptionRequest extends CoreSchema {
   @IsEnum(ESubscriptionStatus)
   status: ESubscriptionStatus;
 
-  @Prop({ type: String, enum: EAddon, required: true })
+  @Prop({ type: String, required: true })
   @IsNotEmpty()
-  @IsEnum(EAddon)
-  addon: EAddon;
+  @IsDateString()
+  activeUntil: string;
+
+  @Prop({ type: Boolean, default: false })
+  @IsBoolean()
+  active: boolean;
 
   @Prop({ type: String })
   @IsString()
@@ -39,8 +53,18 @@ export class SubscriptionRequest extends CoreSchema {
   @Type(() => Payment)
   payment: Payment;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Cupon' })
-  cupon?: Cupon;
+  @Prop({ type: Boolean, default: true })
+  @IsBoolean()
+  allowEveryEmployee: boolean;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Subscription' })
+  subscription?: Subscription;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'AddonSubscription' })
+  addonSubscription?: AddonSubscription;
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
+  allowedUsers?: User[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
   @IsNotEmpty()

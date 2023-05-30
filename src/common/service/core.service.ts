@@ -12,11 +12,11 @@ import {
 } from 'mongoose';
 import { Category } from 'src/category/schema/category.schema';
 import { Audit } from '../schema/audit.schema';
+import { CoreSchema } from '../schema/core.shema';
 import { AUDIT_MODEL } from '../util/constant';
-import { ECategory, EServiceTrigger } from '../util/enumn';
+import { ECategory } from '../util/enumn';
 import { responseError } from '../util/response_error';
 import { AppRequest, Type } from '../util/type';
-import { CoreSchema } from '../schema/core.shema';
 
 type QueryType<T> = {
   custom?: Model<T>;
@@ -65,7 +65,7 @@ type MakeTransactionType = {
   req: AppRequest;
   res?: Response;
   callback?: () => any;
-  audit?: Pick<Audit, 'name' | 'module' | 'payload' | 'triggerBy' | 'triggerType'>;
+  audit?: Pick<Audit, 'name' | 'module' | 'payload' | 'triggeredServices'>;
 };
 
 export abstract class CoreService<T extends CoreSchema> {
@@ -237,11 +237,9 @@ export abstract class CoreService<T extends CoreSchema> {
 
       await session.commitTransaction();
       session.endSession();
-      if (response) response.send(responseObj);
-      else if (audit.triggerBy) {
-        if (audit.triggerType === EServiceTrigger.Update) return res.next;
-        else return res;
-      }
+
+      if (!audit) return res.next ?? res;
+      else if (response) response.send(responseObj);
     } catch (error) {
       await session.abortTransaction();
       session.endSession();

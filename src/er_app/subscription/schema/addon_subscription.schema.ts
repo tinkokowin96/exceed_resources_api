@@ -1,22 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsBoolean, IsEnum } from 'class-validator';
-import { SchemaTypes } from 'mongoose';
-import { EAddon } from 'src/common/util/enumn';
-import { User } from 'src/user/schema/user.schema';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { Subscription } from './subscription.schema';
 
 @Schema()
 export class AddonSubscription extends Subscription {
-  @Prop({ type: Boolean, default: true })
-  @IsBoolean()
-  allowEveryEmployee: boolean;
+  @Prop({ type: String, required: true })
+  @IsNotEmpty()
+  @IsString()
+  name: string;
 
-  @Prop({ type: String, enum: EAddon })
-  @IsEnum(EAddon)
-  addon: EAddon;
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
-  allowedUsers: User[];
+  @Prop({ type: [String], required: true })
+  @IsNotEmpty()
+  @IsString({ each: true })
+  allowedRoutes: string[];
 }
 
 export const AddonSubscriptionSchema = SchemaFactory.createForClass(AddonSubscription);

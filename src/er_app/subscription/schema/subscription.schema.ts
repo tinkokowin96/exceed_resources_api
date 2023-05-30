@@ -1,32 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsBoolean, IsDateString, IsNotEmpty, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { Organization } from 'src/organization/schema/organization.schema';
+import { Promotion } from 'src/er_app/promotion/schema/promotion.schema';
+import { BatchSubscriptionPrice } from './batch_subscription_price.shema';
 
+//NOTE: price is calculated per day
 @Schema()
 export class Subscription extends CoreSchema {
   @Prop({ type: Number, required: true })
   @IsNotEmpty()
   @IsNumber()
-  numDay: number;
+  price: number;
 
-  @Prop({ type: Number, required: true })
-  @IsNotEmpty()
-  @IsNumber()
-  numEmployee: number;
+  @Prop({ type: String })
+  @IsString()
+  remark: string;
 
-  @Prop({ type: Date, required: true })
-  @IsNotEmpty()
-  @IsDateString()
-  activeUntil: Date;
+  @Prop({ type: SchemaTypes.Mixed })
+  @ValidateNested({ each: true })
+  @Type(() => BatchSubscriptionPrice)
+  batchPrice: BatchSubscriptionPrice[];
 
-  @Prop({ type: Boolean, default: true })
-  @IsBoolean()
-  active: boolean;
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
-  organization: Organization;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Promotion' })
+  activePromotion: Promotion;
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(Subscription);

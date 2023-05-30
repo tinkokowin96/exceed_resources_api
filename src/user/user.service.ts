@@ -7,7 +7,7 @@ import { Bank } from 'src/bank/schema/bank.schema';
 import { Break } from 'src/break/schema/break.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { encrypt } from 'src/common/util/encrypt';
-import { EModule, EServiceTrigger, EUser } from 'src/common/util/enumn';
+import { EModule, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { DepartmentService } from 'src/department/department.service';
 import { Department } from 'src/department/schema/department.schema';
@@ -90,11 +90,7 @@ export class UserService extends CoreService<User> {
             },
             req,
             res,
-            {
-              session,
-              triggerBy: 'create-user',
-              type: EServiceTrigger.Create,
-            },
+            session,
           );
         } else {
           orgainzation = req.user.currentOrganization.organization;
@@ -149,11 +145,7 @@ export class UserService extends CoreService<User> {
                 { ...dep, userId: user._id.toString() },
                 req,
                 res,
-                {
-                  triggerBy: 'create-user',
-                  session,
-                  type: EServiceTrigger.Update,
-                },
+                session,
               );
           }
 

@@ -77,15 +77,6 @@ export enum ESubscriptionStatus {
   Declined = 'Declined',
 }
 
-export enum EPaymentMethod {
-  AyaMBanking = 'AyaMBanking',
-  AyaBank = 'AyaBank',
-  AyaPay = 'AyaPay',
-  KbzMBanking = 'KbzMBanking',
-  KbzBank = 'KbzBank',
-  KbzPay = 'KbzPay',
-}
-
 export enum ERequestMethod {
   Post = 'Post',
   Put = 'Put',
@@ -155,8 +146,4 @@ export enum EWeekDay {
   Fri = 'Fri',
   Sat = 'Sat',
   Sun = 'Sun',
-}
-
-export enum EAddon {
-  VideoCall = 'VideoCall',
 }

@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
+  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -12,11 +13,14 @@ import {
   Validate,
   ValidateNested,
 } from 'class-validator';
+import { Category } from 'src/category/schema/category.schema';
 import { Department } from 'src/department/schema/department.schema';
+import { Cupon } from 'src/er_app/cupon/schema/cupon.schema';
 import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
-import { EAttachment, EExtraAllowance, EMessage, EPaymentMethod, ETrigger } from '../util/enumn';
+import { EAttachment, EExtraAllowance, EMessage, ETrigger } from '../util/enumn';
 import { IsEmoji } from '../util/is_emoji.validator';
+import { Promotion } from 'src/er_app/promotion/schema/promotion.schema';
 
 export class WorkingHour {
   @IsNotEmpty()
@@ -91,15 +95,17 @@ export class Payment {
 
   @IsNotEmpty()
   @IsNumber()
-  originalAmount: number;
-
-  @IsNotEmpty()
-  @IsNumber()
   amount: number;
 
   @IsNotEmpty()
-  @IsEnum(EPaymentMethod)
-  paymentMethod: EPaymentMethod;
+  @IsMongoId()
+  paymentMethod: Category;
+
+  @IsMongoId()
+  cupon?: Cupon;
+
+  @IsMongoId()
+  promotion?: Promotion;
 }
 
 export class Trigger {

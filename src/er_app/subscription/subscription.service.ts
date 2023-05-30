@@ -28,7 +28,14 @@ export class SubscriptionService extends CoreService<Subscription> {
   async requestSubscription(dto: RequestSubscriptionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const { organizationId, cuponCode, addon, payment: paymentMethod, ...payload } = dto;
+        const {
+          organizationId,
+          cuponCode,
+          addonSubscriptionId,
+          subscriptionId,
+          payment: paymentMethod,
+          ...payload
+        } = dto;
         const payment: Payment = await this.cuponService.getPayment({ ...paymentMethod, cuponCode });
         const organization = await this.findById({ id: organizationId, custom: this.organizationModel });
         return await this.create({

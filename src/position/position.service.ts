@@ -2,10 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { intersection } from 'lodash';
-import { Connection, Model } from 'mongoose';
+import { ClientSession, Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
-import { AppRequest, ServiceTrigger } from 'src/common/util/type';
+import { AppRequest } from 'src/common/util/type';
 import { CreatePositionDto, UpdatePositionDto } from './dto/position.dto';
 import { Position } from './schema/position.schema';
 
@@ -18,9 +18,10 @@ export class PositionService extends CoreService<Position> {
     super(connection, model);
   }
 
-  async createPosition(dto: CreatePositionDto, req: AppRequest, res: Response, trigger?: ServiceTrigger) {
+  async createPosition(dto: CreatePositionDto, req: AppRequest, res: Response, trigger?: ClientSession) {
     return this.makeTransaction({
-      action: async (session) => {
+      action: async (ses) => {
+        const session = trigger ?? ses;
         if (req.user) {
           const includeRestricted = intersection(req.config.restrictedRoutes, dto.allowedRoutes);
           if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
@@ -28,14 +29,14 @@ export class PositionService extends CoreService<Position> {
         return await this.create({ dto, session });
       },
       req,
-      res: trigger ? undefined : res,
-      audit: {
-        name: 'create-position',
-        module: EModule.Position,
-        payload: dto,
-        triggerBy: trigger?.triggerBy ?? undefined,
-        triggerType: trigger?.type ?? undefined,
-      },
+      res: res,
+      audit: trigger
+        ? undefined
+        : {
+            name: 'create-position',
+            module: EModule.Position,
+            payload: dto,
+          },
     });
   }
 

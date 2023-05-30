@@ -7,12 +7,11 @@ import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { ErConfig } from 'src/er_app/er_config/schema/er_config.schema';
 import { AddonSubscription } from 'src/er_app/subscription/schema/addon_subscription.schema';
-import { Subscription } from 'src/er_app/subscription/schema/subscription.schema';
+import { SubscriptionRequest } from 'src/er_app/subscription/schema/subscription_request.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Position } from 'src/position/schema/position.schema';
 import { User } from 'src/user/schema/user.schema';
-import { AllowedAddon } from './addon.decorator';
 import { AllowedUser } from './user.decorator';
 
 @Injectable()
@@ -20,14 +19,13 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    @InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>,
+    @InjectModel(SubscriptionRequest.name) private readonly subscriptionModel: Model<SubscriptionRequest>,
     @InjectModel(AddonSubscription.name) private readonly addonSubscriptionModel: Model<AddonSubscription>,
     @InjectModel(ErConfig.name) private readonly erConfigModel: Model<ErConfig>,
   ) {}
 
   async canActivate(context: ExecutionContext) {
     const allowedUsers = this.reflector?.get<AllowedUser[]>('users', context.getHandler());
-    const addons = this.reflector?.get<AllowedAddon>('addons', context.getHandler());
 
     const httpCtx = context.switchToHttp();
     const req: AppRequest = httpCtx.getRequest();
@@ -80,12 +78,11 @@ export class AuthGuard implements CanActivate {
       if (type === EUser.Organization && !allowOrganization) return false;
       if (!allowedInActive && !orgainzation) return false;
 
-      let activeSubscription: Subscription;
-      if (orgainzation)
-        activeSubscription = await this.subscriptionModel.findOne(
-          { active: true, organization: orgainzation._id },
-          null,
-        );
+      const activeSubscription = await this.subscriptionModel.findOne({
+        active: true,
+        organization: orgainzation._id,
+      });
+
       if (activeSubscription) {
         if (new Date(activeSubscription.activeUntil).getTime() < Date.now()) {
           this.subscriptionModel.findByIdAndUpdate(orgainzation._id, {
@@ -94,13 +91,12 @@ export class AuthGuard implements CanActivate {
           if (!allowedInActive) throw new ForbiddenException('Subscription is expired');
         }
       } else if (!allowedInActive) throw new ForbiddenException('No active subscription');
-      if (addons) {
-        const subscriptedAddons = await this.addonSubscriptionModel.find({
-          addon: { $in: addons },
-          $or: [{ allowedUsers: { $eleMatch: id } }, { allowEveryEmployee: true }],
-        });
-        return !!subscriptedAddons.length;
-      }
+
+      if (allowedUsers.includes('Addon'))
+        return !!(await this.addonSubscriptionModel.findOne({
+          allowedRoutes: { $eleMatch: path },
+        }));
+
       if (allowedUsers.includes(EUser.Any)) return true;
       if (req.superAdmin) return true;
       return req.user.currentOrganization.position.allowedRoutes.includes(path);

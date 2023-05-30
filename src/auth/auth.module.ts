@@ -9,7 +9,10 @@ import {
   AddonSubscription,
   AddonSubscriptionSchema,
 } from 'src/er_app/subscription/schema/addon_subscription.schema';
-import { Subscription, SubscriptionSchema } from 'src/er_app/subscription/schema/subscription.schema';
+import {
+  SubscriptionRequest,
+  SubscriptionRequestSchema,
+} from 'src/er_app/subscription/schema/subscription_request.schema';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { Position, PositionSchema } from 'src/position/schema/position.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
@@ -26,7 +29,7 @@ import { CustomThrottleGuard } from './custom_throttle.guard';
     }),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
-      { name: Subscription.name, schema: SubscriptionSchema },
+      { name: SubscriptionRequest.name, schema: SubscriptionRequestSchema },
       { name: AddonSubscription.name, schema: AddonSubscriptionSchema },
       { name: ErConfig.name, schema: ErConfigSchema },
       { name: Organization.name, schema: OrganizationSchema },

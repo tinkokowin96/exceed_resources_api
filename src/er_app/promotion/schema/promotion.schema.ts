@@ -1,10 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsDateString, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { EAddon } from 'src/common/util/enumn';
 import { Extra } from 'src/common/schema/common.schema';
+import { CoreSchema } from 'src/common/schema/core.shema';
 
 @Schema()
 export class Promotion extends CoreSchema {
@@ -20,10 +19,6 @@ export class Promotion extends CoreSchema {
   @Prop({ type: Date })
   @IsDateString()
   active_until?: Date;
-
-  @Prop({ type: String, enum: EAddon })
-  @IsEnum(EAddon)
-  addon?: EAddon;
 
   @Prop({ type: String })
   @IsString()

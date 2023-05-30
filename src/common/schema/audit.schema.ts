@@ -1,9 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsEnum, IsIP, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEnum, IsIP, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EModule, EServiceTrigger } from 'src/common/util/enumn';
 import { User } from 'src/user/schema/user.schema';
+
+class TriggerTo {
+  @IsNotEmpty()
+  @IsString()
+  service: string;
+
+  @IsNotEmpty()
+  @IsEnum(EServiceTrigger)
+  type: EServiceTrigger;
+}
 
 @Schema()
 export class Audit extends CoreSchema {
@@ -12,18 +23,15 @@ export class Audit extends CoreSchema {
   @IsString()
   name: string;
 
-  @Prop({ type: String })
-  @IsString()
-  triggerBy?: string;
-
-  @Prop({ type: String, enum: EServiceTrigger })
-  @IsEnum(EServiceTrigger)
-  triggerType?: EServiceTrigger;
-
   @Prop({ type: String, enum: EModule })
   @IsNotEmpty()
   @IsEnum(EModule)
   module: EModule;
+
+  @Prop({ type: [SchemaTypes.Mixed] })
+  @ValidateNested({ each: true })
+  @Type(() => TriggerTo)
+  triggeredServices?: TriggerTo[];
 
   @Prop({ type: SchemaTypes.Mixed })
   payload?: any;

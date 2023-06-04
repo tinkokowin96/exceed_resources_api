@@ -1,6 +1,6 @@
 import { OmitType } from '@nestjs/mapped-types';
 import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
-import { Department } from '../schema/department.schema';
+import { Department } from './department.schema';
 
 export class CreateDepartmentDto extends OmitType(Department, ['head', 'departments']) {
   @IsNotEmpty()

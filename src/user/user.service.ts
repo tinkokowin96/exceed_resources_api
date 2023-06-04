@@ -3,19 +3,19 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
-import { Bank } from 'src/bank/schema/bank.schema';
-import { Break } from 'src/break/schema/break.schema';
+import { Bank } from 'src/bank/bank.schema';
+import { Break } from 'src/break/break.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { encrypt } from 'src/common/util/encrypt';
 import { EModule, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { DepartmentService } from 'src/department/department.service';
-import { Department } from 'src/department/schema/department.schema';
+import { Department } from 'src/department/department.schema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { PositionService } from 'src/position/position.service';
-import { Position } from 'src/position/schema/position.schema';
+import { Position } from 'src/position/position.schema';
 import {
   AddAssociatedOrganizationDto,
   CreateUserDto,

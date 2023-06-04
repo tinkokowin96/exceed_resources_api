@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { CuponModule } from '../cupon/cupon.module';
-import { OSubscription, OSubscriptionSchema } from './schema/o_subscription.schema';
+import { OSubscription, OSubscriptionSchema } from './o_subscription.schema';
 import { SubscriptionController } from './o_subscription.controller';
 import { SubscriptionService } from './o_subscription.service';
 import { Subscription } from 'rxjs';

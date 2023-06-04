@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Category } from 'src/category/schema/category.schema';
+import { Category } from 'src/category/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { CuponCode } from './cupon_code.schema';
 

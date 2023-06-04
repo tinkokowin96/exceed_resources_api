@@ -13,14 +13,14 @@ import {
   Validate,
   ValidateNested,
 } from 'class-validator';
-import { Category } from 'src/category/schema/category.schema';
-import { Department } from 'src/department/schema/department.schema';
+import { Category } from 'src/category/category.schema';
+import { Department } from 'src/department/department.schema';
 import { Cupon } from 'src/er_app/cupon/schema/cupon.schema';
 import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 import { EAttachment, EExtraAllowance, EMessage, ETrigger } from '../util/enumn';
 import { IsEmoji } from '../util/is_emoji.validator';
-import { Promotion } from 'src/er_app/promotion/schema/promotion.schema';
+import { Promotion } from 'src/er_app/promotion/promotion.schema';
 
 export class WorkingHour {
   @IsNotEmpty()

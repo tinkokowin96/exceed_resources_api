@@ -10,7 +10,7 @@ import {
   Types,
   UpdateQuery,
 } from 'mongoose';
-import { Category } from 'src/category/schema/category.schema';
+import { Category } from 'src/category/category.schema';
 import { Audit } from '../schema/audit.schema';
 import { CoreSchema } from '../schema/core.shema';
 import { AUDIT_MODEL } from '../util/constant';

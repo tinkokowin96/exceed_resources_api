@@ -6,7 +6,7 @@ import { OSubscription, OSubscriptionSchema } from './schema/subscription_reques
 import { SubscriptionController } from './subscription.controller';
 import { SubscriptionService } from './subscription.service';
 import { Subscription } from 'rxjs';
-import { SubscriptionSchema } from './schema/subscription.schema';
+import { SubscriptionSchema } from './subscription.schema';
 
 @Module({
   imports: [

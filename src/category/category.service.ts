@@ -5,8 +5,8 @@ import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { CreateCategoryDto } from './dto/create_category.dto';
-import { Category } from './schema/category.schema';
+import { CreateCategoryDto } from './create_category.dto';
+import { Category } from './category.schema';
 
 @Injectable()
 export class CategoryService extends CoreService<Category> {

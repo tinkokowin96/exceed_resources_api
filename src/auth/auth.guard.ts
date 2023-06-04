@@ -10,7 +10,7 @@ import { AddonSubscription } from 'src/er_app/subscription/schema/addon_subscrip
 import { OSubscription } from 'src/er_app/subscription/schema/subscription_request.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
-import { Position } from 'src/position/schema/position.schema';
+import { Position } from 'src/position/position.schema';
 import { User } from 'src/user/schema/user.schema';
 import { AllowedUser } from './user.decorator';
 

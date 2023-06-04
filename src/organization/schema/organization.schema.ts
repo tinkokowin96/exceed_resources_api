@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Category } from 'src/category/schema/category.schema';
+import { Category } from 'src/category/category.schema';
 import { Attachment } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { Department } from '../../department/schema/department.schema';
+import { Department } from '../../department/department.schema';
 import { OConfig } from './o_config.schema';
 
 @Schema()

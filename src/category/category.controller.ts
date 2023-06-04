@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { ECategory } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create_category.dto';
+import { CreateCategoryDto } from './create_category.dto';
 
 @Controller('category')
 export class CategoryController {

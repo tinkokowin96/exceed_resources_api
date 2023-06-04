@@ -4,7 +4,7 @@ import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class
 import { FindDto } from 'src/common/dto/find.dto';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { User } from '../schema/user.schema';
-import { AddUserToDepartmentDto } from 'src/department/dto/department.dto';
+import { AddUserToDepartmentDto } from 'src/department/department.dto';
 
 export class CreateUserDto extends IntersectionType(
   PickType(User, ['name', 'image', 'userName', 'email', 'password', 'phone', 'joiningDate', 'accessErApp']),

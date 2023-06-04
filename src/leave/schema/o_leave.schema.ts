@@ -1,7 +1,7 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Category } from 'src/category/schema/category.schema';
+import { Category } from 'src/category/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
 import { EPosition } from 'src/common/util/enumn';

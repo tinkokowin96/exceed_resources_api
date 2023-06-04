@@ -4,7 +4,7 @@ import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { Response } from 'express';
 import { OSubscriptionService } from './o_subscription.service';
-import { CreateOSubscriptionDto } from './dto/o_subscription.dto';
+import { CreateOSubscriptionDto } from './o_subscription.dto';
 
 @Controller('subscription')
 export class SubscriptionController {

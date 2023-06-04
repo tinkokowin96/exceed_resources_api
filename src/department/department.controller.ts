@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { DepartmentService } from './department.service';
 import { Users } from 'src/auth/user.decorator';
-import { CreateDepartmentDto } from './dto/department.dto';
+import { CreateDepartmentDto } from './department.dto';
 import { AppRequest } from 'src/common/util/type';
 import { Response } from 'express';
 

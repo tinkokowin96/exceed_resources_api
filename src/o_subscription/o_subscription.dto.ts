@@ -2,7 +2,7 @@ import { OmitType, PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Payment } from 'src/common/schema/common.schema';
-import { OSubscription } from '../schema/o_subscription.schema';
+import { OSubscription } from './o_subscription.schema';
 
 export class CreateOSubscriptionDto extends OmitType(OSubscription, [
   'status',

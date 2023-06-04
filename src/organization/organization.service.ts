@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
-import { Category } from 'src/category/schema/category.schema';
+import { Category } from 'src/category/category.schema';
 import { FindDto } from 'src/common/dto/find.dto';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';

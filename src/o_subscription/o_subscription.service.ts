@@ -8,9 +8,9 @@ import { EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { CuponService } from 'src/er_app/cupon/cupon.service';
 import { Organization } from 'src/organization/schema/organization.schema';
-import { OSubscription } from './schema/o_subscription.schema';
-import { Subscription } from 'src/er_app/subscription/schema/subscription.schema';
-import { CalculatePriceDto, CreateOSubscriptionDto } from './dto/o_subscription.dto';
+import { OSubscription } from './o_subscription.schema';
+import { Subscription } from 'src/er_app/subscription/subscription.schema';
+import { CalculatePriceDto, CreateOSubscriptionDto } from './o_subscription.dto';
 
 @Injectable()
 export class OSubscriptionService extends CoreService<OSubscription> {

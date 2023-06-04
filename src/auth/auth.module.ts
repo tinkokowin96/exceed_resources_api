@@ -14,7 +14,7 @@ import {
   OSubscriptionSchema,
 } from 'src/er_app/subscription/schema/subscription_request.schema';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
-import { Position, PositionSchema } from 'src/position/schema/position.schema';
+import { Position, PositionSchema } from 'src/position/position.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
 import { AuthGuard } from './auth.guard';
 import { CustomThrottleGuard } from './custom_throttle.guard';

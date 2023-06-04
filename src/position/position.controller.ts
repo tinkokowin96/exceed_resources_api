@@ -4,7 +4,7 @@ import { Users } from 'src/auth/user.decorator';
 
 import { AppRequest } from 'src/common/util/type';
 import { Response } from 'express';
-import { CreatePositionDto, UpdatePositionDto } from './dto/position.dto';
+import { CreatePositionDto, UpdatePositionDto } from './position.dto';
 
 @Controller('position')
 export class PositionController {

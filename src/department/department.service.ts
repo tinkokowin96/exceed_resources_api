@@ -6,8 +6,8 @@ import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { User } from 'src/user/schema/user.schema';
-import { ChangeDepartmentHeadDto, CreateDepartmentDto } from './dto/department.dto';
-import { Department } from './schema/department.schema';
+import { ChangeDepartmentHeadDto, CreateDepartmentDto } from './department.dto';
+import { Department } from './department.schema';
 
 @Injectable()
 export class DepartmentService extends CoreService<Department> {

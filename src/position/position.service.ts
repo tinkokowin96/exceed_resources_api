@@ -6,8 +6,8 @@ import { ClientSession, Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { CreatePositionDto, UpdatePositionDto } from './dto/position.dto';
-import { Position } from './schema/position.schema';
+import { CreatePositionDto, UpdatePositionDto } from './position.dto';
+import { Position } from './position.schema';
 
 @Injectable()
 export class PositionService extends CoreService<Position> {

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Category } from 'src/category/schema/category.schema';
+import { Category } from 'src/category/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Attachment, PayExtra } from 'src/common/schema/common.schema';
 import { Collaborator } from './collaborator.schema';

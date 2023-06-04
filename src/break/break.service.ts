@@ -5,8 +5,8 @@ import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { CreateBreakDto } from './dto/break.dto';
-import { Break } from './schema/break.schema';
+import { CreateBreakDto } from './break.dto';
+import { Break } from './break.schema';
 
 @Injectable()
 export class BreakService extends CoreService<Break> {

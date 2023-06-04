@@ -11,7 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Bank } from 'src/bank/schema/bank.schema';
+import { Bank } from 'src/bank/bank.schema';
 import { ChatGroup } from 'src/chat/schema/chat_group.shema';
 import { DirectMessage } from 'src/chat/schema/direct_message.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';

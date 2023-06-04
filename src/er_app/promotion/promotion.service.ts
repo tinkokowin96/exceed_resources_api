@@ -5,7 +5,7 @@ import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { Promotion } from './schema/promotion.schema';
+import { Promotion } from './promotion.schema';
 
 @Injectable()
 export class PromotionService extends CoreService<Promotion> {

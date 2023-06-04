@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PromotionController } from './promotion.controller';
-import { Promotion, PromotionSchema } from './schema/promotion.schema';
+import { Promotion, PromotionSchema } from './promotion.schema';
 import { PromotionService } from './promotion.service';
 
 @Module({

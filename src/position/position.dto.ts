@@ -1,6 +1,6 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Position } from '../schema/position.schema';
+import { Position } from './position.schema';
 
 export class CreatePositionDto extends OmitType(Position, ['_id', 'createdAt', 'updatedAt']) {}
 

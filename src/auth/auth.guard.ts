@@ -7,7 +7,7 @@ import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { ErConfig } from 'src/er_app/er_config/schema/er_config.schema';
 import { AddonSubscription } from 'src/er_app/subscription/schema/addon_subscription.schema';
-import { SubscriptionRequest } from 'src/er_app/subscription/schema/subscription_request.schema';
+import { OSubscription } from 'src/er_app/subscription/schema/subscription_request.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Position } from 'src/position/schema/position.schema';
@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    @InjectModel(SubscriptionRequest.name) private readonly subscriptionModel: Model<SubscriptionRequest>,
+    @InjectModel(OSubscription.name) private readonly subscriptionModel: Model<OSubscription>,
     @InjectModel(AddonSubscription.name) private readonly addonSubscriptionModel: Model<AddonSubscription>,
     @InjectModel(ErConfig.name) private readonly erConfigModel: Model<ErConfig>,
   ) {}

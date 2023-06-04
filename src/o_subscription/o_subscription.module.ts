@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { CuponModule } from '../cupon/cupon.module';
-import { OSubscription, OSubscriptionSchema } from './schema/subscription_request.schema';
-import { SubscriptionController } from './subscription.controller';
-import { SubscriptionService } from './subscription.service';
+import { OSubscription, OSubscriptionSchema } from './schema/o_subscription.schema';
+import { SubscriptionController } from './o_subscription.controller';
+import { SubscriptionService } from './o_subscription.service';
 import { Subscription } from 'rxjs';
 import { SubscriptionSchema } from './schema/subscription.schema';
 

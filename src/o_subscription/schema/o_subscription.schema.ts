@@ -13,13 +13,12 @@ import { SchemaTypes } from 'mongoose';
 import { Payment } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { ESubscriptionStatus } from 'src/common/util/enumn';
+import { Subscription } from 'src/er_app/subscription/schema/subscription.schema';
+import { Organization } from 'src/organization/schema/organization.schema';
 import { User } from 'src/user/schema/user.schema';
-import { Organization } from '../../../organization/schema/organization.schema';
-import { AddonSubscription } from './addon_subscription.schema';
-import { Subscription } from './subscription.schema';
 
 @Schema()
-export class SubscriptionRequest extends CoreSchema {
+export class OSubscription extends CoreSchema {
   @Prop({ type: Number, required: true })
   @IsNotEmpty()
   @IsNumber()
@@ -41,7 +40,11 @@ export class SubscriptionRequest extends CoreSchema {
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
-  active: boolean;
+  active?: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  @IsBoolean()
+  isAddon?: boolean;
 
   @Prop({ type: String })
   @IsString()
@@ -60,8 +63,8 @@ export class SubscriptionRequest extends CoreSchema {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Subscription' })
   subscription?: Subscription;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'AddonSubscription' })
-  addonSubscription?: AddonSubscription;
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Subscription' }] })
+  addonSubscriptions?: Subscription[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
   allowedUsers?: User[];
@@ -71,4 +74,4 @@ export class SubscriptionRequest extends CoreSchema {
   organization: Organization;
 }
 
-export const SubscriptionRequestSchema = SchemaFactory.createForClass(SubscriptionRequest);
+export const OSubscriptionSchema = SchemaFactory.createForClass(OSubscription);

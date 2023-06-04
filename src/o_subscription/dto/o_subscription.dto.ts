@@ -2,21 +2,16 @@ import { OmitType, PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Payment } from 'src/common/schema/common.schema';
-import { SubscriptionRequest } from '../schema/subscription_request.schema';
+import { OSubscription } from '../schema/o_subscription.schema';
 
-export class RequestSubscriptionDto extends OmitType(SubscriptionRequest, [
+export class CreateOSubscriptionDto extends OmitType(OSubscription, [
   'status',
   'organization',
   'payment',
   'active',
   'activeUntil',
   'subscription',
-  'addonSubscription',
 ]) {
-  @IsString()
-  @IsNotEmpty()
-  organizationId: string;
-
   @IsString()
   subscriptionId: string;
 
@@ -32,10 +27,9 @@ export class RequestSubscriptionDto extends OmitType(SubscriptionRequest, [
   cuponCode: string;
 }
 
-export class CalculatePriceDto extends PickType(RequestSubscriptionDto, [
+export class CalculatePriceDto extends PickType(CreateOSubscriptionDto, [
   'numDay',
   'numEmployee',
   'subscriptionId',
-  'addonSubscriptionId',
   'payment',
 ]) {}

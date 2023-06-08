@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Extra } from 'src/common/schema/common.schema';
+import { PromotionAllowance } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 
 @Schema()
@@ -27,8 +27,8 @@ export class Promotion extends CoreSchema {
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => Extra)
-  allowance: Extra;
+  @Type(() => PromotionAllowance)
+  allowance: PromotionAllowance;
 }
 
 export const PromotionSchema = SchemaFactory.createForClass(Promotion);

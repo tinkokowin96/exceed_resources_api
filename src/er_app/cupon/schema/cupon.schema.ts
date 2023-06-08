@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDateString, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
+import { PromotionAllowance } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { CuponCode } from './cupon_code.schema';
 
 @Schema()
 export class Cupon extends CoreSchema {
@@ -28,19 +29,11 @@ export class Cupon extends CoreSchema {
   @IsString()
   remark?: string;
 
-  @Prop({ type: Number, required: true })
+  @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
-  @IsNumber()
-  allowanceAmount: number;
-
-  @Prop({ type: Number, required: true })
-  @IsNotEmpty()
-  @IsBoolean()
-  isPercentage: boolean;
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'CuponCode' }] })
-  @IsNotEmpty()
-  cuponCodes: CuponCode[];
+  @ValidateNested()
+  @Type(() => PromotionAllowance)
+  allowance: PromotionAllowance;
 
   @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } })
   category?: Category;

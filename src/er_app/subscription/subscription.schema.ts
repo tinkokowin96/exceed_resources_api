@@ -29,6 +29,11 @@ export class Subscription extends CoreSchema {
   @Prop({ type: Boolean, required: true })
   @IsNotEmpty()
   @IsBoolean()
+  isPointUsable: boolean;
+
+  @Prop({ type: Boolean, required: true })
+  @IsNotEmpty()
+  @IsBoolean()
   isAddon: boolean;
 
   @Prop({ type: SchemaTypes.Mixed, required: true })

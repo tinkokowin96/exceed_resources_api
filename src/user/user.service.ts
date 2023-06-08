@@ -277,7 +277,7 @@ export class UserService extends CoreService<User> {
         const { userIds, isCurrentOrganization, orgainzation } = dto;
         const update = { $addToSet: { associatedOrganizations: orgainzation } };
         if (isCurrentOrganization) update['$set'] = { currentOrganization: orgainzation };
-        return await this.updateManyById({ ids: userIds, session, update });
+        return await this.updateMany({ filter: { _id: { $in: userIds } }, session, update });
       },
       req,
       res,

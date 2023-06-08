@@ -4,12 +4,11 @@ import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
-import { Payment } from 'src/common/schema/common.schema';
 import { AppRequest } from 'src/common/util/type';
-import { CuponCode } from './schema/cupon_code.schema';
-import { Cupon } from './schema/cupon.schema';
-import { CreateCuponDto, GetPaymentDto } from './dto/cupon.dto';
+import { CreateCuponDto } from './dto/cupon.dto';
 import { CreateCuponCodeDto, UpdateCuponCodeDto } from './dto/cupon_code.dto';
+import { Cupon } from './schema/cupon.schema';
+import { CuponCode } from './schema/cupon_code.schema';
 
 @Injectable()
 export class CuponService extends CoreService<Cupon> {
@@ -24,21 +23,12 @@ export class CuponService extends CoreService<Cupon> {
   async createCupon(dto: CreateCuponDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const { category, cuponCodeIds, ...payload } = dto;
+        const { category, ...payload } = dto;
         if (payload.active_until && new Date(payload.active_until).getTime() <= Date.now())
           throw new BadRequestException('End date must be in the future');
 
-        const cuponCodes = (
-          await this.find({
-            filter: { _id: { $in: cuponCodeIds } },
-            options: { lean: false },
-            projection: { _id: 1 },
-            custom: this.cuponCodeModel,
-          })
-        ).items;
-
         return await this.create({
-          dto: { ...payload, cuponCodes },
+          dto: payload,
           category: category ? { ...category, type: ECategory.Cupon } : undefined,
           session,
         });
@@ -82,35 +72,32 @@ export class CuponService extends CoreService<Cupon> {
     });
   }
 
-  async getPayment({
-    originalAmount,
-    cuponCode,
-    paymentMethod,
-    paymentProof,
-  }: GetPaymentDto): Promise<Payment> {
-    const payment: Payment = {
-      amount: originalAmount,
-      originalAmount: originalAmount,
-      paymentMethod,
-      paymentProof,
-    };
-    const filter = { active: true };
-    if (cuponCode)
-      filter['cuponCodes'] = { $eleMatch: { code: cuponCode, active: true, numUsable: { $gt: 0 } } };
-    else filter['$max'] = { activeOnAmount: { $gt: originalAmount } };
-    const cupon: Cupon = await this.findOne({
-      filter,
-      errorOnNotFound: false,
-      options: {
-        populate: 'cuponCodes',
-      },
-    });
-    if (cupon) {
-      const amount =
-        originalAmount +
-        (cupon.isPercentage ? originalAmount * cupon.allowanceAmount : cupon.allowanceAmount);
-      payment.amount = amount;
-    }
-    return payment;
-  }
+  // async getPayment(dto: GetPaymentDto): Promise<Payment> {
+  //   const { cuponCodeId, promotionId, originalAmount, ...payload } = dto;
+  //   const payment: Payment = {
+  //     originalAmount,
+  //     amount: originalAmount,
+  //     ...payload,
+  //   };
+  //   if (cuponCodeId) {
+  //   }
+  //   const filter = { active: true };
+  //   if (cuponCodeId)
+  //     filter['cuponCodes'] = { $eleMatch: { code: cuponCode, active: true, numUsable: { $gt: 0 } } };
+  //   else filter['$max'] = { activeOnAmount: { $gt: originalAmount } };
+  //   const cupon: Cupon = await this.findOne({
+  //     filter,
+  //     errorOnNotFound: false,
+  //     options: {
+  //       populate: 'cuponCodes',
+  //     },
+  //   });
+  //   if (cupon) {
+  //     const amount =
+  //       originalAmount +
+  //       (cupon.isPercentage ? originalAmount * cupon.allowanceAmount : cupon.allowanceAmount);
+  //     payment.amount = amount;
+  //   }
+  //   return payment;
+  // }
 }

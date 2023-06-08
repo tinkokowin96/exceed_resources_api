@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
+import { Cupon } from './cupon.schema';
 
 @Schema()
 export class CuponCode extends CoreSchema {
@@ -9,19 +11,17 @@ export class CuponCode extends CoreSchema {
   @IsString()
   code: string;
 
-  @Prop({ type: Boolean, required: true })
-  @IsNotEmpty()
-  @IsBoolean()
-  active: boolean;
-
-  @Prop({ type: Boolean, required: true })
-  @IsNotEmpty()
-  @IsBoolean()
-  isUsed: boolean;
-
-  @Prop({ type: Number })
+  @Prop({ type: Boolean, default: 0 })
   @IsNumber()
-  numUsable?: number;
+  numUsed: number;
+
+  @Prop({ type: Number, default: 1 })
+  @IsNumber()
+  numUsable: number;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Cupon' })
+  @IsNotEmpty()
+  cupon?: Cupon;
 }
 
 export const CuponCodeSchema = SchemaFactory.createForClass(CuponCode);

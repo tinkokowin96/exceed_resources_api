@@ -90,6 +90,10 @@ export class Message {
 
 export class Payment {
   @IsNotEmpty()
+  @IsNumber()
+  originalAmount: number;
+
+  @IsNotEmpty()
   @IsString()
   paymentProof: string;
 
@@ -127,9 +131,6 @@ export class Extra extends PickType(Trigger, ['amount']) {
   @IsEnum(EExtraAllowance)
   type: EExtraAllowance;
 
-  @IsNumber()
-  extreaAmount?: number;
-
   @ValidateNested()
   @Type(() => OLeave)
   extraLeave?: OLeave;
@@ -137,6 +138,12 @@ export class Extra extends PickType(Trigger, ['amount']) {
   @ValidateNested()
   @Type(() => SalaryCategory)
   extraSalaryCategory?: SalaryCategory;
+}
+
+export class PromotionAllowance extends PickType(Extra, ['amount', 'isPoint']) {
+  @IsNotEmpty()
+  @IsBoolean()
+  isPercent: boolean;
 }
 
 export class PayExtra {

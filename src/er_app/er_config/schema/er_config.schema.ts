@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { User } from 'src/user/schema/user.schema';
@@ -11,6 +11,11 @@ export class ErConfig extends CoreSchema {
   @IsNotEmpty()
   @IsString({ each: true })
   restrictedRoutes: string[];
+
+  @Prop({ type: Number, required: true })
+  @IsNotEmpty()
+  @IsNumber()
+  pointPrice: number;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   @IsNotEmpty()

@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Payment } from 'src/common/schema/common.schema';
 import { OSubscription } from './o_subscription.schema';
+import { FindDto } from 'src/common/dto/find.dto';
 
 export class CreateOSubscriptionDto extends OmitType(OSubscription, [
   'status',
@@ -13,10 +14,8 @@ export class CreateOSubscriptionDto extends OmitType(OSubscription, [
   'subscription',
 ]) {
   @IsString()
+  @IsNotEmpty()
   subscriptionId: string;
-
-  @IsString()
-  addonSubscriptionId: string;
 
   @IsNotEmpty()
   @ValidateNested()
@@ -31,5 +30,12 @@ export class CalculatePriceDto extends PickType(CreateOSubscriptionDto, [
   'numDay',
   'numEmployee',
   'subscriptionId',
-  'payment',
-]) {}
+]) {
+  @IsString()
+  cuponCode: string;
+}
+
+export class GetSubscriptionsDto extends FindDto {
+  @IsString({ each: true })
+  ids: string[];
+}

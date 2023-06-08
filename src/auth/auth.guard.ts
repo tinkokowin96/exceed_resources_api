@@ -6,13 +6,12 @@ import { decrypt } from 'src/common/util/encrypt';
 import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { ErConfig } from 'src/er_app/er_config/schema/er_config.schema';
-import { AddonSubscription } from 'src/er_app/subscription/schema/addon_subscription.schema';
-import { OSubscription } from 'src/er_app/subscription/schema/subscription_request.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Position } from 'src/position/position.schema';
 import { User } from 'src/user/schema/user.schema';
 import { AllowedUser } from './user.decorator';
+import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,7 +19,6 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(OSubscription.name) private readonly subscriptionModel: Model<OSubscription>,
-    @InjectModel(AddonSubscription.name) private readonly addonSubscriptionModel: Model<AddonSubscription>,
     @InjectModel(ErConfig.name) private readonly erConfigModel: Model<ErConfig>,
   ) {}
 
@@ -93,7 +91,8 @@ export class AuthGuard implements CanActivate {
       } else if (!allowedInActive) throw new ForbiddenException('No active subscription');
 
       if (allowedUsers.includes('Addon'))
-        return !!(await this.addonSubscriptionModel.findOne({
+        return !!(await this.subscriptionModel.findOne({
+          isAddon: true,
           allowedRoutes: { $eleMatch: path },
         }));
 

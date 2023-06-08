@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { Attachment } from 'src/common/schema/common.schema';
@@ -22,6 +22,10 @@ export class Organization extends CoreSchema {
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
   approved?: false;
+
+  @Prop({ type: Number, default: 0 })
+  @IsNumber()
+  numPoint?: number;
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })

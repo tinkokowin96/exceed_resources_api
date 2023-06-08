@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsMongoId, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsMongoId, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { WorkingHour } from 'src/common/schema/common.schema';
 import { Organization } from './organization.schema';
 import { Position } from 'src/position/position.schema';
@@ -15,6 +15,9 @@ export class OAssociated {
 
   @IsBoolean()
   flexibleWorkingHour: boolean;
+
+  @IsNumber()
+  numPoint?: number;
 
   @IsString()
   remark?: string;

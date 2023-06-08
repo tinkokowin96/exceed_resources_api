@@ -36,6 +36,11 @@ type CreateType<T> = Pick<QueryType<T>, 'custom'> & {
   };
 };
 
+type GetOptionsType<T> = Pick<
+  FindType<T>,
+  'filter' | 'options' | 'take' | 'page' | 'sort' | 'startDate' | 'endDate'
+>;
+
 type FindType<T> = QueryType<T> & {
   filter?: FilterQuery<T>;
   take?: number;
@@ -54,10 +59,11 @@ type FindByIdAndUpdateType<T> = Omit<FindByIdType<T>, 'projection'> & {
   session: ClientSession;
 };
 
-type UpdateManyByIdType<T> = Omit<FindByIdAndUpdateType<T>, 'id'> & {
-  ids: string[];
+type UpdateManyType<T> = Omit<FindByIdAndUpdateType<T>, 'id'> & {
+  filter: FilterQuery<T>;
   update: UpdateQuery<T>;
   session: ClientSession;
+  pagination?: Omit<GetOptionsType<T>, 'filter' | 'options'>;
 };
 
 type MakeTransactionType = {
@@ -75,6 +81,27 @@ export abstract class CoreService<T extends CoreSchema> {
     protected readonly model?: Model<T>,
     protected readonly categoryModel?: Model<Type<Category, T>>,
   ) {}
+
+  getOptions<K extends CoreSchema = T>({
+    options,
+    filter,
+    sort,
+    take,
+    page = 1,
+    startDate,
+    endDate,
+  }: GetOptionsType<Type<K, T>>) {
+    const opt = { lean: true, ...options };
+    if (sort) opt.sort = sort;
+    if (take) {
+      opt.skip = take * page;
+      opt.limit = take;
+    }
+    if (startDate) {
+      filter.createdAt = { $gte: startDate, $lte: endDate ?? startDate };
+    }
+    return opt;
+  }
 
   async create<K extends CoreSchema = T>({ dto, session, category, custom }: CreateType<Type<K, T>>) {
     const model: Model<Type<K, T>> = (custom ?? this.model) as any;
@@ -106,31 +133,18 @@ export abstract class CoreService<T extends CoreSchema> {
     custom,
     options,
     projection,
-    take,
-    page = 1,
-    sort,
-    startDate,
-    endDate,
     errorOnNotFound = true,
+    ...pagination
   }: FindType<Type<K, T>>) {
     const model: Model<Type<K, T>> = (custom ?? this.model) as any;
-    const opt = { lean: true, ...options };
-    if (sort) opt.sort = sort;
-    if (take) {
-      opt.skip = take * page;
-      opt.limit = take;
-    }
-    if (startDate) {
-      filter.createdAt = { $gte: startDate, $lte: endDate ?? startDate };
-    }
+    const opt = this.getOptions({ options, filter, ...pagination });
     const docs = await model.find(filter, projection, {
       lean: true,
-      ...options,
+      ...opt,
     });
-
     if (docs) {
       const data = { items: docs };
-      if (take) data['numItems'] = await model.countDocuments();
+      if (pagination.take) data['numItems'] = await model.countDocuments();
       return data;
     } else if (errorOnNotFound) throw new NotFoundException('Documents not found with this query');
     else return null;
@@ -188,29 +202,36 @@ export abstract class CoreService<T extends CoreSchema> {
     };
   }
 
-  async updateManyById<K extends CoreSchema = T>({
-    ids,
+  async updateMany<K extends CoreSchema = T>({
+    filter,
     update,
     session,
     custom,
     options,
-  }: UpdateManyByIdType<Type<K, T>>) {
+    pagination,
+  }: UpdateManyType<Type<K, T>>) {
     const model: Model<Type<K, T>> = (custom ?? this.model) as any;
-    const prev = await model.find({ _id: { $in: ids } }, null, {
+    const opt = pagination ? this.getOptions({ filter, options, ...pagination }) : { ...options };
+    const prev = await model.find(filter, null, {
       lean: true,
+      opt,
     });
     if (!prev || !prev.length) throw new NotFoundException('Documents not found with these ids');
 
     const next = await model.updateMany(
-      { _id: { $in: ids } },
+      filter,
       { ...update, updatedAt: new Date() },
       { ...options, session, new: true },
     );
 
-    return {
+    const data = {
       prev,
       next,
+      numItems: null,
     };
+
+    if (pagination) data.numItems = await model.countDocuments();
+    return data;
   }
 
   async makeTransaction({ action, req, res: response, callback, audit }: MakeTransactionType) {

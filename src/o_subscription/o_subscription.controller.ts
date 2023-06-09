@@ -6,8 +6,8 @@ import { Response } from 'express';
 import { OSubscriptionService } from './o_subscription.service';
 import { CreateOSubscriptionDto } from './o_subscription.dto';
 
-@Controller('subscription')
-export class SubscriptionController {
+@Controller('o-subscription')
+export class OSubscriptionController {
   constructor(private readonly service: OSubscriptionService) {}
 
   @Users([EUser.Any])

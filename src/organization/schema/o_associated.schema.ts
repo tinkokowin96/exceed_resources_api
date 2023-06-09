@@ -5,6 +5,7 @@ import { Organization } from './organization.schema';
 import { Position } from 'src/position/position.schema';
 import { Break } from 'src/break/break.schema';
 import { Department } from 'src/department/department.schema';
+import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 
 //NOTE: flexibleworkinghour, checkin, checkout and break will null for non custom(use value from config)
 
@@ -43,4 +44,7 @@ export class OAssociated {
 
   @IsMongoId({ each: true })
   departments: Department[];
+
+  @IsMongoId({ each: true })
+  subscriptions: OSubscription[];
 }

@@ -10,6 +10,7 @@ import { PositionModule } from 'src/position/position.module';
 import { User, UserSchema } from './schema/user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { OSubscription, OSubscriptionSchema } from 'src/o_subscription/o_subscription.schema';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserService } from './user.service';
       { name: Bank.name, schema: BankSchema },
       { name: Break.name, schema: BreakSchema },
       { name: Department.name, schema: DepartmentSchema },
+      { name: OSubscription.name, schema: OSubscriptionSchema },
     ]),
     DepartmentModule,
     PositionModule,

@@ -26,6 +26,9 @@ export class CreateUserDto extends IntersectionType(
   @IsString({ each: true })
   breakIds: string[];
 
+  @IsString({ each: true })
+  subscriptionIds: string[];
+
   @ValidateNested({ each: true })
   @Type(() => OmitType(AddUserToDepartmentDto, ['userId']))
   departments: Omit<AddUserToDepartmentDto, 'userId'>[];

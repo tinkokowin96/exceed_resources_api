@@ -12,6 +12,7 @@ import { Position } from 'src/position/position.schema';
 import { User } from 'src/user/schema/user.schema';
 import { AllowedUser } from './user.decorator';
 import { OSubscription } from 'src/o_subscription/o_subscription.schema';
+import { Subscription } from 'src/er_app/subscription/subscription.schema';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -23,7 +24,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext) {
-    const allowedUsers = this.reflector?.get<AllowedUser[]>('users', context.getHandler());
+    const allowedUsers = this.reflector?.get<AllowedUser[] | 'Addon'>('users', context.getHandler());
 
     const httpCtx = context.switchToHttp();
     const req: AppRequest = httpCtx.getRequest();
@@ -44,6 +45,11 @@ export class AuthGuard implements CanActivate {
           {
             path: 'position',
             model: Position.name,
+          },
+          {
+            path: 'subscriptions',
+            model: OSubscription.name,
+            populate: [{ path: 'subscription', model: Subscription.name }],
           },
         ],
       });
@@ -68,21 +74,27 @@ export class AuthGuard implements CanActivate {
     if (allowedUsers) {
       if (!req.cookies.user) return false;
 
-      const allowedInActive = allowedUsers.some((each) => each === EUser.InActive || each === EUser.Any);
-      const allowErApp = allowedUsers.some((each) => each === EUser.ErApp || each === EUser.Any);
-      const allowOrganization = allowedUsers.some((each) => each === EUser.Organization || allowedInActive);
+      const addonUser = allowedUsers === 'Addon';
+      const allowedInActive =
+        !addonUser && allowedUsers.some((each) => each === EUser.InActive || each === EUser.Any);
+      const allowErApp =
+        !addonUser && allowedUsers.some((each) => each === EUser.ErApp || each === EUser.Any);
+      const allowOrganization =
+        !addonUser && allowedUsers.some((each) => each === EUser.Organization || allowedInActive);
 
       if (type === EUser.ErApp && !allowErApp) return false;
       if (type === EUser.Organization && !allowOrganization) return false;
       if (!allowedInActive && !orgainzation) return false;
 
-      const activeSubscription = await this.subscriptionModel.findOne({
-        active: true,
-        organization: orgainzation._id,
-      });
+      let subscription: OSubscription;
+      if (addonUser)
+        subscription = user.currentOrganization.subscriptions.find(
+          (each) => each.isAddon && each.subscription.allowedRoutes.includes(path),
+        );
+      else subscription = user.currentOrganization.subscriptions.find((each) => !each.isAddon);
 
-      if (activeSubscription) {
-        if (new Date(activeSubscription.activeUntil).getTime() < Date.now()) {
+      if (subscription) {
+        if (new Date(subscription.activeUntil).getTime() < Date.now()) {
           this.subscriptionModel.findByIdAndUpdate(orgainzation._id, {
             $set: { active: false },
           });
@@ -90,14 +102,9 @@ export class AuthGuard implements CanActivate {
         }
       } else if (!allowedInActive) throw new ForbiddenException('No active subscription');
 
-      if (allowedUsers.includes('Addon'))
-        return !!(await this.subscriptionModel.findOne({
-          isAddon: true,
-          allowedRoutes: { $eleMatch: path },
-        }));
-
       if (allowedUsers.includes(EUser.Any)) return true;
       if (req.superAdmin) return true;
+      if (addonUser) return true;
       return req.user.currentOrganization.position.allowedRoutes.includes(path);
     }
 

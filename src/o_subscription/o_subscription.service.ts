@@ -2,14 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { ClientSession, Connection, Model } from 'mongoose';
+import { Category } from 'src/category/category.schema';
 import { PromotionAllowance } from 'src/common/schema/common.schema';
 import { CoreService } from 'src/common/service/core.service';
-import { EModule } from 'src/common/util/enumn';
+import { EModule, ESubscriptionStatus } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { CuponCode } from 'src/er_app/cupon/schema/cupon_code.schema';
 import { Promotion } from 'src/er_app/promotion/promotion.schema';
 import { Subscription } from 'src/er_app/subscription/subscription.schema';
-import { Organization } from 'src/organization/schema/organization.schema';
 import { CalculatePriceDto, CreateOSubscriptionDto } from './o_subscription.dto';
 import { OSubscription } from './o_subscription.schema';
 
@@ -18,12 +18,12 @@ export class OSubscriptionService extends CoreService<OSubscription> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(OSubscription.name) model: Model<OSubscription>,
+    @InjectModel(Category.name) categoryModel: Model<Category>,
     @InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>,
-    @InjectModel(Organization.name) private readonly organizationModel: Model<Organization>,
     @InjectModel(Promotion.name) private readonly promotionModel: Model<Promotion>,
     @InjectModel(CuponCode.name) private readonly cuponCodeModel: Model<CuponCode>,
   ) {
-    super(connection, model);
+    super(connection, model, categoryModel);
   }
 
   async calculateSubscriptionPrice(
@@ -36,9 +36,9 @@ export class OSubscriptionService extends CoreService<OSubscription> {
       action: async (ses) => {
         const session = trigger ?? ses;
 
-        const getMaxValue = (obj) => {
+        const getMaxValue = (obj, num) => {
           const arr = Object.keys(obj)
-            .filter((each) => +each <= numEmployee)
+            .filter((each) => +each <= num)
             .sort((a, b) => +a - +b);
           return +arr[arr.length - 1];
         };
@@ -50,16 +50,17 @@ export class OSubscriptionService extends CoreService<OSubscription> {
           options: { populate: ['activePromotion'] },
         });
 
-        const originalAmount = getMaxValue(getMaxValue(subscription.price)) * numDay;
+        const originalAmount = getMaxValue(getMaxValue(subscription.price, numEmployee), numDay) * numDay;
         const promotion = subscription.activePromotion;
         let amount = originalAmount;
-        let pointEarned = 0;
+        let pointsEarned = 0;
+        let cupon;
 
         const getAllowance = (allowance: PromotionAllowance) => {
           const extraAmount = allowance.isPercent
             ? originalAmount * (allowance.amount / 100)
             : allowance.amount;
-          if (allowance.isPoint) pointEarned += extraAmount;
+          if (allowance.isPoint) pointsEarned += extraAmount;
           else amount -= extraAmount;
         };
 
@@ -87,8 +88,9 @@ export class OSubscriptionService extends CoreService<OSubscription> {
           });
           if (cupCode.numUsed >= cupCode.numUsable) throw new BadRequestException('Cupon code already used');
           getAllowance(cupCode.cupon.allowance);
+          cupon = cupCode.cupon;
         }
-        return { originalAmount, amount, pointEarned };
+        return { subscription, originalAmount, amount, pointsEarned, promotion, cupon };
       },
       req,
       res,
@@ -101,14 +103,48 @@ export class OSubscriptionService extends CoreService<OSubscription> {
   async requestSubscription(dto: CreateOSubscriptionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        // const { cuponCode, subscriptionId, payment: paymentMethod, ...payload } = dto;
-        // const payment: Payment = await this.cuponService.getPayment({ ...paymentMethod, cuponCode });
-        // const organization = await this.findById({ id: organizationId, custom: this.organizationModel });
-        // return await this.create({
-        //   dto: { ...payload, organization, payment, addon: addon ?? undefined },
-        //   custom: this.subRequestModel,
-        //   session,
-        // });
+        const {
+          subscriptionId,
+          payAmount,
+          paymentProof,
+          paymentMethod: categoryId,
+          cuponCode,
+          ...payload
+        } = dto;
+        const { subscription, originalAmount, amount, pointsEarned, promotion, cupon } =
+          await this.calculateSubscriptionPrice(
+            { subscriptionId, cuponCode, numEmployee: payload.numEmployee, numDay: payload.numDay },
+            req,
+            res,
+            session,
+          );
+        if (payAmount < amount) throw new BadRequestException(`Payment is less the require amount`);
+        const paymentMethod = await this.findById({ id: categoryId, custom: this.categoryModel });
+        let surplus;
+        if (payAmount > amount) surplus = payAmount - amount;
+        const payment = {
+          originalAmount,
+          amount,
+          payAmount,
+          surplus,
+          cuponCode,
+          cupon,
+          promotion,
+          paymentMethod,
+          pointsEarned,
+          paymentProof,
+        };
+        return await this.create({
+          dto: {
+            ...payload,
+            payment,
+            status: ESubscriptionStatus.Pending,
+            organization: req.user.currentOrganization.organization,
+            subscription,
+            isAddon: subscription.isAddon,
+          },
+          session,
+        });
       },
       req,
       res,
@@ -119,31 +155,4 @@ export class OSubscriptionService extends CoreService<OSubscription> {
       },
     });
   }
-
-  // async getOSubscriptions(dto: GetSubscriptionsDto, req: AppRequest, res: Response, trigger?: ClientSession) {
-  //   return this.makeTransaction({
-  //     action: async (ses) => {
-  //       const { ids, ...pagination } = dto;
-  //       const session = trigger ?? ses;
-  //       const { next, numItems } = await this.updateMany({
-  //         filter: { _id: ids ? { $in: ids } : undefined },
-  //         update: {
-  //           $set: {
-  //             active: {
-  //               $gt: ['$activeUntil', new Date()],
-  //             },
-  //           },
-  //         },
-  //         session,
-  //         pagination,
-  //       });
-  //       return { items: next, numItems };
-  //     },
-  //     req,
-  //     res,
-  //     audit: trigger
-  //       ? undefined
-  //       : { name: 'get-subscriptions-and-update', payload: dto, module: EModule.Subscription },
-  //   });
-  // }
 }

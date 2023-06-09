@@ -72,6 +72,7 @@ export enum EExtraAllowance {
 }
 
 export enum ESubscriptionStatus {
+  Pending = 'Pending',
   Approved = 'Approved',
   Refunded = 'Refunded',
   Declined = 'Declined',

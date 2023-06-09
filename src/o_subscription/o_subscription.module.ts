@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
-import { CuponModule } from '../cupon/cupon.module';
-import { OSubscription, OSubscriptionSchema } from './o_subscription.schema';
-import { SubscriptionController } from './o_subscription.controller';
-import { SubscriptionService } from './o_subscription.service';
 import { Subscription } from 'rxjs';
-import { SubscriptionSchema } from './schema/subscription.schema';
+import { Category, CategorySchema } from 'src/category/category.schema';
+import { SubscriptionSchema } from 'src/er_app/subscription/subscription.schema';
+import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
+import { OSubscription, OSubscriptionSchema } from './o_subscription.schema';
+import { OSubscriptionService } from './o_subscription.service';
+import { Promotion, PromotionSchema } from 'src/er_app/promotion/promotion.schema';
+import { CuponCode, CuponCodeSchema } from 'src/er_app/cupon/schema/cupon_code.schema';
+import { OSubscriptionController } from './o_subscription.controller';
 
 @Module({
   imports: [
@@ -14,10 +16,12 @@ import { SubscriptionSchema } from './schema/subscription.schema';
       { name: Subscription.name, schema: SubscriptionSchema },
       { name: OSubscription.name, schema: OSubscriptionSchema },
       { name: Organization.name, schema: OrganizationSchema },
+      { name: Category.name, schema: CategorySchema },
+      { name: Promotion.name, schema: PromotionSchema },
+      { name: CuponCode.name, schema: CuponCodeSchema },
     ]),
-    CuponModule,
   ],
-  controllers: [SubscriptionController],
-  providers: [SubscriptionService],
+  controllers: [OSubscriptionController],
+  providers: [OSubscriptionService],
 })
 export class SubscriptionModule {}

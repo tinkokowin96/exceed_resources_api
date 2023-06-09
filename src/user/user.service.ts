@@ -24,6 +24,7 @@ import {
   ToggleErAppAccessDto,
 } from './dto/user.dto';
 import { User } from './schema/user.schema';
+import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 
 @Injectable()
 export class UserService extends CoreService<User> {
@@ -35,6 +36,7 @@ export class UserService extends CoreService<User> {
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
     @InjectModel(Break.name) private readonly breakModel: Model<Break>,
     @InjectModel(Department.name) private readonly departmentModel: Model<Department>,
+    @InjectModel(OSubscription.name) private readonly oSubscriptionModel: Model<OSubscription>,
     private readonly departmentService: DepartmentService,
     private readonly positionService: PositionService,
   ) {
@@ -54,6 +56,7 @@ export class UserService extends CoreService<User> {
           positionId,
           breakIds,
           organizationId,
+          subscriptionIds,
           departments: departmentsDto,
           ...payload
         } = dto;
@@ -115,6 +118,21 @@ export class UserService extends CoreService<User> {
             ).items.reduce((acc, cur) => [...acc, cur._id], [])
           : [];
 
+        if (subscriptionIds && !req.user)
+          throw new ForbiddenException("Can't create user with subscription without logging in");
+
+        const subscriptions = (
+          await this.find({
+            filter: {
+              $and: [
+                { _id: { $in: subscriptionIds } },
+                { organization: req.user.currentOrganization.organization._id },
+              ],
+            },
+            custom: this.oSubscriptionModel,
+          })
+        ).items;
+
         const associatedOrganization: OAssociated = {
           accessOAdminApp,
           flexibleWorkingHour,
@@ -125,6 +143,7 @@ export class UserService extends CoreService<User> {
           position: position._id as any,
           breaks,
           departments,
+          subscriptions,
         };
 
         const user = await this.create({

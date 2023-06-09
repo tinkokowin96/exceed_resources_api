@@ -5,19 +5,12 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import * as cookieParser from 'cookie-parser';
 import { ExceedLimit, ExceedLimitSchema } from 'src/common/schema/exceed_limit.schema';
 import { ErConfig, ErConfigSchema } from 'src/er_app/er_config/schema/er_config.schema';
-import {
-  AddonSubscription,
-  AddonSubscriptionSchema,
-} from 'src/er_app/subscription/schema/addon_subscription.schema';
-import {
-  OSubscription,
-  OSubscriptionSchema,
-} from 'src/er_app/subscription/schema/subscription_request.schema';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { Position, PositionSchema } from 'src/position/position.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
 import { AuthGuard } from './auth.guard';
 import { CustomThrottleGuard } from './custom_throttle.guard';
+import { OSubscription, OSubscriptionSchema } from 'src/o_subscription/o_subscription.schema';
 
 @Module({
   imports: [
@@ -30,7 +23,6 @@ import { CustomThrottleGuard } from './custom_throttle.guard';
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: OSubscription.name, schema: OSubscriptionSchema },
-      { name: AddonSubscription.name, schema: AddonSubscriptionSchema },
       { name: ErConfig.name, schema: ErConfigSchema },
       { name: Organization.name, schema: OrganizationSchema },
       { name: ExceedLimit.name, schema: ExceedLimitSchema },

@@ -1,9 +1,7 @@
 import { OmitType, PickType } from '@nestjs/mapped-types';
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { Payment } from 'src/common/schema/common.schema';
-import { OSubscription } from './o_subscription.schema';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { FindDto } from 'src/common/dto/find.dto';
+import { OSubscription } from './o_subscription.schema';
 
 export class CreateOSubscriptionDto extends OmitType(OSubscription, [
   'status',
@@ -12,15 +10,23 @@ export class CreateOSubscriptionDto extends OmitType(OSubscription, [
   'active',
   'activeUntil',
   'subscription',
+  'isAddon',
 ]) {
   @IsString()
   @IsNotEmpty()
   subscriptionId: string;
 
   @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => OmitType(Payment, ['amount']))
-  payment: Omit<Payment, 'amount'>;
+  @IsNumber()
+  payAmount: number;
+
+  @IsNotEmpty()
+  @IsString()
+  paymentMethod: string;
+
+  @IsNotEmpty()
+  @IsString()
+  paymentProof: string;
 
   @IsString()
   cuponCode: string;

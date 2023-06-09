@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { CuponModule } from '../cupon/cupon.module';
-import { OSubscription, OSubscriptionSchema } from './schema/subscription_request.schema';
 import { SubscriptionController } from './subscription.controller';
 import { SubscriptionService } from './subscription.service';
 import { Subscription } from 'rxjs';
 import { SubscriptionSchema } from './subscription.schema';
+import { OSubscription, OSubscriptionSchema } from 'src/o_subscription/o_subscription.schema';
 
 @Module({
   imports: [

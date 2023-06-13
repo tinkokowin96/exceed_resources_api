@@ -5,7 +5,7 @@ import { CreateSubscriptionDto, UpdateSubscriptionDto } from 'src/user/dto/subsc
 import { AppRequest } from 'src/common/util/type';
 import { Response } from 'express';
 
-@Controller('er-app/subscription')
+@Controller('subscription')
 export class SubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 

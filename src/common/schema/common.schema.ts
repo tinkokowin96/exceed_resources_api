@@ -14,8 +14,8 @@ import {
 } from 'class-validator';
 import { Category } from 'src/category/category.schema';
 import { Department } from 'src/department/department.schema';
-import { Cupon } from 'src/er_app/cupon/schema/cupon.schema';
-import { Promotion } from 'src/er_app/promotion/promotion.schema';
+import { Cupon } from 'src/cupon/schema/cupon.schema';
+import { Promotion } from 'src/promotion/promotion.schema';
 import { OLeave } from 'src/leave/schema/o_leave.schema';
 import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 import { EAttachment, EExtraAllowance, EMessage, ETrigger } from '../util/enumn';

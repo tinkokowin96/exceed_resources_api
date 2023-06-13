@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { ErConfig } from 'src/er_app/er_config/schema/er_config.schema';
+import { ErConfig } from 'src/er_config/schema/er_config.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { User } from 'src/user/schema/user.schema';
 import { EUser } from './enumn';

@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import * as cookieParser from 'cookie-parser';
 import { ExceedLimit, ExceedLimitSchema } from 'src/common/schema/exceed_limit.schema';
-import { ErConfig, ErConfigSchema } from 'src/er_app/er_config/schema/er_config.schema';
+import { ErConfig, ErConfigSchema } from 'src/er_config/schema/er_config.schema';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { Position, PositionSchema } from 'src/position/position.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';

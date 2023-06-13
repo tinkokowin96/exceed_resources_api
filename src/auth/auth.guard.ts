@@ -5,14 +5,14 @@ import { Model } from 'mongoose';
 import { decrypt } from 'src/common/util/encrypt';
 import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { ErConfig } from 'src/er_app/er_config/schema/er_config.schema';
+import { ErConfig } from 'src/er_config/schema/er_config.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Position } from 'src/position/position.schema';
 import { User } from 'src/user/schema/user.schema';
 import { AllowedUser } from './user.decorator';
 import { OSubscription } from 'src/o_subscription/o_subscription.schema';
-import { Subscription } from 'src/er_app/subscription/subscription.schema';
+import { Subscription } from 'src/subscription/subscription.schema';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

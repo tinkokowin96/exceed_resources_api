@@ -5,7 +5,7 @@ import { AppRequest } from 'src/common/util/type';
 import { Promotion } from './promotion.schema';
 import { PromotionService } from './promotion.service';
 
-@Controller('er-app/promotion')
+@Controller('promotion')
 export class PromotionController {
   constructor(private readonly service: PromotionService) {}
 

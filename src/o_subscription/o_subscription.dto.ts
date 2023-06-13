@@ -1,4 +1,4 @@
-import { OmitType, PickType } from '@nestjs/mapped-types';
+import { IntersectionType, OmitType, PickType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { FindDto } from 'src/common/dto/find.dto';
 import { OSubscription } from './o_subscription.schema';
@@ -41,7 +41,7 @@ export class CalculatePriceDto extends PickType(CreateOSubscriptionDto, [
   cuponCode: string;
 }
 
-export class GetSubscriptionsDto extends FindDto {
-  @IsString({ each: true })
-  ids: string[];
+export class GetSubscriptionsDto extends IntersectionType(FindDto, PickType(OSubscription, ['status'])) {
+  @IsString()
+  organizationId: string;
 }

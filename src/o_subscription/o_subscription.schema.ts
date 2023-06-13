@@ -13,7 +13,7 @@ import { SchemaTypes } from 'mongoose';
 import { Payment } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { ESubscriptionStatus } from 'src/common/util/enumn';
-import { Subscription } from 'src/er_app/subscription/subscription.schema';
+import { Subscription } from 'src/subscription/subscription.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 
 @Schema()

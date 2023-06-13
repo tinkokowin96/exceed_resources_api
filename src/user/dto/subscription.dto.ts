@@ -1,7 +1,7 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { Subscription } from 'src/er_app/subscription/subscription.schema';
+import { Subscription } from 'src/subscription/subscription.schema';
 
 export class CreateSubscriptionDto extends OmitType(Subscription, [
   'activePromotion',

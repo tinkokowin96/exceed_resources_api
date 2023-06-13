@@ -1,16 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { ClientSession, Connection, Model } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { PromotionAllowance } from 'src/common/schema/common.schema';
 import { CoreService } from 'src/common/service/core.service';
-import { EModule, ESubscriptionStatus } from 'src/common/util/enumn';
+import { EModule, ESubscriptionStatus, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { CuponCode } from 'src/er_app/cupon/schema/cupon_code.schema';
-import { Promotion } from 'src/er_app/promotion/promotion.schema';
-import { Subscription } from 'src/er_app/subscription/subscription.schema';
-import { CalculatePriceDto, CreateOSubscriptionDto } from './o_subscription.dto';
+import { CuponCode } from 'src/cupon/schema/cupon_code.schema';
+import { Promotion } from 'src/promotion/promotion.schema';
+import { Subscription } from 'src/subscription/subscription.schema';
+import { CalculatePriceDto, CreateOSubscriptionDto, GetSubscriptionsDto } from './o_subscription.dto';
 import { OSubscription } from './o_subscription.schema';
 
 @Injectable()
@@ -153,6 +153,20 @@ export class OSubscriptionService extends CoreService<OSubscription> {
         module: EModule.Subscription,
         payload: dto,
       },
+    });
+  }
+
+  async getSubscriptions(dto: GetSubscriptionsDto, req: AppRequest, res: Response) {
+    return this.makeTransaction({
+      action: async () => {
+        const { organizationId, status, ...pagination } = dto;
+        if (req.type !== EUser.ErApp && organizationId)
+          throw new ForbiddenException("Can't access other organization");
+        return this.find({ filter: { status, organization: organizationId }, ...pagination });
+      },
+      req,
+      res,
+      audit: { name: 'get-subscriptions', module: EModule.Organization, payload: dto },
     });
   }
 }

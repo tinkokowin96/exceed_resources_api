@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { Promotion } from 'src/er_app/promotion/promotion.schema';
+import { Promotion } from 'src/promotion/promotion.schema';
 
 /**
  * NOTE:

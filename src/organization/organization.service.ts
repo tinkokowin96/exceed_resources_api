@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
@@ -26,6 +26,8 @@ export class OrganizationService extends CoreService<Organization> {
     return this.makeTransaction({
       action: async (session) => {
         const { category, checkInTime, checkOutTime, ...payload } = dto;
+
+        if (req.user) throw new BadRequestException("Can't create other organization");
         const config = await this.create({
           dto: {
             checkInTime,

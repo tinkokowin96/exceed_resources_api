@@ -37,6 +37,7 @@ export class UserService extends CoreService<User> {
     @InjectModel(Break.name) private readonly breakModel: Model<Break>,
     @InjectModel(Department.name) private readonly departmentModel: Model<Department>,
     @InjectModel(OSubscription.name) private readonly oSubscriptionModel: Model<OSubscription>,
+    @InjectModel(Position.name) private readonly positionModel: Model<Position>,
     private readonly departmentService: DepartmentService,
     private readonly positionService: PositionService,
   ) {
@@ -61,8 +62,6 @@ export class UserService extends CoreService<User> {
           ...payload
         } = dto;
         let bank: Bank, orgainzation: Organization, position: Position;
-        if (req.user && (organizationId || positionId))
-          throw new ForbiddenException("Can't create user for other organization");
 
         if (bankId)
           bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
@@ -96,8 +95,9 @@ export class UserService extends CoreService<User> {
             session,
           );
         } else {
+          if (!positionId) throw new BadRequestException('Require position to create user');
           orgainzation = req.user.currentOrganization.organization;
-          position = req.user.currentOrganization.position;
+          position = await this.findById({ id: positionId, custom: this.positionModel });
         }
 
         const breaks = (
@@ -270,7 +270,7 @@ export class UserService extends CoreService<User> {
   async getUsers({ organizationId, ...pagination }: GetUsersDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async () => {
-        if (req.type !== EUser.ErApp && !req.user.currentOrganization.organization._id.equals(organizationId))
+        if (req.type !== EUser.ErApp && organizationId)
           throw new ForbiddenException("Can't access other organization or user");
 
         return this.find({

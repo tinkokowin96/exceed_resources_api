@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Extra, ExtraAllowance } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
 import { Leave } from 'src/leave/schema/leave.schema';
 import { User } from 'src/user/schema/user.schema';
+import { WorkingDay } from 'src/working_hour/schema/working_day.schema';
 
 @Schema()
 export class OConfig extends CoreSchema {
@@ -30,15 +31,22 @@ export class OConfig extends CoreSchema {
   @IsBoolean()
   allowUserBreak?: boolean;
 
+  @Prop({ type: SchemaTypes.Mixed, required: true })
+  @ArrayNotEmpty()
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => WorkingDay)
+  workingDays: WorkingDay[];
+
   @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested({ each: true })
   @Type(() => ExtraAllowance)
-  latePenalties: ExtraAllowance[];
+  latePenalties?: ExtraAllowance[];
 
   @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested()
   @Type(() => Extra)
-  overtimeHourlyAllowance: Extra;
+  overtimeHourlyAllowance?: Extra;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Field' }] })
   overtimeForm: Field[];

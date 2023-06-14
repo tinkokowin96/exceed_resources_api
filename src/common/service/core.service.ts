@@ -124,7 +124,8 @@ export abstract class CoreService<T> {
       ...payload,
       _id: new Types.ObjectId(),
     });
-    return await doc.save({ session });
+    await doc.save({ session });
+    return doc;
   }
 
   async find<K = T>({

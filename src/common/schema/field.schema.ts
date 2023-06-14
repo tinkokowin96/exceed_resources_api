@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { SchemaTypes } from 'mongoose';
 import { EField } from '../util/enumn';
 import { CoreSchema } from './core.shema';
 
@@ -14,9 +13,6 @@ export class Field extends CoreSchema {
   @Prop({ type: String, enum: EField, default: EField.String })
   @IsEnum(EField)
   fieldType: EField;
-
-  @Prop({ type: SchemaTypes.Mixed })
-  value: any;
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()

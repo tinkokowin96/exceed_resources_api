@@ -25,13 +25,13 @@ export class OrganizationService extends CoreService<Organization> {
   async createOrganization(dto: CreateOrganizationDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const { category, checkInTime, checkOutTime, ...payload } = dto;
+        const { category, workingDays, overtimeForm, ...payload } = dto;
 
         if (req.user) throw new BadRequestException("Can't create other organization");
         const config = await this.create({
           dto: {
-            checkInTime,
-            checkOutTime,
+            workingDays,
+            overtimeForm,
           },
           session,
           custom: this.oConfigModel,

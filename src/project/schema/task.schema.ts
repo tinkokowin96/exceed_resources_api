@@ -3,8 +3,8 @@ import { Type } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
+import { Attachment } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { Attachment, PayExtra } from 'src/common/schema/common.schema';
 import { Collaborator } from './collaborator.schema';
 import { Phase } from './phase.schema';
 import { Project } from './project.schema';
@@ -38,11 +38,6 @@ export class Task extends CoreSchema {
   @ValidateNested({ each: true })
   @Type(() => Attachment)
   attachments: Attachment[];
-
-  @Prop({ type: [SchemaTypes.Mixed] })
-  @ValidateNested({ each: true })
-  @Type(() => PayExtra)
-  reward: PayExtra[];
 
   @Prop({ type: { type: SchemaTypes.ObjectId, ref: 'Category' } }) // need to validate here
   status: Category;

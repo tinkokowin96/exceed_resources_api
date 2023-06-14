@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsLatitude,
   IsLongitude,
+  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -193,4 +194,13 @@ export class Counter {
   @IsNotEmpty()
   @IsDateString()
   end: Date;
+}
+
+export class FieldValue {
+  @IsNotEmpty()
+  @IsMongoId()
+  id: string;
+
+  @IsNotEmpty()
+  value: string;
 }

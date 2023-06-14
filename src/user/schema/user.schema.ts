@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hashSync } from 'bcryptjs';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
@@ -17,9 +18,7 @@ import { DirectMessage } from 'src/chat/schema/direct_message.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { Project } from 'src/project/schema/project.schema';
-import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
 import { UserStatus } from './user_status.schema';
-import { Type } from 'class-transformer';
 
 @Schema()
 export class User extends CoreSchema {
@@ -92,12 +91,6 @@ export class User extends CoreSchema {
   @ValidateNested()
   @Type(() => OAssociated)
   currentOrganization: OAssociated;
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'SalaryCategory' }] })
-  earnings?: SalaryCategory[];
-
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'SalaryCategory' }] })
-  deductions?: SalaryCategory[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Project' }] })
   projects?: Project[];

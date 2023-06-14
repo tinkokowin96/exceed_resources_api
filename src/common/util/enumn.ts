@@ -55,6 +55,11 @@ export enum EExtra {
   Percentage = 'Percentage',
   Absolute = 'Absolute',
   BaseSalaryPercentage = 'BaseSalaryPercentage',
+  Leave = 'Leave',
+}
+
+export enum EEarningTrigger {
+  CustomWorkingDay = 'CustomWorkingDay',
 }
 
 export enum EServiceTrigger {
@@ -63,13 +68,13 @@ export enum EServiceTrigger {
   Update = 'Update',
 }
 
-export enum EExtraAllowance {
-  Percentage = 'Percentage',
-  Absolute = 'Absolute',
-  BaseSalaryPercentage = 'BaseSalaryPercentage',
-  Leave = 'Leave',
-  Allowance = 'Allowance',
-}
+// export enum EExtraAllowance {
+//   Percentage = 'Percentage',
+//   Absolute = 'Absolute',
+//   BaseSalaryPercentage = 'BaseSalaryPercentage',
+//   Leave = 'Leave',
+//   Allowance = 'Allowance',
+// }
 
 export enum ESubscriptionStatus {
   Pending = 'Pending',
@@ -108,14 +113,6 @@ export enum EWorkingHour {
   Break = 'Break',
 }
 
-export enum EPosition {
-  Owner = 'Owner',
-  CEO = 'CEO',
-  DepartmentHead = 'DepartmentHead',
-  TeamLeader = 'TeamLeader',
-  Member = 'Member',
-}
-
 export enum EAttachment {
   Video = 'Video',
   Image = 'Image',
@@ -135,10 +132,6 @@ export enum EField {
   Number = 'Number',
 }
 
-export enum EFieldCategory {
-  Salary = 'Salary',
-}
-
 export enum EWeekDay {
   Mon = 'Mon',
   Tue = 'Tue',
@@ -148,3 +141,12 @@ export enum EWeekDay {
   Sat = 'Sat',
   Sun = 'Sun',
 }
+
+/**
+ * Deduction
+ * late, leave
+ *
+ * Earning
+ * Overtime
+ * Custom Working Day
+ */

@@ -1,19 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Promotion } from 'src/promotion/promotion.schema';
 
-/**
- * NOTE:
- * price is calcualted per day
- * 1st key is num employee, 2nd is day
- */
-type SubscriptionPriceType = {
-  [key: number]: {
-    [key: number]: number;
-  };
-};
+class DayPrice {
+  @IsNotEmpty()
+  @IsNumber()
+  numDay: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  price: number;
+}
+
+class SubscriptionPrice {
+  @IsNotEmpty()
+  @IsNumber()
+  numEmployee: number;
+
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => DayPrice)
+  dayPrice: DayPrice[];
+}
 
 @Schema()
 export class Subscription extends CoreSchema {
@@ -38,7 +49,9 @@ export class Subscription extends CoreSchema {
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
-  price: SubscriptionPriceType;
+  @ValidateNested({ each: true })
+  @Type(() => SubscriptionPrice)
+  price: SubscriptionPrice[];
 
   @Prop({ type: String })
   @IsString()

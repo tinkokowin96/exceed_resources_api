@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsMongoId, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { WorkingHour } from 'src/common/schema/common.schema';
+import { Hour } from 'src/common/schema/common.schema';
 import { Organization } from './organization.schema';
 import { Position } from 'src/position/position.schema';
-import { Break } from 'src/break/break.schema';
+import { Break } from 'src/break/schema/break.schema';
 import { Department } from 'src/department/department.schema';
 import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 
@@ -24,12 +24,12 @@ export class OAssociated {
   remark?: string;
 
   @ValidateNested()
-  @Type(() => WorkingHour)
-  checkInTime?: WorkingHour;
+  @Type(() => Hour)
+  checkInTime?: Hour;
 
   @ValidateNested()
-  @Type(() => WorkingHour)
-  checkOutTime?: WorkingHour;
+  @Type(() => Hour)
+  checkOutTime?: Hour;
 
   @IsNotEmpty()
   @IsMongoId()

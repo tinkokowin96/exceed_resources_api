@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Bank, BankSchema } from 'src/bank/bank.schema';
-import { Break, BreakSchema } from 'src/break/break.schema';
+import { Break, BreakSchema } from 'src/break/schema/break.schema';
 import { DepartmentModule } from 'src/department/department.module';
 import { Department, DepartmentSchema } from 'src/department/department.schema';
 import { OConfig, OConfigSchema } from 'src/organization/schema/o_config.schema';

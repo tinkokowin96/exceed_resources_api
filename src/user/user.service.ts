@@ -4,7 +4,7 @@ import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/bank.schema';
-import { Break } from 'src/break/break.schema';
+import { Break } from 'src/break/schema/break.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { encrypt } from 'src/common/util/encrypt';
 import { EModule, EUser } from 'src/common/util/enumn';

@@ -50,8 +50,15 @@ export class SubscriptionService extends CoreService<Subscription> {
         }
         if (prices) {
           prices.forEach((each) => {
-            if (each.numEmployee in price) price[each.numEmployee][each.numDay] = each.price;
-            else price[each.numEmployee] = { [each.numDay]: each.price };
+            const empPriceInd = price.findIndex((eP) => eP.numEmployee === each.numEmployee);
+            if (empPriceInd) {
+              const dayPriceInd = price[empPriceInd].dayPrice.findIndex((dP) => dP.numDay === each.numDay);
+              if (dayPriceInd) price[empPriceInd].dayPrice[dayPriceInd].price = each.price;
+            } else
+              price.push({
+                numEmployee: each.numEmployee,
+                dayPrice: [{ numDay: each.numDay, price: each.price }],
+              });
           });
         }
         if (promotionId)

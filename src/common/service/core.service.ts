@@ -12,7 +12,6 @@ import {
 } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { Audit } from '../schema/audit.schema';
-import { CoreSchema } from '../schema/core.shema';
 import { AUDIT_MODEL } from '../util/constant';
 import { ECategory } from '../util/enumn';
 import { responseError } from '../util/response_error';
@@ -74,7 +73,7 @@ type MakeTransactionType = {
   audit?: Pick<Audit, 'name' | 'module' | 'payload' | 'triggeredServices'>;
 };
 
-export abstract class CoreService<T extends CoreSchema> {
+export abstract class CoreService<T> {
   @Inject(AUDIT_MODEL) private readonly auditModel: Model<Audit>;
   constructor(
     protected readonly connection: Connection,
@@ -82,7 +81,7 @@ export abstract class CoreService<T extends CoreSchema> {
     protected readonly categoryModel?: Model<Type<Category, T>>,
   ) {}
 
-  getOptions<K extends CoreSchema = T>({
+  getOptions<K = T>({
     options,
     filter,
     sort,
@@ -98,12 +97,12 @@ export abstract class CoreService<T extends CoreSchema> {
       opt.limit = take;
     }
     if (startDate) {
-      filter.createdAt = { $gte: startDate, $lte: endDate ?? startDate };
+      (filter as any).createdAt = { $gte: startDate, $lte: endDate ?? startDate };
     }
     return opt;
   }
 
-  async create<K extends CoreSchema = T>({ dto, session, category, custom }: CreateType<Type<K, T>>) {
+  async create<K = T>({ dto, session, category, custom }: CreateType<Type<K, T>>) {
     const model: Model<Type<K, T>> = (custom ?? this.model) as any;
     const payload = dto;
     if (category) {
@@ -128,7 +127,7 @@ export abstract class CoreService<T extends CoreSchema> {
     return await doc.save({ session });
   }
 
-  async find<K extends CoreSchema = T>({
+  async find<K = T>({
     filter,
     custom,
     options,
@@ -150,7 +149,7 @@ export abstract class CoreService<T extends CoreSchema> {
     else return null;
   }
 
-  async findOne<K extends CoreSchema = T>({
+  async findOne<K = T>({
     filter,
     custom,
     options,
@@ -167,7 +166,7 @@ export abstract class CoreService<T extends CoreSchema> {
     else return null;
   }
 
-  async findById<K extends CoreSchema = T>({ id, custom, options, projection }: FindByIdType<Type<K, T>>) {
+  async findById<K = T>({ id, custom, options, projection }: FindByIdType<Type<K, T>>) {
     const model: Model<Type<K, T>> = (custom ?? this.model) as any;
     const doc = await model.findById(id, projection, {
       lean: true,
@@ -177,7 +176,7 @@ export abstract class CoreService<T extends CoreSchema> {
     else throw new NotFoundException('Document not found with this id');
   }
 
-  async findByIdAndUpdate<K extends CoreSchema = T>({
+  async findByIdAndUpdate<K = T>({
     id,
     update,
     session,
@@ -202,7 +201,7 @@ export abstract class CoreService<T extends CoreSchema> {
     };
   }
 
-  async updateMany<K extends CoreSchema = T>({
+  async updateMany<K = T>({
     filter,
     update,
     session,

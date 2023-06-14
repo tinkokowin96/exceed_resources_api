@@ -2,7 +2,7 @@ import { PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { CategoryDto } from 'src/common/dto/category.dto';
-import { WorkingHour } from 'src/common/schema/common.schema';
+import { Hour } from 'src/common/schema/common.schema';
 import { Organization } from '../schema/organization.schema';
 
 export class CreateOrganizationDto extends PickType(Organization, ['name', 'logo', 'attachments']) {
@@ -13,11 +13,11 @@ export class CreateOrganizationDto extends PickType(Organization, ['name', 'logo
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => WorkingHour)
-  checkInTime: WorkingHour;
+  @Type(() => Hour)
+  checkInTime: Hour;
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => WorkingHour)
-  checkOutTime: WorkingHour;
+  @Type(() => Hour)
+  checkOutTime: Hour;
 }

@@ -2,7 +2,10 @@ import { PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsDateString,
   IsEnum,
+  IsLatitude,
+  IsLongitude,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -13,15 +16,14 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Category } from 'src/category/category.schema';
-import { Department } from 'src/department/department.schema';
 import { Cupon } from 'src/cupon/schema/cupon.schema';
+import { Department } from 'src/department/department.schema';
+import { Leave } from 'src/leave/schema/leave.schema';
 import { Promotion } from 'src/promotion/promotion.schema';
-import { OLeave } from 'src/leave/schema/o_leave.schema';
-import { SalaryCategory } from 'src/salary/schema/salary_category.schema';
-import { EAttachment, EExtraAllowance, EMessage, ETrigger } from '../util/enumn';
+import { EAttachment, EExtra, EMessage } from '../util/enumn';
 import { IsEmoji } from '../util/is_emoji.validator';
 
-export class WorkingHour {
+export class Hour {
   @IsNotEmpty()
   @Min(0)
   @Max(23)
@@ -127,32 +129,22 @@ export class Payment {
   promotion?: Promotion;
 }
 
-export class Trigger {
-  @IsNotEmpty()
-  @IsEnum(ETrigger)
-  type: ETrigger;
-
-  @IsNotEmpty()
-  @IsNumber()
-  amount: number;
-}
-
-export class Extra extends PickType(Trigger, ['amount']) {
+export class Extra {
   @IsNotEmpty()
   @IsBoolean()
   isPoint: boolean;
 
   @IsNotEmpty()
-  @IsEnum(EExtraAllowance)
-  type: EExtraAllowance;
+  @IsNumber()
+  amount: number;
+
+  @IsNotEmpty()
+  @IsEnum(EExtra)
+  type: EExtra;
 
   @ValidateNested()
-  @Type(() => OLeave)
-  extraLeave?: OLeave;
-
-  @ValidateNested()
-  @Type(() => SalaryCategory)
-  extraSalaryCategory?: SalaryCategory;
+  @Type(() => Leave)
+  extraLeave?: Leave;
 }
 
 export class PromotionAllowance extends PickType(Extra, ['amount', 'isPoint']) {
@@ -161,20 +153,15 @@ export class PromotionAllowance extends PickType(Extra, ['amount', 'isPoint']) {
   isPercent: boolean;
 }
 
-export class PayExtra {
+export class ExtraAllowance {
   @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => Trigger)
-  trigger: Trigger;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  reward: boolean;
+  @IsNumber()
+  extraMinute: number;
 
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => Extra)
-  extra: Extra;
+  allowance: Extra;
 }
 
 export class LeaveAllowedDepartment {
@@ -190,10 +177,20 @@ export class LeaveAllowedDepartment {
 
 export class Location {
   @IsNotEmpty()
-  @IsNumber()
+  @IsLatitude()
   lat: number;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsLongitude()
   lng: number;
+}
+
+export class Counter {
+  @IsNotEmpty()
+  @IsDateString()
+  start: Date;
+
+  @IsNotEmpty()
+  @IsDateString()
+  end: Date;
 }

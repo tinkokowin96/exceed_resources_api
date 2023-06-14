@@ -6,7 +6,7 @@ import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { CreateBreakDto } from './break.dto';
-import { Break } from './break.schema';
+import { Break } from './schema/break.schema';
 
 @Injectable()
 export class BreakService extends CoreService<Break> {

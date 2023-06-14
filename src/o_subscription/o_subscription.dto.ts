@@ -34,7 +34,7 @@ export class CreateOSubscriptionDto extends OmitType(OSubscription, [
 
 export class CalculatePriceDto extends PickType(CreateOSubscriptionDto, [
   'numDay',
-  'numEmployee',
+  'numSlot',
   'subscriptionId',
 ]) {
   @IsString()

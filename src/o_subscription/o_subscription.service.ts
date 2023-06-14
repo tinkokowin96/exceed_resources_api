@@ -43,14 +43,14 @@ export class OSubscriptionService extends CoreService<OSubscription> {
           return +arr[arr.length - 1];
         };
 
-        const { numDay, numEmployee, subscriptionId, cuponCode } = dto;
+        const { numDay, numSlot, subscriptionId, cuponCode } = dto;
         const subscription = await this.findById({
           id: subscriptionId,
           custom: this.subscriptionModel,
           options: { populate: ['activePromotion'] },
         });
 
-        const originalAmount = getMaxValue(getMaxValue(subscription.price, numEmployee), numDay) * numDay;
+        const originalAmount = getMaxValue(getMaxValue(subscription.price, numSlot), numDay) * numDay;
         const promotion = subscription.activePromotion;
         let amount = originalAmount;
         let pointsEarned = 0;
@@ -113,7 +113,7 @@ export class OSubscriptionService extends CoreService<OSubscription> {
         } = dto;
         const { subscription, originalAmount, amount, pointsEarned, promotion, cupon } =
           await this.calculateSubscriptionPrice(
-            { subscriptionId, cuponCode, numEmployee: payload.numEmployee, numDay: payload.numDay },
+            { subscriptionId, cuponCode, numSlot: payload.numSlot, numDay: payload.numDay },
             req,
             res,
             session,

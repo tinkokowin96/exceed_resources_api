@@ -26,7 +26,11 @@ export class OSubscription extends CoreSchema {
   @Prop({ type: Number, required: true })
   @IsNotEmpty()
   @IsNumber()
-  numEmployee: number;
+  numSlot: number;
+
+  @Prop({ type: Number, default: 0 })
+  @IsNumber()
+  usedSlot?: number;
 
   @Prop({ type: String, enum: ESubscriptionStatus, required: true })
   @IsNotEmpty()

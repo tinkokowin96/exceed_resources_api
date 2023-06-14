@@ -133,6 +133,17 @@ export class UserService extends CoreService<User> {
           })
         ).items;
 
+        for (const sub of subscriptions) {
+          if (sub.usedSlot === sub.numSlot)
+            throw new BadRequestException('All subscription slots have been used');
+          await this.findByIdAndUpdate({
+            id: sub.id,
+            update: { $inc: { usedSlot: 1 } },
+            session,
+            custom: this.oSubscriptionModel,
+          });
+        }
+
         const associatedOrganization: OAssociated = {
           accessOAdminApp,
           flexibleWorkingHour,

@@ -62,20 +62,6 @@ export enum EEarningTrigger {
   CustomWorkingDay = 'CustomWorkingDay',
 }
 
-export enum EServiceTrigger {
-  Find = 'Find',
-  Create = 'Create',
-  Update = 'Update',
-}
-
-// export enum EExtraAllowance {
-//   Percentage = 'Percentage',
-//   Absolute = 'Absolute',
-//   BaseSalaryPercentage = 'BaseSalaryPercentage',
-//   Leave = 'Leave',
-//   Allowance = 'Allowance',
-// }
-
 export enum ESubscriptionStatus {
   Pending = 'Pending',
   Approved = 'Approved',

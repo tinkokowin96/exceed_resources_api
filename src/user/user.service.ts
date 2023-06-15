@@ -2,6 +2,7 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
+import { omit } from 'lodash';
 import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/bank.schema';
 import { Break } from 'src/break/schema/break.schema';
@@ -9,13 +10,14 @@ import { CoreService } from 'src/common/service/core.service';
 import { encrypt } from 'src/common/util/encrypt';
 import { EModule, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { DepartmentService } from 'src/department/department.service';
 import { Department } from 'src/department/department.schema';
+import { DepartmentService } from 'src/department/department.service';
+import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
-import { PositionService } from 'src/position/position.service';
 import { Position } from 'src/position/position.schema';
+import { PositionService } from 'src/position/position.service';
 import {
   AddAssociatedOrganizationDto,
   CreateUserDto,
@@ -24,7 +26,6 @@ import {
   ToggleErAppAccessDto,
 } from './dto/user.dto';
 import { User } from './schema/user.schema';
-import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 
 @Injectable()
 export class UserService extends CoreService<User> {
@@ -76,7 +77,7 @@ export class UserService extends CoreService<User> {
             id: organizationId,
             custom: this.organizationModel,
             projection: { _id: 1, name: 1 },
-            options: { populate: { path: 'config', select: '_id' } },
+            options: { populate: ['config'] },
           });
           const users = await this.find({
             filter: {
@@ -89,10 +90,11 @@ export class UserService extends CoreService<User> {
               name: `${orgainzation.name} Owner`,
               shortName: 'Owner',
               basicSalary: 0,
+              config: omit(orgainzation.config, ['_id', 'createdAt', 'updatedAt']),
             },
             req,
             res,
-            session,
+            { session, service: 'create-user' },
           );
         } else {
           if (!positionId) throw new BadRequestException('Require position to create user');
@@ -170,13 +172,14 @@ export class UserService extends CoreService<User> {
 
         if (departmentsDto)
           for (const dep of departmentsDto) {
-            if (dep.isHead)
+            if (dep.isHead) {
               await this.departmentService.changeDepartmentHead(
                 { ...dep, userId: user._id.toString() },
                 req,
                 res,
-                session,
+                { session, service: 'create-user' },
               );
+            }
           }
 
         if (!req.user)

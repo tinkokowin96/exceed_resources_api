@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
-import { ClientSession, Connection, Model } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest, TriggeredBy } from 'src/common/util/type';
 import { User } from 'src/user/schema/user.schema';
 import { ChangeDepartmentHeadDto, CreateDepartmentDto } from './department.dto';
 import { Department } from './department.schema';
@@ -39,24 +39,23 @@ export class DepartmentService extends CoreService<Department> {
     dto: ChangeDepartmentHeadDto,
     req: AppRequest,
     res: Response,
-    trigger?: ClientSession,
+    trigger?: TriggeredBy,
   ) {
     return this.makeTransaction({
       action: async (ses) => {
-        const session = trigger ?? ses;
+        const session = trigger?.session ?? ses;
         const { departmentId, userId } = dto;
         const user = await this.findById({ id: userId, custom: this.userModel });
         return await this.findByIdAndUpdate({ id: departmentId, update: { $set: { head: user } }, session });
       },
       req,
       res,
-      audit: trigger
-        ? undefined
-        : {
-            name: 'add-user',
-            module: EModule.Department,
-            payload: dto,
-          },
+      audit: {
+        name: 'change-department-head',
+        module: EModule.Department,
+        payload: dto,
+        triggeredBy: trigger?.service,
+      },
     });
   }
 }

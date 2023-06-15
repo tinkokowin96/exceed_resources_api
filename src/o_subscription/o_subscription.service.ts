@@ -1,12 +1,12 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
-import { ClientSession, Connection, Model } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { PromotionAllowance } from 'src/common/schema/common.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule, ESubscriptionStatus, EUser } from 'src/common/util/enumn';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest, TriggeredBy } from 'src/common/util/type';
 import { CuponCode } from 'src/cupon/schema/cupon_code.schema';
 import { Promotion } from 'src/promotion/promotion.schema';
 import { Subscription } from 'src/subscription/subscription.schema';
@@ -30,11 +30,11 @@ export class OSubscriptionService extends CoreService<OSubscription> {
     dto: CalculatePriceDto,
     req: AppRequest,
     res: Response,
-    trigger?: ClientSession,
+    trigger?: TriggeredBy,
   ) {
     return this.makeTransaction({
       action: async (ses) => {
-        const session = trigger ?? ses;
+        const session = trigger?.session ?? ses;
 
         const getMaxValue = (obj, num) => {
           const arr = Object.keys(obj)
@@ -94,9 +94,12 @@ export class OSubscriptionService extends CoreService<OSubscription> {
       },
       req,
       res,
-      audit: trigger
-        ? undefined
-        : { name: 'calculate-subscription-price', payload: dto, module: EModule.Subscription },
+      audit: {
+        name: 'calculate-subscription-price',
+        payload: dto,
+        module: EModule.Subscription,
+        triggeredBy: trigger?.service,
+      },
     });
   }
 
@@ -116,7 +119,7 @@ export class OSubscriptionService extends CoreService<OSubscription> {
             { subscriptionId, cuponCode, numSlot: payload.numSlot, numDay: payload.numDay },
             req,
             res,
-            session,
+            { session, service: 'request-subscription' },
           );
         if (payAmount < amount) throw new BadRequestException(`Payment is less the require amount`);
         const paymentMethod = await this.findById({ id: categoryId, custom: this.categoryModel });

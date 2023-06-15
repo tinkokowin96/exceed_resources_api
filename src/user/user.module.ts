@@ -30,6 +30,5 @@ import { Position, PositionSchema } from 'src/position/position.schema';
   ],
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService],
 })
 export class UserModule {}

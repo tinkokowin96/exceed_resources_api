@@ -2,10 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { intersection } from 'lodash';
-import { ClientSession, Connection, Model } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest, TriggeredBy } from 'src/common/util/type';
 import { CreatePositionDto, UpdatePositionDto } from './position.dto';
 import { Position } from './position.schema';
 
@@ -18,25 +18,25 @@ export class PositionService extends CoreService<Position> {
     super(connection, model);
   }
 
-  async createPosition(dto: CreatePositionDto, req: AppRequest, res: Response, trigger?: ClientSession) {
+  async createPosition(dto: CreatePositionDto, req: AppRequest, res: Response, trigger?: TriggeredBy) {
     return this.makeTransaction({
       action: async (ses) => {
-        const session = trigger ?? ses;
+        const session = trigger?.session ?? ses;
+        const { config, ...payload } = dto;
         if (req.user) {
           const includeRestricted = intersection(req.config.restrictedRoutes, dto.allowedRoutes);
           if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
-        }
-        return await this.create({ dto, session });
+        } else if (!config) throw new BadRequestException('Config is required');
+        return await this.create({ dto: { ...payload, ...config }, session });
       },
       req,
       res: res,
-      audit: trigger
-        ? undefined
-        : {
-            name: 'create-position',
-            module: EModule.Position,
-            payload: dto,
-          },
+      audit: {
+        name: 'create-position',
+        module: EModule.Position,
+        payload: dto,
+        triggeredBy: trigger?.service,
+      },
     });
   }
 

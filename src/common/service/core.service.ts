@@ -70,7 +70,7 @@ type MakeTransactionType = {
   req: AppRequest;
   res?: Response;
   callback?: () => any;
-  audit?: Pick<Audit, 'name' | 'module' | 'payload' | 'triggeredServices'>;
+  audit?: Pick<Audit, 'name' | 'module' | 'payload' | 'triggeredBy'>;
 };
 
 export abstract class CoreService<T> {

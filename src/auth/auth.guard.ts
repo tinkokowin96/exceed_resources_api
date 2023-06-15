@@ -13,6 +13,7 @@ import { User } from 'src/user/schema/user.schema';
 import { AllowedUser } from './user.decorator';
 import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 import { Subscription } from 'src/subscription/subscription.schema';
+import { omit } from 'lodash';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -66,8 +67,9 @@ export class AuthGuard implements CanActivate {
           lean: true,
           populate: ['superAdmin'],
         });
-        req.config = config;
-      } else req.config = orgainzation.config;
+
+        req.config = omit(config, ['_id', 'createdAt', 'updatedAt']);
+      } else req.config = omit(orgainzation.config, ['_id', 'createdAt', 'updatedAt']);
       req.superAdmin = req.config.superAdmin._id.equals(req.user._id);
     }
 

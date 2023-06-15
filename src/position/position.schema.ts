@@ -1,12 +1,10 @@
+import { OmitType } from '@nestjs/mapped-types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { SchemaTypes } from 'mongoose';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { WorkingDay } from 'src/working_hour/schema/working_day.schema';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { OConfig } from 'src/organization/schema/o_config.schema';
 
 @Schema()
-export class Position extends CoreSchema {
+export class Position extends OmitType(OConfig, ['superAdmin']) {
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsString()
@@ -15,10 +13,6 @@ export class Position extends CoreSchema {
   @Prop({ type: String, required: true })
   @IsString()
   shortName: string;
-
-  @Prop({ type: Boolean, default: false })
-  @IsBoolean()
-  flexibleWorkingHour?: boolean;
 
   @Prop({ type: Number, required: true })
   @IsNotEmpty()
@@ -40,11 +34,6 @@ export class Position extends CoreSchema {
   @Prop({ type: String })
   @IsString()
   remark?: string;
-
-  @Prop({ type: SchemaTypes.Mixed, required: true })
-  @ValidateNested({ each: true })
-  @Type(() => WorkingDay)
-  workingDays?: WorkingDay[];
 
   @Prop({ type: [String], default: [] })
   @IsString({ each: true })

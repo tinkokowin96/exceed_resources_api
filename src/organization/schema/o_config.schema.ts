@@ -19,6 +19,14 @@ export class OConfig extends CoreSchema {
   @IsBoolean()
   requireCheckIn?: boolean;
 
+  @Prop({ type: Boolean, default: true })
+  @IsBoolean()
+  requireCheckOut?: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  @IsBoolean()
+  flexibleWorkingHour?: boolean;
+
   @Prop({ type: [String], default: ['organization/change-super-admin'] })
   @IsString({ each: true })
   restrictedRoutes?: string[];

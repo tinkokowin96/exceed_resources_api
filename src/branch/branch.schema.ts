@@ -12,6 +12,11 @@ export class Branch extends CoreSchema {
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsString()
+  name: string;
+
+  @Prop({ type: String, required: true })
+  @IsNotEmpty()
+  @IsString()
   address: string;
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
@@ -22,19 +27,15 @@ export class Branch extends CoreSchema {
 
   @Prop({ type: String })
   @IsString()
-  name?: string;
-
-  @Prop({ type: String })
-  @IsString()
   remark?: string;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Organization' })
   @IsNotEmpty()
-  organization?: Organization;
+  organization: Organization;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OConfig' })
   @IsNotEmpty()
-  config?: OConfig;
+  config: OConfig;
 }
 
 export const BranchSchema = SchemaFactory.createForClass(Branch);

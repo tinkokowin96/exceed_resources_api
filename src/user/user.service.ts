@@ -51,7 +51,6 @@ export class UserService extends CoreService<User> {
         const {
           bankId,
           accessOAdminApp,
-          flexibleWorkingHour,
           remark,
           checkInTime,
           checkOutTime,
@@ -98,7 +97,7 @@ export class UserService extends CoreService<User> {
           );
         } else {
           if (!positionId) throw new BadRequestException('Require position to create user');
-          orgainzation = req.user.currentOrganization.organization;
+          orgainzation = req.user.currentOrganization.branch.organization;
           position = await this.findById({ id: positionId, custom: this.positionModel });
         }
 
@@ -128,7 +127,7 @@ export class UserService extends CoreService<User> {
             filter: {
               $and: [
                 { _id: { $in: subscriptionIds } },
-                { organization: req.user.currentOrganization.organization._id },
+                { organization: req.user.currentOrganization.branch.organization._id },
               ],
             },
             custom: this.oSubscriptionModel,
@@ -148,11 +147,10 @@ export class UserService extends CoreService<User> {
 
         const associatedOrganization: OAssociated = {
           accessOAdminApp,
-          flexibleWorkingHour,
           remark,
           checkInTime,
           checkOutTime,
-          organization: orgainzation._id as any,
+          branch: orgainzation._id as any,
           position: position._id as any,
           breaks,
           departments,
@@ -291,7 +289,7 @@ export class UserService extends CoreService<User> {
           filter: {
             currentOrganization: {
               $eleMatch: {
-                orgainzation: organizationId ?? req.user.currentOrganization.organization._id,
+                orgainzation: organizationId ?? req.user.currentOrganization.branch.organization._id,
               },
             },
           },

@@ -14,6 +14,7 @@ import { AllowedUser } from './user.decorator';
 import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 import { Subscription } from 'src/subscription/subscription.schema';
 import { omit } from 'lodash';
+import { Branch } from 'src/branch/branch.schema';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -38,10 +39,12 @@ export class AuthGuard implements CanActivate {
         path: 'currentOrganization',
         populate: [
           {
-            path: 'organization',
-            model: Organization.name,
-            select: '_id config',
-            populate: [{ path: 'config', model: OConfig.name }],
+            path: 'branch',
+            model: Branch.name,
+            populate: [
+              { path: 'config', model: OConfig.name },
+              { path: 'organization', model: Organization.name },
+            ],
           },
           {
             path: 'position',
@@ -56,7 +59,7 @@ export class AuthGuard implements CanActivate {
       });
       if (type === EUser.ErApp && !user.accessErApp)
         throw new ForbiddenException("User don't have access to ER App");
-      orgainzation = user.currentOrganization.organization;
+      orgainzation = user.currentOrganization.branch.organization;
       if (!orgainzation.approved)
         throw new ForbiddenException("Organization hasn't approved, please contact support");
       req.id = id;

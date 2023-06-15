@@ -25,6 +25,7 @@ export enum EModule {
   Audit = 'Audit',
   Auth = 'Auth',
   Bank = 'Bank',
+  Branch = 'Branch',
   Category = 'Category',
   Chat = 'Chat',
   Common = 'Common',

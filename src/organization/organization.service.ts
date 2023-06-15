@@ -10,6 +10,7 @@ import { AppRequest } from 'src/common/util/type';
 import { CreateOrganizationDto } from './dto/organization.dto';
 import { OConfig } from './schema/o_config.schema';
 import { Organization } from './schema/organization.schema';
+import { BranchService } from 'src/branch/branch.service';
 
 @Injectable()
 export class OrganizationService extends CoreService<Organization> {
@@ -18,6 +19,7 @@ export class OrganizationService extends CoreService<Organization> {
     @InjectModel(Organization.name) model: Model<Organization>,
     @InjectModel(Category.name) categoryModel: Model<Category>,
     @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
+    private readonly branchService: BranchService,
   ) {
     super(connection, model, categoryModel);
   }
@@ -25,7 +27,8 @@ export class OrganizationService extends CoreService<Organization> {
   async createOrganization(dto: CreateOrganizationDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const { category, workingDays, overtimeForm, ...payload } = dto;
+        const { category, workingDays, overtimeForm, mainBranchName, address, location, remark, ...payload } =
+          dto;
 
         if (req.user) throw new BadRequestException("Can't create other organization");
         const config = await this.create({
@@ -45,7 +48,18 @@ export class OrganizationService extends CoreService<Organization> {
           category: { ...category, type: ECategory.Organization },
           session,
         });
-        return { next: organization };
+
+        await this.branchService.createBranch(
+          { name: mainBranchName ?? 'main', organization, address, location, remark },
+          req,
+          res,
+          {
+            session,
+            service: 'create-organization',
+          },
+        );
+
+        return organization;
       },
       req,
       res,

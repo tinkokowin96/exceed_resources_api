@@ -17,10 +17,6 @@ export class OConfig extends CoreSchema {
 
   @Prop({ type: Boolean, default: true })
   @IsBoolean()
-  requireCheckIn?: boolean;
-
-  @Prop({ type: Boolean, default: true })
-  @IsBoolean()
   requireCheckOut?: boolean;
 
   @Prop({ type: Boolean, default: false })

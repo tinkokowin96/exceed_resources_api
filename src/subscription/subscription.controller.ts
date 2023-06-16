@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Patch, Post, Req, Res } from '@nestjs/common';
 import { SubscriptionService } from './subscription.service';
 import { Users } from 'src/auth/user.decorator';
 import { CreateSubscriptionDto, UpdateSubscriptionDto } from 'src/user/dto/subscription.dto';
@@ -16,7 +16,7 @@ export class SubscriptionController {
   }
 
   @Users(['ErApp'])
-  @Post('update')
+  @Patch('update')
   async update(@Body() dto: UpdateSubscriptionDto, @Req() req: AppRequest, @Res() res: Response) {
     return this.service.updateSubscription(dto, req, res);
   }

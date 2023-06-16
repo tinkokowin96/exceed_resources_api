@@ -38,9 +38,9 @@ export class OSubscription extends CoreSchema {
   status: ESubscriptionStatus;
 
   //NOTE: this wil null until subscription is approved...
-  @Prop({ type: String })
+  @Prop({ type: Date })
   @IsDateString()
-  activeUntil?: string;
+  activeUntil?: Date;
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()

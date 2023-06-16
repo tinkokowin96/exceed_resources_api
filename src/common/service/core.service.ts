@@ -245,11 +245,11 @@ export abstract class CoreService<T> {
         const user = {};
         if (req.user) user['submittedUser'] = req.user;
         else user['submittedIP'] = req.ip;
-        // await this.create({
-        //   dto: { ...audit, ...user, prev: res?.prev, next: res?.next },
-        //   custom: this.auditModel,
-        //   session,
-        // });
+        await this.create({
+          dto: { ...audit, ...user, response: res } as any,
+          custom: this.auditModel as any,
+          session,
+        });
       }
 
       const responseObj: any = {};

@@ -25,10 +25,7 @@ export class Audit extends CoreSchema {
   payload?: any;
 
   @Prop({ type: SchemaTypes.Mixed })
-  prev?: any;
-
-  @Prop({ type: SchemaTypes.Mixed })
-  next?: any;
+  response?: any;
 
   @Prop({ type: String })
   @IsIP()

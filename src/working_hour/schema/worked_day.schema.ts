@@ -8,6 +8,7 @@ import { Counter, Hour } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { User } from 'src/user/schema/user.schema';
 import { UserOvertime } from 'src/user_overtime/user_overtime';
+import { LatePenalty } from './working_day.schema';
 
 class BreakWorkingHour {
   @IsNotEmpty()
@@ -27,15 +28,17 @@ export class WorkedDay extends CoreSchema {
   @Type(() => Hour)
   checkInTime: Hour;
 
-  @IsNotEmpty()
   @ValidateNested()
   @Type(() => Hour)
-  checkOutTime: Hour;
+  checkOutTime?: Hour;
 
-  @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => BreakWorkingHour)
-  breaks: BreakWorkingHour[];
+  breaks?: BreakWorkingHour[];
+
+  @ValidateNested()
+  @Type(() => LatePenalty)
+  latePenalty?: LatePenalty;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'UserBreak' })
   userBreak?: UserBreak;
@@ -45,4 +48,8 @@ export class WorkedDay extends CoreSchema {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   lateApprovedBy?: User;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  @IsNotEmpty()
+  user: User;
 }

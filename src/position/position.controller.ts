@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Patch, Post, Req, Res } from '@nestjs/common';
 import { PositionService } from './position.service';
 import { Users } from 'src/auth/user.decorator';
 
@@ -17,7 +17,7 @@ export class PositionController {
   }
 
   @Users(['Organization'])
-  @Post('update')
+  @Patch('update')
   async updatePosition(
     @Body() dto: Omit<UpdatePositionDto, 'basicSalary'>,
     @Req() req: AppRequest,
@@ -27,7 +27,7 @@ export class PositionController {
   }
 
   @Users(['Organization'])
-  @Post('update-salary')
+  @Patch('update-salary')
   async updateSalary(
     @Body() dto: Pick<UpdatePositionDto, 'basicSalary' | 'id'>,
     @Req() req: AppRequest,

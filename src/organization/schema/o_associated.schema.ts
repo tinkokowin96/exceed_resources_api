@@ -15,7 +15,7 @@ export class OAssociated {
   accessOAdminApp: boolean;
 
   @IsNumber()
-  numPoint?: number;
+  numPoint: number;
 
   @IsString()
   remark?: string;

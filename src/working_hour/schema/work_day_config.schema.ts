@@ -14,17 +14,16 @@ export class LatePenalty {
   penalty: Extra;
 }
 
-export class WorkingDay {
-  @IsNotEmpty()
-  @IsEnum(EWeekDay)
-  day: EWeekDay;
-
+export class WorkDayConfig {
   @ValidateNested({ each: true })
   @Type(() => LatePenalty)
   penalties?: LatePenalty[];
 
   @IsBoolean()
   allowRemote?: boolean;
+
+  @IsBoolean()
+  requireCheckOut?: boolean;
 
   @ValidateNested()
   @Type(() => Hour)
@@ -34,9 +33,30 @@ export class WorkingDay {
   @Type(() => Hour)
   checkOutTime?: Hour;
 
+  @ValidateNested()
+  @Type(() => Extra)
+  overtimeHourlyAllowance?: Extra;
+
+  @IsBoolean()
+  allowLateSubstitute?: boolean;
+
+  @IsBoolean()
+  allowUserBreak?: boolean;
+
   @IsBoolean()
   flexibleWorkingHour?: boolean;
 
   @IsNumber()
   numWorkingHour?: number;
+}
+
+export class WorkDay {
+  @IsNotEmpty()
+  @IsEnum(EWeekDay)
+  day: EWeekDay;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => WorkDayConfig)
+  config: WorkDayConfig;
 }

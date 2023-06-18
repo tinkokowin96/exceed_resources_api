@@ -6,6 +6,7 @@ import { Category } from 'src/category/category.schema';
 import { PromotionAllowance } from 'src/common/schema/common.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { EModule, ESubscriptionStatus, EUser } from 'src/common/util/enumn';
+import { getNestedIndex } from 'src/common/util/misc';
 import { AppRequest, TriggeredBy } from 'src/common/util/type';
 import { CuponCode } from 'src/cupon/schema/cupon_code.schema';
 import { Promotion } from 'src/promotion/promotion.schema';
@@ -36,13 +37,6 @@ export class OSubscriptionService extends CoreService<OSubscription> {
       action: async (ses) => {
         const session = trigger?.session ?? ses;
 
-        const getMaxValue = (obj, num) => {
-          const arr = Object.keys(obj)
-            .filter((each) => +each <= num)
-            .sort((a, b) => +a - +b);
-          return +arr[arr.length - 1];
-        };
-
         const { numDay, numSlot, subscriptionId, cuponCode } = dto;
         const subscription = await this.findById({
           id: subscriptionId,
@@ -50,7 +44,11 @@ export class OSubscriptionService extends CoreService<OSubscription> {
           options: { populate: ['activePromotion'] },
         });
 
-        const originalAmount = getMaxValue(getMaxValue(subscription.price, numSlot), numDay) * numDay;
+        const dayPrices =
+          subscription.price[getNestedIndex(subscription.price, 'numEmployee', numSlot)].dayPrice;
+        const originalAmount =
+          dayPrices[getNestedIndex(dayPrices, 'numDay', numDay)].price * numDay * numSlot;
+
         const promotion = subscription.activePromotion;
         let amount = originalAmount;
         let pointsEarned = 0;
@@ -142,7 +140,7 @@ export class OSubscriptionService extends CoreService<OSubscription> {
             ...payload,
             payment,
             status: ESubscriptionStatus.Pending,
-            organization: req.user.currentOrganization.organization,
+            organization: req.user.currentOrganization.branch.organization,
             subscription,
             isAddon: subscription.isAddon,
           },

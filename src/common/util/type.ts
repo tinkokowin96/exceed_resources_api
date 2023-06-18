@@ -11,7 +11,7 @@ export interface AppRequest extends Request {
   id: string;
   type: EUser;
   user: User;
-  config: Omit<ErConfig | OConfig, '_id' | 'createdAt' | 'updatedAt'>;
+  config: ErConfig | OConfig;
   superAdmin: boolean;
 }
 

@@ -19,6 +19,9 @@ export class CreateUserDto extends IntersectionType(
   @IsNumber()
   basicSalary: number;
 
+  @IsString()
+  configId: string;
+
   //NOTE: This will accept if not logged in which mean owner account
   @IsString()
   organizationId: string;

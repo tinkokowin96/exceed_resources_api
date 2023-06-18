@@ -1,15 +1,14 @@
-import { IntersectionType, OmitType } from '@nestjs/mapped-types';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { WorkingDay } from './working_day.schema';
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { User } from 'src/user/schema/user.schema';
-import { Type } from 'class-transformer';
 import { Extra, Location } from 'src/common/schema/common.schema';
+import { CoreSchema } from 'src/common/schema/core.shema';
 import { Position } from 'src/position/position.schema';
+import { User } from 'src/user/schema/user.schema';
+import { WorkDayConfig } from './work_day_config.schema';
 
-export class CustomWorkDay extends IntersectionType(CoreSchema, OmitType(WorkingDay, ['day'])) {
+export class CustomWorkDay extends CoreSchema {
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsString()
@@ -51,6 +50,11 @@ export class CustomWorkDay extends IntersectionType(CoreSchema, OmitType(Working
   @ValidateNested()
   @Type(() => Location)
   location?: Location;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => WorkDayConfig)
+  config: WorkDayConfig;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
   affectedUsers?: User[];

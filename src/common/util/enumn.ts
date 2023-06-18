@@ -121,13 +121,13 @@ export enum EField {
 }
 
 export enum EWeekDay {
+  Sun = 'Sun',
   Mon = 'Mon',
   Tue = 'Tue',
   Wed = 'Wed',
   Thurs = 'Thurs',
   Fri = 'Fri',
   Sat = 'Sat',
-  Sun = 'Sun',
 }
 
 /**

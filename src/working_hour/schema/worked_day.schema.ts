@@ -1,14 +1,14 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsMongoId, IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsDateString, IsMongoId, IsNotEmpty, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Break } from 'src/break/schema/break.schema';
 import { UserBreak } from 'src/break/schema/user_break.schema';
-import { Counter, Hour } from 'src/common/schema/common.schema';
+import { Counter } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { User } from 'src/user/schema/user.schema';
 import { UserOvertime } from 'src/user_overtime/user_overtime';
-import { LatePenalty } from './working_day.schema';
+import { LatePenalty } from './work_day_config.schema';
 
 class BreakWorkingHour {
   @IsNotEmpty()
@@ -23,14 +23,14 @@ class BreakWorkingHour {
 
 @Schema()
 export class WorkedDay extends CoreSchema {
+  @Prop({ type: Date, required: true })
   @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => Hour)
-  checkInTime: Hour;
+  @IsDateString()
+  checkInTime: Date;
 
-  @ValidateNested()
-  @Type(() => Hour)
-  checkOutTime?: Hour;
+  @Prop({ type: Date })
+  @IsDateString()
+  checkOutTime?: Date;
 
   @ValidateNested({ each: true })
   @Type(() => BreakWorkingHour)

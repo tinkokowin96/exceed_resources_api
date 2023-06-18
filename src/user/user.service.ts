@@ -2,7 +2,6 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
-import { omit } from 'lodash';
 import { Connection, Model } from 'mongoose';
 import { Bank } from 'src/bank/bank.schema';
 import { Break } from 'src/break/schema/break.schema';
@@ -59,6 +58,7 @@ export class UserService extends CoreService<User> {
           organizationId,
           subscriptionIds,
           departments: departmentsDto,
+          configId,
           ...payload
         } = dto;
         let bank: Bank, orgainzation: Organization, position: Position;
@@ -89,7 +89,7 @@ export class UserService extends CoreService<User> {
               name: `${orgainzation.name} Owner`,
               shortName: 'Owner',
               basicSalary: 0,
-              config: omit(orgainzation.config, ['_id', 'createdAt', 'updatedAt']),
+              configId,
             },
             req,
             res,
@@ -147,6 +147,7 @@ export class UserService extends CoreService<User> {
 
         const associatedOrganization: OAssociated = {
           accessOAdminApp,
+          numPoint: 0,
           remark,
           checkInTime,
           checkOutTime,
@@ -184,7 +185,7 @@ export class UserService extends CoreService<User> {
           await this.findByIdAndUpdate({
             id: orgainzation.config._id,
             update: { $set: { superAdmin: user } },
-            custom: this.oConfigModel,
+            custom: this.organizationModel,
             session,
           });
         return user;

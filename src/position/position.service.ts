@@ -8,12 +8,14 @@ import { EModule } from 'src/common/util/enumn';
 import { AppRequest, TriggeredBy } from 'src/common/util/type';
 import { CreatePositionDto, UpdatePositionDto } from './position.dto';
 import { Position } from './position.schema';
+import { OConfig } from 'src/organization/schema/o_config.schema';
 
 @Injectable()
 export class PositionService extends CoreService<Position> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(Position.name) model: Model<Position>,
+    @InjectModel(OConfig.name) private readonly configModel: Model<OConfig>,
   ) {
     super(connection, model);
   }
@@ -22,12 +24,16 @@ export class PositionService extends CoreService<Position> {
     return this.makeTransaction({
       action: async (ses) => {
         const session = trigger?.session ?? ses;
-        const { config, ...payload } = dto;
+        const { configId, ...payload } = dto;
+        let config: OConfig;
         if (req.user) {
+          config = req.config as OConfig;
           const includeRestricted = intersection(req.config.restrictedRoutes, dto.allowedRoutes);
           if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
-        } else if (!config) throw new BadRequestException('Config is required');
-        return await this.create({ dto: { ...payload, ...config }, session });
+        } else if (!configId) throw new BadRequestException('Config is required');
+        config = await this.findById({ id: configId, custom: this.configModel });
+
+        return await this.create({ dto: { ...payload, config }, session });
       },
       req,
       res: res,

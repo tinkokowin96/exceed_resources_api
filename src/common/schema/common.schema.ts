@@ -145,7 +145,7 @@ export class Extra {
 
   @ValidateNested()
   @Type(() => Leave)
-  extraLeave?: Leave;
+  leave?: Leave;
 }
 
 export class PromotionAllowance extends PickType(Extra, ['amount', 'isPoint']) {

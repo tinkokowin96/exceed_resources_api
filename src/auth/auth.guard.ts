@@ -2,19 +2,18 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@
 import { Reflector } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Branch } from 'src/branch/branch.schema';
 import { decrypt } from 'src/common/util/encrypt';
 import { EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { ErConfig } from 'src/er_config/schema/er_config.schema';
+import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Position } from 'src/position/position.schema';
+import { Subscription } from 'src/subscription/subscription.schema';
 import { User } from 'src/user/schema/user.schema';
 import { AllowedUser } from './user.decorator';
-import { OSubscription } from 'src/o_subscription/o_subscription.schema';
-import { Subscription } from 'src/subscription/subscription.schema';
-import { omit } from 'lodash';
-import { Branch } from 'src/branch/branch.schema';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -71,9 +70,9 @@ export class AuthGuard implements CanActivate {
           populate: ['superAdmin'],
         });
 
-        req.config = omit(config, ['_id', 'createdAt', 'updatedAt']);
-      } else req.config = omit(orgainzation.config, ['_id', 'createdAt', 'updatedAt']);
-      req.superAdmin = req.config.superAdmin._id.equals(req.user._id);
+        req.config = config;
+      } else req.config = user.currentOrganization.branch.config;
+      req.superAdmin = orgainzation.superAdmin._id.equals(req.user._id);
     }
 
     if (allowedUsers) {

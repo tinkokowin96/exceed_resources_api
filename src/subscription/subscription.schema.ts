@@ -15,7 +15,7 @@ class DayPrice {
   price: number;
 }
 
-class SubscriptionPrice {
+export class SubscriptionPrice {
   @IsNotEmpty()
   @IsNumber()
   numEmployee: number;

@@ -7,6 +7,7 @@ import { Attachment } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Department } from '../../department/department.schema';
 import { OConfig } from './o_config.schema';
+import { User } from 'src/user/schema/user.schema';
 
 @Schema()
 export class Organization extends CoreSchema {
@@ -34,6 +35,9 @@ export class Organization extends CoreSchema {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
   type?: Category;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  superAdmin?: User;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OConfig' })
   @IsNotEmpty()

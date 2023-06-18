@@ -1,10 +1,11 @@
-import { OmitType } from '@nestjs/mapped-types';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { SchemaTypes } from 'mongoose';
+import { CoreSchema } from 'src/common/schema/core.shema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 
 @Schema()
-export class Position extends OmitType(OConfig, ['superAdmin']) {
+export class Position extends CoreSchema {
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsString()
@@ -38,6 +39,9 @@ export class Position extends OmitType(OConfig, ['superAdmin']) {
   @Prop({ type: [String], default: [] })
   @IsString({ each: true })
   allowedRoutes?: string[];
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'OConfig' })
+  config: OConfig;
 }
 
 export const PositionSchema = SchemaFactory.createForClass(Position);

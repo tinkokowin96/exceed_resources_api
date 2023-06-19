@@ -37,7 +37,7 @@ type CreateType<T> = Pick<QueryType<T>, 'custom'> & {
 
 type GetOptionsType<T> = Pick<
   FindType<T>,
-  'filter' | 'options' | 'take' | 'page' | 'sort' | 'startDate' | 'endDate'
+  'filter' | 'options' | 'take' | 'page' | 'sort' | 'startDate' | 'endDate' | 'desc'
 >;
 
 type FindType<T> = QueryType<T> & {
@@ -45,6 +45,7 @@ type FindType<T> = QueryType<T> & {
   take?: number;
   page?: number;
   sort?: string;
+  desc?: boolean;
   startDate?: string;
   endDate?: string;
 };
@@ -86,12 +87,13 @@ export abstract class CoreService<T> {
     filter,
     sort,
     take,
-    page = 1,
     startDate,
     endDate,
+    page = 1,
+    desc = false,
   }: GetOptionsType<Type<K, T>>) {
     const opt = { lean: true, ...options };
-    if (sort) opt.sort = sort;
+    if (sort) opt.sort = { sort: desc ? -1 : 1 };
     if (take) {
       opt.skip = take * page;
       opt.limit = take;
@@ -124,8 +126,7 @@ export abstract class CoreService<T> {
       ...payload,
       _id: new Types.ObjectId(),
     });
-    await doc.save({ session });
-    return doc;
+    return await doc.save({ session });
   }
 
   async find<K = T>({
@@ -218,12 +219,12 @@ export abstract class CoreService<T> {
     });
     if (!prev || !prev.length) throw new NotFoundException('Documents not found with these ids');
 
-    const next = await model.updateMany(
-      filter,
-      { ...update, updatedAt: new Date() },
-      { ...options, session, new: true },
-    );
+    await model.updateMany(filter, { ...update, updatedAt: new Date() }, { ...options, session, new: true });
 
+    const next = await model.find(filter, null, {
+      lean: true,
+      opt,
+    });
     const data = {
       prev,
       next,

@@ -7,6 +7,7 @@ import { CoreSchema } from 'src/common/schema/core.shema';
 import { Position } from 'src/position/position.schema';
 import { User } from 'src/user/schema/user.schema';
 import { WorkDayConfig } from './work_day_config.schema';
+import { Break } from 'src/break/schema/break.schema';
 
 export class CustomWorkDay extends CoreSchema {
   @Prop({ type: String, required: true })
@@ -65,6 +66,9 @@ export class CustomWorkDay extends CoreSchema {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Position' }] })
   affectedPositions?: Position[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Break' }] })
+  breaks?: Break[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   @IsNotEmpty()

@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
+import { Break } from 'src/break/schema/break.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 
@@ -42,6 +43,9 @@ export class Position extends CoreSchema {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'OConfig' })
   config: OConfig;
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Break' }] })
+  breaks?: Break[];
 }
 
 export const PositionSchema = SchemaFactory.createForClass(Position);

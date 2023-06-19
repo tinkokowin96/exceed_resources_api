@@ -9,10 +9,9 @@ import { CategoryModule } from './category/category.module';
 import { ChatModule } from './chat/chat.module';
 import { CommonModule } from './common/common.module';
 import { CuponModule } from './cupon/cupon.module';
-import { DeductionModule } from './deduction/deduction.module';
 import { DepartmentModule } from './department/department.module';
-import { EarningModule } from './earning/earning.module';
 import { ErConfigModule } from './er_config/er_config.module';
+import { ExtraSalaryModule } from './extra_salary/extra_salary.module';
 import { LeaveModule } from './leave/leave.module';
 import { OSubscriptionModule } from './o_subscription/o_subscription.module';
 import { OrganizationModule } from './organization/organization.module';
@@ -54,8 +53,7 @@ import { WorkingHourModule } from './working_hour/working_hour.module';
     OSubscriptionModule,
     BranchModule,
     WorkingHourModule,
-    EarningModule,
-    DeductionModule,
+    ExtraSalaryModule,
     BreakModule,
     UserOvertimeModule,
   ],

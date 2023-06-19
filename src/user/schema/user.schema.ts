@@ -6,7 +6,6 @@ import {
   IsDateString,
   IsEmail,
   IsNotEmpty,
-  IsNumber,
   IsPhoneNumber,
   IsString,
   ValidateNested,
@@ -75,10 +74,6 @@ export class User extends CoreSchema {
   @Prop({ type: Boolean, default: false })
   @IsBoolean()
   accessErApp: boolean;
-
-  @Prop({ type: Number })
-  @IsNumber()
-  basicSalary: number;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'UserStatus' })
   status?: UserStatus;

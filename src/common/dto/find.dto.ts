@@ -10,6 +10,9 @@ export class FindDto {
   @IsString()
   sort: string;
 
+  @IsString()
+  desc: boolean;
+
   @IsDateString()
   startDate: string;
 

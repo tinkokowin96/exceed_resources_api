@@ -84,6 +84,13 @@ export enum ERequestStatus {
   Declined = 'Declined',
 }
 
+export enum EExtraSalaryStatus {
+  Penalized = 'Penalized',
+  Approved = 'Approved',
+  Pending = 'Pending',
+  Declined = 'Declined',
+}
+
 export enum ECategory {
   Status = 'Status',
   Priority = 'Priority',
@@ -128,6 +135,13 @@ export enum EWeekDay {
   Thurs = 'Thurs',
   Fri = 'Fri',
   Sat = 'Sat',
+}
+
+export enum EExtraSalary {
+  Late = 'Late',
+  Leave = 'Leave',
+  Overtime = 'Overtime',
+  CustomWorkDay = 'CustomWorkDay',
 }
 
 /**

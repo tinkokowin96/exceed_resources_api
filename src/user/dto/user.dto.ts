@@ -8,7 +8,7 @@ import { AddUserToDepartmentDto } from 'src/department/department.dto';
 
 export class CreateUserDto extends IntersectionType(
   PickType(User, ['name', 'image', 'userName', 'email', 'password', 'phone', 'joiningDate', 'accessErApp']),
-  OmitType(OAssociated, ['position', 'breaks', 'departments', 'branch']),
+  OmitType(OAssociated, ['position', 'departments', 'branch']),
 ) {
   @IsString()
   bankId: string;
@@ -25,9 +25,6 @@ export class CreateUserDto extends IntersectionType(
   //NOTE: This will accept if not logged in which mean owner account
   @IsString()
   organizationId: string;
-
-  @IsString({ each: true })
-  breakIds: string[];
 
   @IsString({ each: true })
   subscriptionIds: string[];

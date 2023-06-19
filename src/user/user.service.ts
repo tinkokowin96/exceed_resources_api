@@ -54,7 +54,6 @@ export class UserService extends CoreService<User> {
           checkInTime,
           checkOutTime,
           positionId,
-          breakIds,
           organizationId,
           subscriptionIds,
           departments: departmentsDto,
@@ -101,14 +100,6 @@ export class UserService extends CoreService<User> {
           position = await this.findById({ id: positionId, custom: this.positionModel });
         }
 
-        const breaks = (
-          await this.find({
-            filter: { $or: [{ _id: { $in: breakIds } }, { orgainzation: orgainzation._id }] },
-            custom: this.breakModel,
-            projection: { _id: 1 },
-          })
-        ).items.reduce((acc, cur) => [...acc, cur._id], []);
-
         const departments = departmentsDto
           ? (
               await this.find({
@@ -134,40 +125,38 @@ export class UserService extends CoreService<User> {
           })
         ).items;
 
-        for (const sub of subscriptions) {
-          if (sub.usedSlot === sub.numSlot)
-            throw new BadRequestException('All subscription slots have been used');
-          await this.findByIdAndUpdate({
-            id: sub.id,
-            update: { $inc: { usedSlot: 1 } },
-            session,
-            custom: this.oSubscriptionModel,
-          });
-        }
-
         const associatedOrganization: OAssociated = {
           accessOAdminApp,
+          basicSalary: payload.basicSalary ?? position.basicSalary,
           numPoint: 0,
           remark,
           checkInTime,
           checkOutTime,
           branch: orgainzation._id as any,
           position: position._id as any,
-          breaks,
           departments,
-          subscriptions,
         };
 
         const user = await this.create({
           dto: {
             ...payload,
-            basicSalary: payload.basicSalary ?? position.basicSalary,
             bank,
             currentOrganization: associatedOrganization,
             associatedOrganizations: [associatedOrganization],
           },
           session,
         });
+
+        for (const sub of subscriptions) {
+          if (sub.usedSlot === sub.numSlot)
+            throw new BadRequestException('All subscription slots have been used');
+          await this.findByIdAndUpdate({
+            id: sub.id,
+            update: { $inc: { usedSlot: 1 }, $push: { users: user } },
+            session,
+            custom: this.oSubscriptionModel,
+          });
+        }
 
         if (departmentsDto)
           for (const dep of departmentsDto) {

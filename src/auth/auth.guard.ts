@@ -11,7 +11,6 @@ import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 import { Position } from 'src/position/position.schema';
-import { Subscription } from 'src/subscription/subscription.schema';
 import { User } from 'src/user/schema/user.schema';
 import { AllowedUser } from './user.decorator';
 
@@ -49,11 +48,6 @@ export class AuthGuard implements CanActivate {
             path: 'position',
             model: Position.name,
           },
-          {
-            path: 'subscriptions',
-            model: OSubscription.name,
-            populate: [{ path: 'subscription', model: Subscription.name }],
-          },
         ],
       });
       if (type === EUser.ErApp && !user.accessErApp)
@@ -90,12 +84,19 @@ export class AuthGuard implements CanActivate {
       if (type === EUser.Organization && !allowOrganization) return false;
       if (!allowedInActive && !orgainzation) return false;
 
-      let subscription: OSubscription;
-      if (addonUser)
-        subscription = user.currentOrganization.subscriptions.find(
-          (each) => each.isAddon && each.subscription.allowedRoutes.includes(path),
-        );
-      else subscription = user.currentOrganization.subscriptions.find((each) => !each.isAddon);
+      const subscription = await this.subscriptionModel.findOne(
+        {
+          users: { $eleMatch: user._id },
+          isAddon: addonUser,
+          'subscription.allowedRouter': addonUser
+            ? {
+                $eleMatch: { path },
+              }
+            : undefined,
+        },
+        null,
+        { populate: 'subscription' },
+      );
 
       if (subscription) {
         if (new Date(subscription.activeUntil).getTime() < Date.now()) {

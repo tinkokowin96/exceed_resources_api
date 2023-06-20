@@ -4,7 +4,7 @@ import { ArrayNotEmpty, IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNeste
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
-import { Leave } from 'src/leave/schema/leave.schema';
+import { LeaveAllowed } from 'src/leave/schema/leave.schema';
 import { WorkDay } from 'src/working_hour/schema/work_day_config.schema';
 
 @Schema()
@@ -28,11 +28,14 @@ export class OConfig extends CoreSchema {
   @Type(() => WorkDay)
   workDays: WorkDay[];
 
+  @Prop({ type: SchemaTypes.Mixed })
+  @ValidateNested({ each: true })
+  @Type(() => LeaveAllowed)
+  leaves?: LeaveAllowed[];
+
+  @Prop({})
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Field' }] })
   overtimeForm: Field[];
-
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Leave' })
-  leave?: Leave;
 }
 
 export const OConfigSchema = SchemaFactory.createForClass(OConfig);

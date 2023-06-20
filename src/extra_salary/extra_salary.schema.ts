@@ -2,7 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Extra } from 'src/common/schema/common.schema';
+import { Category } from 'src/category/category.schema';
+import { Compensation } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { EExtraSalary, EExtraSalaryStatus } from 'src/common/util/enumn';
 import { User } from 'src/user/schema/user.schema';
@@ -25,11 +26,15 @@ export class ExtraSalary extends CoreSchema {
   @Prop({ type: SchemaTypes.Mixed, required: true })
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => Extra)
-  extra: Extra;
+  @Type(() => Compensation)
+  extra: Compensation;
 
   @Prop({ type: SchemaTypes.Mixed })
   payload: any;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
+  @IsNotEmpty()
+  category: Category;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   @IsNotEmpty()

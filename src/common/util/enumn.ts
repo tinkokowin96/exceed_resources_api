@@ -53,7 +53,7 @@ export enum ETrigger {
   Count = 'Count',
 }
 
-export enum EExtra {
+export enum ECompensation {
   Percentage = 'Percentage',
   Absolute = 'Absolute',
   BaseSalaryPercentage = 'BaseSalaryPercentage',

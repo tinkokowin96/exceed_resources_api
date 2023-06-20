@@ -2,13 +2,13 @@ import { Prop, Schema } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Counter, ExtraAllowance } from 'src/common/schema/common.schema';
+import { Counter, TimeCompensation } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { ERequestStatus } from 'src/common/util/enumn';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()
-export class UserBreak extends CoreSchema {
+export class CustomBreak extends CoreSchema {
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsString()
@@ -37,11 +37,11 @@ export class UserBreak extends CoreSchema {
 
   @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested()
-  @Type(() => ExtraAllowance)
-  penalty: ExtraAllowance;
+  @Type(() => TimeCompensation)
+  penalty: TimeCompensation;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-  approvedBy: User;
+  adjudicatedBy: User;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   penalizedBy: User;

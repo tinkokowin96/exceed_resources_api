@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Bank, BankSchema } from 'src/bank/bank.schema';
-import { Break, BreakSchema } from 'src/break/schema/break.schema';
 import { DepartmentModule } from 'src/department/department.module';
 import { Department, DepartmentSchema } from 'src/department/department.schema';
+import { Leave, LeaveSchema } from 'src/leave/schema/leave.schema';
+import { OSubscription, OSubscriptionSchema } from 'src/o_subscription/o_subscription.schema';
 import { OConfig, OConfigSchema } from 'src/organization/schema/o_config.schema';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { PositionModule } from 'src/position/position.module';
+import { Position, PositionSchema } from 'src/position/position.schema';
 import { User, UserSchema } from './schema/user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { OSubscription, OSubscriptionSchema } from 'src/o_subscription/o_subscription.schema';
-import { Position, PositionSchema } from 'src/position/position.schema';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { Position, PositionSchema } from 'src/position/position.schema';
       { name: Organization.name, schema: OrganizationSchema },
       { name: OConfig.name, schema: OConfigSchema },
       { name: Bank.name, schema: BankSchema },
-      { name: Break.name, schema: BreakSchema },
+      { name: Leave.name, schema: LeaveSchema },
       { name: Department.name, schema: DepartmentSchema },
       { name: OSubscription.name, schema: OSubscriptionSchema },
       { name: Position.name, schema: PositionSchema },

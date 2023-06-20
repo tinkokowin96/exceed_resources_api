@@ -1,23 +1,12 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
-import { Extra, Hour } from 'src/common/schema/common.schema';
+import { Compensation, Hour, TimeCompensation } from 'src/common/schema/common.schema';
 import { EWeekDay } from 'src/common/util/enumn';
-
-export class LatePenalty {
-  @IsNotEmpty()
-  @IsNumber()
-  numMinute: number;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => Extra)
-  penalty: Extra;
-}
 
 export class WorkDayConfig {
   @ValidateNested({ each: true })
-  @Type(() => LatePenalty)
-  penalties?: LatePenalty[];
+  @Type(() => TimeCompensation)
+  penalties?: TimeCompensation[];
 
   @IsBoolean()
   allowRemote?: boolean;
@@ -34,14 +23,14 @@ export class WorkDayConfig {
   checkOutTime?: Hour;
 
   @ValidateNested()
-  @Type(() => Extra)
-  overtimeHourlyAllowance?: Extra;
+  @Type(() => Compensation)
+  overtimeHourlyAllowance?: Compensation;
 
   @IsBoolean()
   allowLateSubstitute?: boolean;
 
   @IsBoolean()
-  allowUserBreak?: boolean;
+  allowCustomBreak?: boolean;
 
   @IsBoolean()
   flexibleWorkingHour?: boolean;

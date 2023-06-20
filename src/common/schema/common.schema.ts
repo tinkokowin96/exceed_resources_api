@@ -18,10 +18,9 @@ import {
 } from 'class-validator';
 import { Category } from 'src/category/category.schema';
 import { Cupon } from 'src/cupon/schema/cupon.schema';
-import { Department } from 'src/department/department.schema';
 import { Leave } from 'src/leave/schema/leave.schema';
 import { Promotion } from 'src/promotion/promotion.schema';
-import { EAttachment, EExtra, EMessage } from '../util/enumn';
+import { EAttachment, ECompensation, EMessage } from '../util/enumn';
 import { IsEmoji } from '../util/is_emoji.validator';
 
 export class Hour {
@@ -130,7 +129,7 @@ export class Payment {
   promotion?: Promotion;
 }
 
-export class Extra {
+export class Compensation {
   @IsNotEmpty()
   @IsBoolean()
   isPoint: boolean;
@@ -140,40 +139,29 @@ export class Extra {
   amount: number;
 
   @IsNotEmpty()
-  @IsEnum(EExtra)
-  type: EExtra;
+  @IsEnum(ECompensation)
+  type: ECompensation;
 
   @ValidateNested()
   @Type(() => Leave)
   leave?: Leave;
 }
 
-export class PromotionAllowance extends PickType(Extra, ['amount', 'isPoint']) {
+export class PromotionAllowance extends PickType(Compensation, ['amount', 'isPoint']) {
   @IsNotEmpty()
   @IsBoolean()
   isPercent: boolean;
 }
 
-export class ExtraAllowance {
+export class TimeCompensation {
   @IsNotEmpty()
   @IsNumber()
   extraMinute: number;
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => Extra)
-  allowance: Extra;
-}
-
-export class LeaveAllowedDepartment {
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => Department)
-  department: Department;
-
-  @IsNotEmpty()
-  @IsNumber()
-  num_allowed: number;
+  @Type(() => Compensation)
+  allowance: Compensation;
 }
 
 export class Location {

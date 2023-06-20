@@ -5,6 +5,7 @@ import { FindDto } from 'src/common/dto/find.dto';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { User } from '../schema/user.schema';
 import { AddUserToDepartmentDto } from 'src/department/department.dto';
+import { LeaveAllowedDto } from 'src/leave/dto/leave.dto';
 
 export class CreateUserDto extends IntersectionType(
   PickType(User, ['name', 'image', 'userName', 'email', 'password', 'phone', 'joiningDate', 'accessErApp']),
@@ -32,6 +33,10 @@ export class CreateUserDto extends IntersectionType(
   @ValidateNested({ each: true })
   @Type(() => OmitType(AddUserToDepartmentDto, ['userId']))
   departments: Omit<AddUserToDepartmentDto, 'userId'>[];
+
+  @ValidateNested({ each: true })
+  @Type(() => LeaveAllowedDto)
+  leaveAllowed: LeaveAllowedDto[];
 }
 
 export class LoginUserDto extends PartialType(PickType(User, ['userName', 'email'])) {

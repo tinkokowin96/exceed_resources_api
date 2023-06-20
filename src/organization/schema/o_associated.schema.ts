@@ -3,6 +3,7 @@ import { IsBoolean, IsMongoId, IsNotEmpty, IsNumber, IsString, ValidateNested } 
 import { Branch } from 'src/branch/branch.schema';
 import { Hour } from 'src/common/schema/common.schema';
 import { Department } from 'src/department/department.schema';
+import { LeaveAllowed } from 'src/leave/schema/leave.schema';
 import { Position } from 'src/position/position.schema';
 
 //NOTE: flexibleworkinghour, checkin, checkout and break will null for non custom(use value from config)
@@ -40,4 +41,8 @@ export class OAssociated {
 
   @IsMongoId({ each: true })
   departments: Department[];
+
+  @ValidateNested({ each: true })
+  @Type(() => LeaveAllowed)
+  leaves?: LeaveAllowed[];
 }

@@ -2,15 +2,15 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
-import { Connection, Model } from 'mongoose';
+import { Connection, Document, Model, Types } from 'mongoose';
 import { Bank } from 'src/bank/bank.schema';
-import { Break } from 'src/break/schema/break.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { encrypt } from 'src/common/util/encrypt';
 import { EModule, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { Department } from 'src/department/department.schema';
 import { DepartmentService } from 'src/department/department.service';
+import { Leave } from 'src/leave/schema/leave.schema';
 import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
@@ -34,7 +34,7 @@ export class UserService extends CoreService<User> {
     @InjectModel(Organization.name) private readonly organizationModel: Model<Organization>,
     @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
-    @InjectModel(Break.name) private readonly breakModel: Model<Break>,
+    @InjectModel(Leave.name) private readonly leaveModel: Model<Leave>,
     @InjectModel(Department.name) private readonly departmentModel: Model<Department>,
     @InjectModel(OSubscription.name) private readonly oSubscriptionModel: Model<OSubscription>,
     @InjectModel(Position.name) private readonly positionModel: Model<Position>,
@@ -57,10 +57,17 @@ export class UserService extends CoreService<User> {
           organizationId,
           subscriptionIds,
           departments: departmentsDto,
+          leaveAllowed,
           configId,
           ...payload
         } = dto;
-        let bank: Bank, orgainzation: Organization, position: Position;
+        let bank: Bank,
+          orgainzation: Organization,
+          position: Document<unknown, any, Position> &
+            Position &
+            Required<{
+              _id: Types.ObjectId;
+            }>;
 
         if (bankId)
           bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
@@ -100,6 +107,24 @@ export class UserService extends CoreService<User> {
           position = await this.findById({ id: positionId, custom: this.positionModel });
         }
 
+        position = await position.populate('config');
+
+        let leaves = position.config.leaves;
+
+        if (leaveAllowed) {
+          const arr = [];
+          const leaveArr = await this.find({
+            filter: { _id: { $in: leaveAllowed.map((each) => each.leaveId) } },
+            custom: this.leaveModel,
+            options: { projection: { _id: 1 } },
+          });
+          leaveArr.items.forEach((each) => {
+            const leave = leaveAllowed.find((lev) => each.id === lev.leaveId);
+            if (leave) arr.push({ numAllowed: leave.numAllowed, leave: each._id });
+          });
+          leaves = arr;
+        }
+
         const departments = departmentsDto
           ? (
               await this.find({
@@ -135,6 +160,7 @@ export class UserService extends CoreService<User> {
           branch: orgainzation._id as any,
           position: position._id as any,
           departments,
+          leaves,
         };
 
         const user = await this.create({

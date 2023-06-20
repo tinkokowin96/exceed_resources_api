@@ -12,6 +12,11 @@ export class ScheduledJobService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
+  doStatistics() {
+    this.approveExtraSalary();
+    this.yearlyStatistics();
+  }
+
   async approveExtraSalary() {
     const filter = { $and: [{ createdAt: new Date(), status: EExtraSalaryStatus.Pending }] };
     const extras = await this.extraSalaryModel.find(filter, null, {
@@ -30,5 +35,9 @@ export class ScheduledJobService {
     });
     for (const { extra } of extras) {
     }
+  }
+
+  async yearlyStatistics() {
+    return;
   }
 }

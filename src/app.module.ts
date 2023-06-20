@@ -23,8 +23,10 @@ import { SalaryModule } from './salary/salary.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { TeamModule } from './team/team.module';
 import { UserModule } from './user/user.module';
-import { UserOvertimeModule } from './user_overtime/user_overtime.module';
+import { OvertimeModule } from './overtime/overtime.module';
 import { WorkingHourModule } from './working_hour/working_hour.module';
+import { NotificationModule } from './notification/notification.module';
+import { MasterDataModule } from './master_data/master_data.module';
 
 /**
  * TODO: calculate statistic tasks at night (penalize if late not approved)
@@ -55,7 +57,9 @@ import { WorkingHourModule } from './working_hour/working_hour.module';
     WorkingHourModule,
     ExtraSalaryModule,
     BreakModule,
-    UserOvertimeModule,
+    OvertimeModule,
+    NotificationModule,
+    MasterDataModule,
   ],
   controllers: [AppController],
   providers: [AppService],

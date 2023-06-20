@@ -2,7 +2,7 @@ import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Extra, Location } from 'src/common/schema/common.schema';
+import { Compensation, Location } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Position } from 'src/position/position.schema';
 import { User } from 'src/user/schema/user.schema';
@@ -44,8 +44,8 @@ export class CustomWorkDay extends CoreSchema {
 
   @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested()
-  @Type(() => Extra)
-  allowance?: Extra;
+  @Type(() => Compensation)
+  allowance?: Compensation;
 
   @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested()

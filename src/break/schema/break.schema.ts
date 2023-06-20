@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Branch } from 'src/branch/branch.schema';
-import { ExtraAllowance } from 'src/common/schema/common.schema';
+import { TimeCompensation } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 
 export class Break extends CoreSchema {
@@ -35,8 +35,8 @@ export class Break extends CoreSchema {
 
   @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested({ each: true })
-  @Type(() => ExtraAllowance)
-  penalties: ExtraAllowance[];
+  @Type(() => TimeCompensation)
+  penalties: TimeCompensation[];
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Branch', required: true })
   @IsNotEmpty()

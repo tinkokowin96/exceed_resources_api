@@ -27,11 +27,19 @@ export class WorkedDayController {
 
   @Users(['Organization'])
   @Patch('start-user-break')
-  async startUserBreak(@Body('location') location: Location, @Req() req: AppRequest, @Res() res: Response) {}
+  async startCustomBreak(
+    @Body('location') location: Location,
+    @Req() req: AppRequest,
+    @Res() res: Response,
+  ) {}
 
   @Users(['Organization'])
   @Patch('finish-user-break')
-  async finishUserBreak(@Body('location') location: Location, @Req() req: AppRequest, @Res() res: Response) {}
+  async finishCustomBreak(
+    @Body('location') location: Location,
+    @Req() req: AppRequest,
+    @Res() res: Response,
+  ) {}
 
   @Users(['Organization'])
   @Patch('late-approve')

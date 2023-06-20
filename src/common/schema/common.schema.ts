@@ -13,15 +13,14 @@ import {
   Max,
   MaxLength,
   Min,
-  Validate,
   ValidateNested,
 } from 'class-validator';
 import { Category } from 'src/category/category.schema';
 import { Cupon } from 'src/cupon/schema/cupon.schema';
 import { Leave } from 'src/leave/schema/leave.schema';
 import { Promotion } from 'src/promotion/promotion.schema';
+import { IsEmoji } from '../custom_validator/is_emoji.validator';
 import { EAttachment, ECompensation, EMessage } from '../util/enumn';
-import { IsEmoji } from '../util/is_emoji.validator';
 
 export class Hour {
   @IsNotEmpty()
@@ -65,7 +64,7 @@ export class Emoji {
   @IsNotEmpty()
   @IsString()
   @MaxLength(64)
-  @Validate(IsEmoji)
+  @IsEmoji()
   emoji: string;
 
   @IsNotEmpty()

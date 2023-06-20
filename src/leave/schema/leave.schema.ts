@@ -5,6 +5,8 @@ import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
+import { AccumulatedLeave } from './accumulated_leave.schema';
+import { ForfeitedLeave } from './forfeited_leave.schema';
 
 export class NumAllowedPerTenure {
   @IsNotEmpty()
@@ -20,6 +22,20 @@ export class LeaveAllowed {
   @ValidateNested({ each: true })
   @Type(() => NumAllowedPerTenure)
   numAllowed: NumAllowedPerTenure[];
+
+  @IsNotEmpty()
+  @IsMongoId()
+  leave: Leave;
+}
+
+export class AllocatedLeave {
+  @IsNotEmpty()
+  @IsMongoId({ each: true })
+  accumulatedLeaves: AccumulatedLeave[];
+
+  @IsNotEmpty()
+  @IsMongoId({ each: true })
+  forfeitedLeaves: ForfeitedLeave[];
 
   @IsNotEmpty()
   @IsMongoId()

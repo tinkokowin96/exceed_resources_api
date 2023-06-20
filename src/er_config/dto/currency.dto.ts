@@ -1,11 +1,12 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { Currency } from '../schema/currency.schema';
+import { PartialType } from '@nestjs/mapped-types';
 import { Prop } from '@nestjs/mongoose';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { AppOmit } from 'src/common/dto/core.dto';
+import { Currency } from '../schema/currency.schema';
 
 export class CreateCurrencyDto extends Currency {}
 
-export class EditCurrencyDto extends PartialType(OmitType(Currency, ['_id', 'updatedAt'])) {
+export class EditCurrencyDto extends PartialType(AppOmit(Currency)) {
   @Prop({ type: String, required: true })
   @IsNotEmpty()
   @IsString()

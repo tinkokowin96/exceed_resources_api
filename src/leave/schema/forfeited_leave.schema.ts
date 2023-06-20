@@ -15,7 +15,7 @@ class LeavePenalty extends PickType(Compensation, ['isPoint', 'amount']) {
 }
 
 @Schema()
-export class UtilizedLeave extends CoreSchema {
+export class ForfeitedLeave extends CoreSchema {
   @Prop({ type: SchemaTypes.Number, required: true })
   @IsNotEmpty()
   @IsNumber()
@@ -49,4 +49,4 @@ export class UtilizedLeave extends CoreSchema {
   adjudicatedBy: User;
 }
 
-export const UtilizedLeaveSchema = SchemaFactory.createForClass(UtilizedLeave);
+export const ForfeitedLeaveSchema = SchemaFactory.createForClass(ForfeitedLeave);

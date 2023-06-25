@@ -26,7 +26,7 @@ export class UpdatePositionDto extends PartialType(AppOmit(Position, ['config', 
 
   @ValidateNested({ each: true })
   @Type(() => UpdateArray)
-  breaks?: UpdateArray[];
+  breakIds: UpdateArray[];
 
   @IsString()
   configId?: string;

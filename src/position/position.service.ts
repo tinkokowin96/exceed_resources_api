@@ -49,12 +49,12 @@ export class PositionService extends CoreService<Position> {
   async updatePosition(dto: UpdatePositionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const { id, breaks, configId, ...payload } = dto;
+        const { id, breakIds, configId, ...payload } = dto;
         let config;
         const addBreaks = [];
         const removeBreaks = [];
-        if (breaks)
-          breaks.forEach((each) => (each.add ? addBreaks.push(each.value) : removeBreaks.push(each.value)));
+        if (breakIds)
+          breakIds.forEach((each) => (each.add ? addBreaks.push(each.value) : removeBreaks.push(each.value)));
 
         if (configId) config = await this.findById({ id: configId, custom: this.configModel });
 

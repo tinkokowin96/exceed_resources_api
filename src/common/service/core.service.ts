@@ -260,7 +260,7 @@ export abstract class CoreService<T> {
       await session.commitTransaction();
       session.endSession();
 
-      if (!audit) return res.next ?? res;
+      if (!response) return res.next ?? res;
       else if (response) response.send(responseObj);
     } catch (error) {
       await session.abortTransaction();

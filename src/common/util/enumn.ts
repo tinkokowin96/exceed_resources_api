@@ -41,6 +41,7 @@ export enum EModule {
   Salary = 'Salary',
   Subscription = 'Subscription',
   WorkingHour = 'WorkingHour',
+  Leave = 'Leave',
 }
 
 export enum ETrigger {

@@ -8,7 +8,7 @@
     "**/Thumbs.db": true,
     "**/*.freezed.dart": true,
     "**/*.g.dart": true,
-    "node_modules/": false
+    "node_modules/": true
   },
   "explorerExclude.backup": {}
 }

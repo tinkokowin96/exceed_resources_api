@@ -91,7 +91,7 @@ export class OSubscriptionService extends CoreService<OSubscription> {
         return { subscription, originalAmount, amount, pointsEarned, promotion, cupon };
       },
       req,
-      res,
+      res: trigger ? undefined : res,
       audit: {
         name: 'calculate-subscription-price',
         payload: dto,

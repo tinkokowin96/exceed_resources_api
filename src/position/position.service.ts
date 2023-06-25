@@ -36,7 +36,7 @@ export class PositionService extends CoreService<Position> {
         return await this.create({ dto: { ...payload, config }, session });
       },
       req,
-      res: res,
+      res: trigger ? undefined : res,
       audit: {
         name: 'create-position',
         module: EModule.Position,
@@ -49,12 +49,29 @@ export class PositionService extends CoreService<Position> {
   async updatePosition(dto: UpdatePositionDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const { id, ...update } = dto;
-        if (update.allowedRoutes) {
-          const includeRestricted = intersection(req.config.restrictedRoutes, update.allowedRoutes);
-          if (includeRestricted.length) throw new BadRequestException('Include restricted permissions');
-        }
-        return await this.findByIdAndUpdate({ id, update, session });
+        const { id, breaks, configId, ...payload } = dto;
+        let config;
+        const addBreaks = [];
+        const removeBreaks = [];
+        if (breaks)
+          breaks.forEach((each) => (each.add ? addBreaks.push(each.value) : removeBreaks.push(each.value)));
+
+        if (configId) config = await this.findById({ id: configId, custom: this.configModel });
+
+        return await this.findByIdAndUpdate({
+          id,
+          update: {
+            $set: {
+              ...payload,
+              config,
+              breaks: {
+                $pop: removeBreaks,
+                $push: addBreaks,
+              },
+            },
+          },
+          session,
+        });
       },
       req,
       res,

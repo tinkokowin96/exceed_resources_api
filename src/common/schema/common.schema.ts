@@ -191,3 +191,13 @@ export class FieldValue {
   @IsNotEmpty()
   value: string;
 }
+
+export class UpdateArray {
+  @IsNotEmpty()
+  @IsString()
+  value: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  add: boolean;
+}

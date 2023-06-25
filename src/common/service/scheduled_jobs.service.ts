@@ -37,6 +37,10 @@ export class ScheduledJobService {
     }
   }
 
+  /**
+   * TODO:
+   * combine all remaining accumulated leave from previous year to one
+   */
   async yearlyStatistics() {
     return;
   }

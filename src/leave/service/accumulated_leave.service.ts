@@ -36,7 +36,13 @@ export class AccumulatedLeaveService extends CoreService<AccumulatedLeave> {
         if (grantedUserId) grantedUser = await this.findById({ id: grantedUserId, custom: this.userModel });
         const leave = await this.findById({ id: leaveId, custom: this.leaveModel });
         return await this.create({
-          dto: { ...payload, leave, grantedBy: grantedUser, year: new Date().getFullYear() },
+          dto: {
+            ...payload,
+            availableDay: payload.numDay,
+            leave,
+            grantedBy: grantedUser,
+            year: new Date().getFullYear(),
+          },
           session,
         });
       },

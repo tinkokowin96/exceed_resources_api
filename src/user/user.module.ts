@@ -10,8 +10,8 @@ import { Organization, OrganizationSchema } from 'src/organization/schema/organi
 import { PositionModule } from 'src/position/position.module';
 import { Position, PositionSchema } from 'src/position/position.schema';
 import { User, UserSchema } from './schema/user.schema';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { UserController } from './controller/user.controller';
+import { UserService } from './service/user.service';
 
 @Module({
   imports: [

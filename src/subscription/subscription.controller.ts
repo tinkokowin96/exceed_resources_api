@@ -1,7 +1,7 @@
 import { Body, Controller, Patch, Post, Req, Res } from '@nestjs/common';
 import { SubscriptionService } from './subscription.service';
 import { Users } from 'src/auth/user.decorator';
-import { CreateSubscriptionDto, UpdateSubscriptionDto } from 'src/user/dto/subscription.dto';
+import { CreateSubscriptionDto, UpdateSubscriptionDto } from 'src/subscription/subscription.dto';
 import { AppRequest } from 'src/common/util/type';
 import { Response } from 'express';
 

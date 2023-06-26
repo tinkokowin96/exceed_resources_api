@@ -9,8 +9,8 @@ import {
   GetUsersDto,
   LoginUserDto,
   ToggleErAppAccessDto,
-} from './dto/user.dto';
-import { UserService } from './user.service';
+} from '../dto/user.dto';
+import { UserService } from '../service/user.service';
 
 @Controller('user')
 export class UserController {

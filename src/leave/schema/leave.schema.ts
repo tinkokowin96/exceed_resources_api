@@ -1,6 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsMongoId, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsMongoId,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
@@ -49,8 +58,25 @@ export class Leave extends CoreSchema {
   name: boolean;
 
   @Prop({ type: Number, required: true })
+  @IsNotEmpty()
+  @Min(0)
+  @Max(100)
+  carryOverLimt: number;
+
+  @Prop({ type: Number, required: true })
+  @IsNotEmpty()
   @IsNumber()
-  numAllowed: number;
+  rolloverPeriod: number;
+
+  @Prop({ type: Boolean, required: true })
+  @IsNotEmpty()
+  @IsBoolean()
+  isCashable: boolean;
+
+  //NOTE: this is non-nullable if isCashable is true
+  @Prop({ type: Number })
+  @IsNumber()
+  monetaryValue?: number;
 
   @Prop({ type: String })
   @IsString()

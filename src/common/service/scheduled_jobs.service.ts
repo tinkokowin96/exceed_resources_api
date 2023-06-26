@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model } from 'mongoose';
 import { ExtraSalary } from 'src/extra_salary/extra_salary.schema';
 import { EExtraSalaryStatus } from '../util/enumn';
 import { User } from 'src/user/schema/user.schema';
+import { CoreService } from './core.service';
 
 @Injectable()
-export class ScheduledJobService {
+export class ScheduledJobService extends CoreService<User> {
   constructor(
+    @InjectConnection() connection: Connection,
+    @InjectModel(User.name) model: Model<User>,
     @InjectModel(ExtraSalary.name) private readonly extraSalaryModel: Model<ExtraSalary>,
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
-
-  doStatistics() {
-    this.approveExtraSalary();
-    this.yearlyStatistics();
+  ) {
+    super(connection, model);
   }
 
   async approveExtraSalary() {
@@ -34,6 +33,9 @@ export class ScheduledJobService {
       },
     });
     for (const { extra } of extras) {
+      if (extra.isPoint) {
+        // await
+      }
     }
   }
 
@@ -41,7 +43,7 @@ export class ScheduledJobService {
    * TODO:
    * combine all remaining accumulated leave from previous year to one
    */
-  async yearlyStatistics() {
-    return;
-  }
+  // async yearlyStatistics() {
+  //   return;
+  // }
 }

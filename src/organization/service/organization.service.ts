@@ -7,9 +7,9 @@ import { FindDto } from 'src/common/dto/find.dto';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { CreateOrganizationDto } from './dto/organization.dto';
-import { OConfig } from './schema/o_config.schema';
-import { Organization } from './schema/organization.schema';
+import { CreateOrganizationDto } from '../dto/organization.dto';
+import { OConfig } from '../schema/o_config.schema';
+import { Organization } from '../schema/organization.schema';
 import { BranchService } from 'src/branch/branch.service';
 
 @Injectable()

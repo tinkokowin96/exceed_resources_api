@@ -4,7 +4,7 @@ import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { Subscription } from './subscription.schema';
 import { Promotion } from '../promotion/promotion.schema';
-import { CreateSubscriptionDto, UpdateSubscriptionDto } from 'src/user/dto/subscription.dto';
+import { CreateSubscriptionDto, UpdateSubscriptionDto } from 'src/subscription/subscription.dto';
 import { AppRequest } from 'src/common/util/type';
 import { Response } from 'express';
 import { EModule } from 'src/common/util/enumn';

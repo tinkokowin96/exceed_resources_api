@@ -3,8 +3,8 @@ import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
 import { AppRequest } from 'src/common/util/type';
-import { CreateOrganizationDto } from './dto/organization.dto';
-import { OrganizationService } from './organization.service';
+import { CreateOrganizationDto } from '../dto/organization.dto';
+import { OrganizationService } from '../service/organization.service';
 
 @Controller('organization')
 export class OrganizationController {

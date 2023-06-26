@@ -23,8 +23,8 @@ import {
   GetUsersDto,
   LoginUserDto,
   ToggleErAppAccessDto,
-} from './dto/user.dto';
-import { User } from './schema/user.schema';
+} from '../dto/user.dto';
+import { User } from '../schema/user.schema';
 
 @Injectable()
 export class UserService extends CoreService<User> {
@@ -150,18 +150,18 @@ export class UserService extends CoreService<User> {
           })
         ).items;
 
-        const associatedOrganization: OAssociated = {
-          accessOAdminApp,
-          basicSalary: payload.basicSalary ?? position.basicSalary,
-          numPoint: 0,
-          remark,
-          checkInTime,
-          checkOutTime,
-          branch: orgainzation._id as any,
-          position: position._id as any,
-          departments,
-          leaves,
-        };
+        // const associatedOrganization: OAssociated = {
+        //   accessOAdminApp,
+        //   basicSalary: payload.basicSalary ?? position.basicSalary,
+        //   numPoint: 0,
+        //   remark,
+        //   checkInTime,
+        //   checkOutTime,
+        //   branch: orgainzation._id as any,
+        //   position: position._id as any,
+        //   departments,
+        //   leaves,
+        // };
 
         const user = await this.create({
           dto: {

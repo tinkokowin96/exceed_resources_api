@@ -1,15 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hashSync } from 'bcryptjs';
-import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsDateString,
-  IsEmail,
-  IsNotEmpty,
-  IsPhoneNumber,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsBoolean, IsDateString, IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Bank } from 'src/bank/bank.schema';
 import { ChatGroup } from 'src/chat/schema/chat_group.shema';
@@ -81,19 +72,15 @@ export class User extends CoreSchema {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Bank' })
   bank?: Bank;
 
-  @Prop({ type: SchemaTypes.Mixed })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'OAssociated' })
   @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => OAssociated)
   currentOrganization: OAssociated;
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Project' }] })
   projects?: Project[];
 
-  @Prop({ type: [SchemaTypes.Mixed] })
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'OAssociated' }] })
   @IsNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => OAssociated)
   associatedOrganizations: OAssociated[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ChatGroup' }] })

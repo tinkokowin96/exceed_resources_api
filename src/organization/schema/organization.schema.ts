@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsIP, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { Attachment } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
+import { User } from 'src/user/schema/user.schema';
 import { Department } from '../../department/department.schema';
 import { OConfig } from './o_config.schema';
-import { User } from 'src/user/schema/user.schema';
 
 @Schema()
 export class Organization extends CoreSchema {
@@ -27,11 +27,6 @@ export class Organization extends CoreSchema {
   @Prop({ type: Number, default: 0 })
   @IsNumber()
   numPoint?: number;
-
-  @Prop({ type: String })
-  @IsNotEmpty()
-  @IsIP()
-  createdIp: string;
 
   @Prop({ type: [SchemaTypes.Mixed] })
   @ValidateNested({ each: true })

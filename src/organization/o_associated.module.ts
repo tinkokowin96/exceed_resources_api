@@ -6,9 +6,9 @@ import { Leave, LeaveSchema } from 'src/leave/schema/leave.schema';
 import { PositionModule } from 'src/position/position.module';
 import { Position, PositionSchema } from 'src/position/position.schema';
 import { User, UserSchema } from 'src/user/schema/user.schema';
-import { OAssociated, OAssociatedSchema } from '../schema/o_associated.schema';
-import { OAssociatedService } from '../service/o_associated.service';
-import { OAssociatedController } from '../controller/o_associated.controller';
+import { OAssociated, OAssociatedSchema } from './schema/o_associated.schema';
+import { OAssociatedService } from './service/o_associated.service';
+import { OAssociatedController } from './controller/o_associated.controller';
 
 @Module({
   imports: [

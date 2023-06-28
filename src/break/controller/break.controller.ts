@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
-import { BreakService } from './break.service';
+import { BreakService } from '../service/break.service';
 import { Users } from 'src/auth/user.decorator';
-import { CreateBreakDto } from './break.dto';
+import { CreateBreakDto } from '../dto/break.dto';
 import { AppRequest } from 'src/common/util/type';
 import { Response } from 'express';
 

@@ -7,7 +7,7 @@ import { Organization } from '../schema/organization.schema';
 import { Branch } from 'src/branch/branch.schema';
 
 export class CreateOrganizationDto extends IntersectionType(
-  PickType(OConfig, ['workingDays', 'overtimeForm']),
+  PickType(OConfig, ['overtimeForm']),
   PickType(Organization, ['name', 'logo', 'attachments']),
   PickType(Branch, ['address', 'location', 'remark']),
 ) {

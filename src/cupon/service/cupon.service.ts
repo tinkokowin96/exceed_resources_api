@@ -5,10 +5,10 @@ import { Connection, Model } from 'mongoose';
 import { CoreService } from 'src/common/service/core.service';
 import { ECategory, EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { CreateCuponDto } from './dto/cupon.dto';
-import { CreateCuponCodeDto, UpdateCuponCodeDto } from './dto/cupon_code.dto';
-import { Cupon } from './schema/cupon.schema';
-import { CuponCode } from './schema/cupon_code.schema';
+import { CreateCuponDto } from '../dto/cupon.dto';
+import { CreateCuponCodeDto, UpdateCuponCodeDto } from '../dto/cupon_code.dto';
+import { Cupon } from '../schema/cupon.schema';
+import { CuponCode } from '../schema/cupon_code.schema';
 
 @Injectable()
 export class CuponService extends CoreService<Cupon> {

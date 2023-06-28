@@ -6,10 +6,10 @@ import { CoreService } from 'src/common/service/core.service';
 import { EModule } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
 import { User } from 'src/user/schema/user.schema';
-import { CreateCurrencyDto, EditCurrencyDto } from './dto/currency.dto';
-import { EditErConfigDto } from './dto/er_config.dto';
-import { Currency } from './schema/currency.schema';
-import { ErConfig } from './schema/er_config.schema';
+import { CreateCurrencyDto, EditCurrencyDto } from '../dto/currency.dto';
+import { EditErConfigDto } from '../dto/er_config.dto';
+import { Currency } from '../schema/currency.schema';
+import { ErConfig } from '../schema/er_config.schema';
 
 @Injectable()
 export class ErConfigService extends CoreService<ErConfig> {

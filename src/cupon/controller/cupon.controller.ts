@@ -2,8 +2,8 @@ import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
 import { AppRequest } from 'src/common/util/type';
-import { CuponService } from './cupon.service';
-import { CreateCuponDto } from './dto/cupon.dto';
+import { CuponService } from '../service/cupon.service';
+import { CreateCuponDto } from '../dto/cupon.dto';
 
 @Controller('cupon')
 export class CuponController {

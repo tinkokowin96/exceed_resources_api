@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CuponCode, CuponCodeSchema } from './schema/cupon_code.schema';
-import { CuponController } from './cupon.controller';
-import { CuponService } from './cupon.service';
+import { CuponController } from './controller/cupon.controller';
+import { CuponService } from './service/cupon.service';
 import { Cupon, CuponSchema } from './schema/cupon.schema';
 
 @Module({

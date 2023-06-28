@@ -1,4 +1,4 @@
-import { Prop } from '@nestjs/mongoose';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
@@ -55,3 +55,5 @@ export class OAssociated extends CoreSchema {
   @Type(() => LeaveAllowed)
   leaves?: LeaveAllowed[];
 }
+
+export const OAssociatedSchema = SchemaFactory.createForClass(OAssociated);

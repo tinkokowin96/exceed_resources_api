@@ -2,21 +2,17 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { compareSync } from 'bcryptjs';
 import { Response } from 'express';
-import { Connection, Document, Model, Types } from 'mongoose';
+import { Connection, Document, Model } from 'mongoose';
 import { Bank } from 'src/bank/bank.schema';
+import { Branch } from 'src/branch/branch.schema';
 import { CoreService } from 'src/common/service/core.service';
 import { encrypt } from 'src/common/util/encrypt';
 import { EModule, EUser } from 'src/common/util/enumn';
 import { AppRequest } from 'src/common/util/type';
-import { Department } from 'src/department/department.schema';
-import { DepartmentService } from 'src/department/department.service';
-import { Leave } from 'src/leave/schema/leave.schema';
 import { OSubscription } from 'src/o_subscription/o_subscription.schema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
-import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
-import { Position } from 'src/position/position.schema';
-import { PositionService } from 'src/position/position.service';
+import { OAssociatedService } from 'src/organization/service/o_associated.service';
 import {
   AddAssociatedOrganizationDto,
   CreateUserDto,
@@ -32,14 +28,9 @@ export class UserService extends CoreService<User> {
     @InjectConnection() connection: Connection,
     @InjectModel(User.name) model: Model<User>,
     @InjectModel(Organization.name) private readonly organizationModel: Model<Organization>,
-    @InjectModel(OConfig.name) private readonly oConfigModel: Model<OConfig>,
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
-    @InjectModel(Leave.name) private readonly leaveModel: Model<Leave>,
-    @InjectModel(Department.name) private readonly departmentModel: Model<Department>,
     @InjectModel(OSubscription.name) private readonly oSubscriptionModel: Model<OSubscription>,
-    @InjectModel(Position.name) private readonly positionModel: Model<Position>,
-    private readonly departmentService: DepartmentService,
-    private readonly positionService: PositionService,
+    private readonly oAssociatedService: OAssociatedService,
   ) {
     super(connection, model);
   }
@@ -47,93 +38,14 @@ export class UserService extends CoreService<User> {
   async createUser(dto: CreateUserDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
-        const {
-          bankId,
-          accessOAdminApp,
-          remark,
-          checkInTime,
-          checkOutTime,
-          positionId,
-          organizationId,
-          subscriptionIds,
-          departments: departmentsDto,
-          leaveAllowed,
-          configId,
-          ...payload
-        } = dto;
-        let bank: Bank,
-          orgainzation: Organization,
-          position: Document<unknown, any, Position> &
-            Position &
-            Required<{
-              _id: Types.ObjectId;
-            }>;
+        const { bankId, subscriptionIds, orgainzationDto, ...payload } = dto;
+        let bank: Bank;
 
         if (bankId)
           bank = await this.findById({ id: bankId, custom: this.bankModel, projection: { _id: 1 } });
 
         if ((!req.user && payload.accessErApp) || (req.type !== EUser.ErApp && payload.accessErApp))
-          throw new ForbiddenException('Not allow to use user to access erapp');
-
-        if (!req.user) {
-          if (!organizationId)
-            throw new BadRequestException('Require organization id to create owner account');
-          orgainzation = await this.findById({
-            id: organizationId,
-            custom: this.organizationModel,
-            projection: { _id: 1, name: 1 },
-            options: { populate: ['config'] },
-          });
-          const users = await this.find({
-            filter: {
-              currentOrganization: { orgainzation: orgainzation._id },
-            },
-          });
-          if (users.items.length) throw new ForbiddenException('Organization already had owner account');
-          position = await this.positionService.createPosition(
-            {
-              name: `${orgainzation.name} Owner`,
-              shortName: 'Owner',
-              basicSalary: 0,
-              configId,
-            },
-            req,
-            res,
-            { session, service: 'create-user' },
-          );
-        } else {
-          if (!positionId) throw new BadRequestException('Require position to create user');
-          orgainzation = req.user.currentOrganization.branch.organization;
-          position = await this.findById({ id: positionId, custom: this.positionModel });
-        }
-
-        position = await position.populate('config');
-
-        let leaves = position.config.leaves;
-
-        if (leaveAllowed) {
-          const arr = [];
-          const leaveArr = await this.find({
-            filter: { _id: { $in: leaveAllowed.map((each) => each.leaveId) } },
-            custom: this.leaveModel,
-            options: { projection: { _id: 1 } },
-          });
-          leaveArr.items.forEach((each) => {
-            const leave = leaveAllowed.find((lev) => each.id === lev.leaveId);
-            if (leave) arr.push({ numAllowed: leave.numAllowed, leave: each._id });
-          });
-          leaves = arr;
-        }
-
-        const departments = departmentsDto
-          ? (
-              await this.find({
-                filter: { _id: { $in: departmentsDto.reduce((acc, cur) => [...acc, cur.departmentId], []) } },
-                projection: { _id: 1 },
-                custom: this.departmentModel,
-              })
-            ).items.reduce((acc, cur) => [...acc, cur._id], [])
-          : [];
+          throw new ForbiddenException('Not allow to access erapp');
 
         if (subscriptionIds && !req.user)
           throw new ForbiddenException("Can't create user with subscription without logging in");
@@ -150,18 +62,20 @@ export class UserService extends CoreService<User> {
           })
         ).items;
 
-        // const associatedOrganization: OAssociated = {
-        //   accessOAdminApp,
-        //   basicSalary: payload.basicSalary ?? position.basicSalary,
-        //   numPoint: 0,
-        //   remark,
-        //   checkInTime,
-        //   checkOutTime,
-        //   branch: orgainzation._id as any,
-        //   position: position._id as any,
-        //   departments,
-        //   leaves,
-        // };
+        const oAssociated: Document<unknown, any, OAssociated> & OAssociated =
+          await this.oAssociatedService.createOAssociated(orgainzationDto, req, res, {
+            service: 'create-user',
+            session,
+          });
+
+        const associatedOrganization = await oAssociated.populate([
+          {
+            path: 'branch',
+            model: Branch.name,
+            select: ['organization'],
+            populate: [{ path: 'organization', model: Organization.name, select: ['config'] }],
+          },
+        ]);
 
         const user = await this.create({
           dto: {
@@ -184,21 +98,9 @@ export class UserService extends CoreService<User> {
           });
         }
 
-        if (departmentsDto)
-          for (const dep of departmentsDto) {
-            if (dep.isHead) {
-              await this.departmentService.changeDepartmentHead(
-                { ...dep, userId: user._id.toString() },
-                req,
-                res,
-                { session, service: 'create-user' },
-              );
-            }
-          }
-
         if (!req.user)
           await this.findByIdAndUpdate({
-            id: orgainzation.config._id,
+            id: associatedOrganization.branch.organization.config as any,
             update: { $set: { superAdmin: user } },
             custom: this.organizationModel,
             session,

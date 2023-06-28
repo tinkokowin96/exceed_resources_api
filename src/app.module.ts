@@ -14,7 +14,7 @@ import { ErConfigModule } from './er_config/er_config.module';
 import { ExtraSalaryModule } from './extra_salary/extra_salary.module';
 import { LeaveModule } from './leave/leave.module';
 import { OSubscriptionModule } from './o_subscription/o_subscription.module';
-import { OrganizationModule } from './organization/organization.module';
+import { OrganizationModule } from './organization/module/organization.module';
 import { PositionModule } from './position/position.module';
 import { ProjectModule } from './project/project.module';
 import { PromotionModule } from './promotion/promotion.module';

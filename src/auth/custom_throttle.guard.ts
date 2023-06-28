@@ -1,7 +1,7 @@
 import { ExecutionContext } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ThrottlerException, ThrottlerGuard } from '@nestjs/throttler';
-import * as moment from 'moment';
+import dayjs from 'dayjs';
 import { Model, Types } from 'mongoose';
 import { ExceedLimit } from 'src/common/schema/exceed_limit.schema';
 import { decrypt } from 'src/common/util/encrypt';
@@ -33,7 +33,7 @@ export class CustomThrottleGuard extends ThrottlerGuard {
             filterObj['address'] ? 'address' : 'account'
           } is blocked for exceeding limt multiple time. Contact support to unblock`,
         );
-      const blockUntil = moment(doc.blockedTime)
+      const blockUntil = dayjs(doc.blockedTime)
         .add(doc.blockedDay === 0.5 ? 12 : doc.blockedDay === 1 ? 24 : 72, 'hours')
         .toDate();
       if (Date.now() < blockUntil.getTime()) {

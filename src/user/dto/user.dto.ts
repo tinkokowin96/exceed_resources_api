@@ -1,42 +1,33 @@
-import { IntersectionType, OmitType, PartialType, PickType } from '@nestjs/mapped-types';
+import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { FindDto } from 'src/common/dto/find.dto';
-import { OAssociated } from 'src/organization/schema/o_associated.schema';
-import { User } from '../schema/user.schema';
 import { AddUserToDepartmentDto } from 'src/department/department.dto';
 import { LeaveAllowedDto } from 'src/leave/dto/leave.dto';
+import { CreateOAssociatedDto } from 'src/organization/dto/o_associated.dto';
+import { OAssociated } from 'src/organization/schema/o_associated.schema';
+import { User } from '../schema/user.schema';
 
-export class CreateUserDto extends IntersectionType(
-  PickType(User, ['name', 'image', 'userName', 'email', 'password', 'phone', 'joiningDate', 'accessErApp']),
-  OmitType(OAssociated, ['position', 'departments', 'branch']),
-) {
+export class CreateUserDto extends PickType(User, [
+  'name',
+  'image',
+  'userName',
+  'email',
+  'password',
+  'phone',
+  'joiningDate',
+  'accessErApp',
+]) {
   @IsString()
   bankId: string;
-
-  @IsString()
-  positionId: string;
-
-  @IsNumber()
-  basicSalary: number;
-
-  @IsString()
-  configId: string;
-
-  //NOTE: This will accept if not logged in which mean owner account
-  @IsString()
-  organizationId: string;
 
   @IsString({ each: true })
   subscriptionIds: string[];
 
-  @ValidateNested({ each: true })
-  @Type(() => OmitType(AddUserToDepartmentDto, ['userId']))
-  departments: Omit<AddUserToDepartmentDto, 'userId'>[];
-
-  @ValidateNested({ each: true })
-  @Type(() => LeaveAllowedDto)
-  leaveAllowed: LeaveAllowedDto[];
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateOAssociatedDto)
+  orgainzationDto: CreateOAssociatedDto;
 }
 
 export class LoginUserDto extends PartialType(PickType(User, ['userName', 'email'])) {

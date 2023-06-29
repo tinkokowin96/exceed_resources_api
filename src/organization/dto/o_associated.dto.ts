@@ -1,10 +1,10 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { AppOmit } from 'src/common/dto/core.dto';
+import { AppOmitWithExtra } from 'src/common/dto/core.dto';
 import { LeaveAllowedDto } from 'src/leave/dto/leave.dto';
 import { OAssociated } from '../schema/o_associated.schema';
 
-export class CreateOAssociatedDto extends AppOmit(OAssociated, [
+export class CreateOAssociatedDto extends AppOmitWithExtra(OAssociated, [
   'branch',
   'position',
   'departments',

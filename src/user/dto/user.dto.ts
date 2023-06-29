@@ -1,9 +1,7 @@
-import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { FindDto } from 'src/common/dto/find.dto';
-import { AddUserToDepartmentDto } from 'src/department/department.dto';
-import { LeaveAllowedDto } from 'src/leave/dto/leave.dto';
 import { CreateOAssociatedDto } from 'src/organization/dto/o_associated.dto';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { User } from '../schema/user.schema';

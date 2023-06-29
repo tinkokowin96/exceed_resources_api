@@ -24,7 +24,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
 import { TeamModule } from './team/team.module';
 import { UserModule } from './user/user.module';
 import { OvertimeModule } from './overtime/overtime.module';
-import { WorkingHourModule } from './working_hour/working_hour.module';
+import { WorkingHourModule } from './work_day/working_hour.module';
 import { NotificationModule } from './notification/notification.module';
 import { MasterDataModule } from './master_data/master_data.module';
 

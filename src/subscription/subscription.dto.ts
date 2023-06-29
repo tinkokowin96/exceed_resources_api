@@ -1,10 +1,10 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { AppOmit } from 'src/common/dto/core.dto';
+import { AppOmitWithExtra } from 'src/common/dto/core.dto';
 import { Subscription } from 'src/subscription/subscription.schema';
 
-export class CreateSubscriptionDto extends AppOmit(Subscription, ['activePromotion']) {
+export class CreateSubscriptionDto extends AppOmitWithExtra(Subscription, ['activePromotion']) {
   @IsString()
   promotionId?: string;
 }

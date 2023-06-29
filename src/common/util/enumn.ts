@@ -65,6 +65,12 @@ export enum EEarningTrigger {
   CustomWorkingDay = 'CustomWorkingDay',
 }
 
+export enum ETime {
+  Minute = 'Minute',
+  Hour = 'Hour',
+  Day = 'Day',
+}
+
 export enum ESubscriptionStatus {
   Pending = 'Pending',
   Approved = 'Approved',

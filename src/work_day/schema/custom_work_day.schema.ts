@@ -10,10 +10,9 @@ import { WorkDayConfig } from './work_day_config.schema';
 import { Break } from 'src/break/schema/break.schema';
 
 export class CustomWorkDay extends CoreSchema {
-  @Prop({ type: String, required: true })
-  @IsNotEmpty()
+  @Prop({ type: String })
   @IsString()
-  name: string;
+  name?: string;
 
   @Prop({ type: Date, required: true })
   @IsNotEmpty()
@@ -33,10 +32,6 @@ export class CustomWorkDay extends CoreSchema {
   @Prop({ type: Boolean, default: true })
   @IsBoolean()
   affectAllUser: boolean;
-
-  @Prop({ type: Boolean, default: false })
-  @IsBoolean()
-  allowRemoteCheckIn: boolean;
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()

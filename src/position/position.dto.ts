@@ -1,9 +1,9 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { AppOmit } from 'src/common/dto/core.dto';
-import { Position } from './position.schema';
 import { Type } from 'class-transformer';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { AppOmitWithExtra } from 'src/common/dto/core.dto';
 import { UpdateArray } from 'src/common/schema/common.schema';
+import { Position } from './position.schema';
 
 export class CreatePositionDto extends PickType(Position, [
   'name',
@@ -19,7 +19,7 @@ export class CreatePositionDto extends PickType(Position, [
   configId?: string;
 }
 
-export class UpdatePositionDto extends PartialType(AppOmit(Position, ['config', 'breaks'])) {
+export class UpdatePositionDto extends PartialType(AppOmitWithExtra(Position, ['config', 'breaks'])) {
   @IsNotEmpty()
   @IsString()
   id: string;

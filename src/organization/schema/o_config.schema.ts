@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { ArrayNotEmpty, IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { CoreSchema } from 'src/common/schema/core.shema';
 import { Field } from 'src/common/schema/field.schema';
 import { LeaveAllowed } from 'src/leave/schema/leave.schema';
-import { WorkDay } from 'src/working_hour/schema/work_day_config.schema';
+import { WorkDay } from 'src/work_day/schema/work_day_config.schema';
 
 @Schema()
 export class OConfig extends CoreSchema {
@@ -22,7 +22,6 @@ export class OConfig extends CoreSchema {
   restrictedRoutes?: string[];
 
   @Prop({ type: SchemaTypes.Mixed, required: true })
-  @ArrayNotEmpty()
   @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => WorkDay)
@@ -33,7 +32,6 @@ export class OConfig extends CoreSchema {
   @Type(() => LeaveAllowed)
   leaves?: LeaveAllowed[];
 
-  @Prop({})
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Field' }] })
   overtimeForm: Field[];
 }

@@ -4,6 +4,10 @@ import { Compensation, Hour, TimeCompensation } from 'src/common/schema/common.s
 import { EWeekDay } from 'src/common/util/enumn';
 
 export class WorkDayConfig {
+  @IsNotEmpty()
+  @IsBoolean()
+  offDay: boolean;
+
   @ValidateNested({ each: true })
   @Type(() => TimeCompensation)
   penalties?: TimeCompensation[];
@@ -27,6 +31,9 @@ export class WorkDayConfig {
   overtimeHourlyAllowance?: Compensation;
 
   @IsBoolean()
+  allowRemoteCheckIn?: boolean;
+
+  @IsBoolean()
   allowLateSubstitute?: boolean;
 
   @IsBoolean()
@@ -41,8 +48,8 @@ export class WorkDayConfig {
 
 export class WorkDay {
   @IsNotEmpty()
-  @IsEnum(EWeekDay)
-  day: EWeekDay;
+  @IsEnum(EWeekDay, { each: true })
+  days: EWeekDay[];
 
   @IsNotEmpty()
   @ValidateNested()

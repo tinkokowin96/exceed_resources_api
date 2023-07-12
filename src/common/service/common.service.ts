@@ -7,7 +7,7 @@ import { User } from 'src/user/schema/user.schema';
 import { CoreService } from './core.service';
 
 @Injectable()
-export class ScheduledJobService extends CoreService<User> {
+export class CommonService extends CoreService<User> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(User.name) model: Model<User>,

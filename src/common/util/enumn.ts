@@ -144,11 +144,31 @@ export enum EWeekDay {
   Sat = 'Sat',
 }
 
+export enum EMonth {
+  Jan = 'Jan',
+  Feb = 'Feb',
+  Mar = 'Mar',
+  Apr = 'Apr',
+  May = 'May',
+  June = 'June',
+  July = 'July',
+  Aug = 'Aug',
+  Sep = 'Sep',
+  Oct = 'Oct',
+  Nov = 'Nov',
+  Dec = 'Dec',
+}
+
 export enum EExtraSalary {
   Late = 'Late',
   Leave = 'Leave',
   Overtime = 'Overtime',
   CustomWorkDay = 'CustomWorkDay',
+}
+
+export enum EScheduledTask {
+  PaySalary = 'PaySalary',
+  Event = 'Event',
 }
 
 /**

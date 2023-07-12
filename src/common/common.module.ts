@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { createConnection } from 'mongoose';
 import { Audit, AuditSchema } from './schema/audit.schema';
 import { AUDIT_MODEL } from './util/constant';
-import { ScheduledJobService } from './service/scheduled_jobs.service';
+import { CommonService } from './service/common.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ExtraSalary, ExtraSalarySchema } from 'src/extra_salary/extra_salary.schema';
 
@@ -17,8 +17,8 @@ import { ExtraSalary, ExtraSalarySchema } from 'src/extra_salary/extra_salary.sc
         return connection.model(Audit.name, AuditSchema);
       },
     },
-    ScheduledJobService,
+    CommonService,
   ],
-  exports: [AUDIT_MODEL, ScheduledJobService],
+  exports: [AUDIT_MODEL, CommonService],
 })
 export class CommonModule {}

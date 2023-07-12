@@ -27,6 +27,8 @@ import { OvertimeModule } from './overtime/overtime.module';
 import { WorkingHourModule } from './work_day/working_hour.module';
 import { NotificationModule } from './notification/notification.module';
 import { MasterDataModule } from './master_data/master_data.module';
+import { ScheduledTasksModule } from './scheduled_tasks/scheduled_tasks.module';
+import { EventModule } from './event/event.module';
 
 /**
  * TODO: calculate statistic tasks at night (penalize if late not approved)
@@ -60,6 +62,8 @@ import { MasterDataModule } from './master_data/master_data.module';
     OvertimeModule,
     NotificationModule,
     MasterDataModule,
+    ScheduledTasksModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [AppService],

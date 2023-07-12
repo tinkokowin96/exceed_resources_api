@@ -5,7 +5,7 @@ import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { StatementPeriod } from 'src/common/schema/common.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
-import { ExtraSalary } from 'src/extra_salary/extra_salary.schema';
+import { ExtraSalary } from 'src/salary/schema/extra_salary.schema';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
-import { ExtraSalary } from 'src/extra_salary/extra_salary.schema';
+import { ExtraSalary } from 'src/salary/schema/extra_salary.schema';
 import { EExtraSalaryStatus } from '../util/enumn';
 import { User } from 'src/user/schema/user.schema';
 import { CoreService } from './core.service';
@@ -38,6 +38,11 @@ export class CommonService extends CoreService<User> {
       }
     }
   }
+
+  /**
+   * TODO: some notifications come from BE (push notification) and some will be local notification(FE handle it)
+   * sendNotification()
+   */
 
   /**
    * TODO:

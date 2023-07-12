@@ -4,7 +4,7 @@ import { Audit, AuditSchema } from './schema/audit.schema';
 import { AUDIT_MODEL } from './util/constant';
 import { CommonService } from './service/common.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ExtraSalary, ExtraSalarySchema } from 'src/extra_salary/extra_salary.schema';
+import { ExtraSalary, ExtraSalarySchema } from 'src/salary/schema/extra_salary.schema';
 
 @Global()
 @Module({

@@ -11,10 +11,8 @@ import { CommonModule } from './common/common.module';
 import { CuponModule } from './cupon/cupon.module';
 import { DepartmentModule } from './department/department.module';
 import { ErConfigModule } from './er_config/er_config.module';
-import { ExtraSalaryModule } from './extra_salary/extra_salary.module';
 import { LeaveModule } from './leave/leave.module';
 import { OSubscriptionModule } from './o_subscription/o_subscription.module';
-import { OrganizationModule } from './organization/module/organization.module';
 import { PositionModule } from './position/position.module';
 import { ProjectModule } from './project/project.module';
 import { PromotionModule } from './promotion/promotion.module';
@@ -29,6 +27,7 @@ import { NotificationModule } from './notification/notification.module';
 import { MasterDataModule } from './master_data/master_data.module';
 import { ScheduledTasksModule } from './scheduled_tasks/scheduled_tasks.module';
 import { EventModule } from './event/event.module';
+import { OrganizationModule } from './organization/organization.module';
 
 /**
  * TODO: calculate statistic tasks at night (penalize if late not approved)
@@ -57,7 +56,6 @@ import { EventModule } from './event/event.module';
     OSubscriptionModule,
     BranchModule,
     WorkingHourModule,
-    ExtraSalaryModule,
     BreakModule,
     OvertimeModule,
     NotificationModule,

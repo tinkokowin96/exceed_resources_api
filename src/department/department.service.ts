@@ -46,7 +46,7 @@ export class DepartmentService extends CoreService<Department> {
         const session = trigger?.session ?? ses;
         const { departmentId, userId } = dto;
         const user = await this.findById({ id: userId, custom: this.userModel });
-        return await this.findByIdAndUpdate({ id: departmentId, update: { $set: { head: user } }, session });
+        return await this.findAndUpdate({ id: departmentId, update: { $set: { head: user } }, session });
       },
       req,
       res: trigger ? undefined : res,

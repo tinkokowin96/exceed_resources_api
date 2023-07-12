@@ -68,7 +68,7 @@ export class OSubscriptionService extends CoreService<OSubscription> {
             promotion.active &&
             new Date(promotion.active_until).getTime() < Date.now()
           ) {
-            await this.findByIdAndUpdate({
+            await this.findAndUpdate({
               id: promotion._id,
               update: {
                 $set: { active: false },

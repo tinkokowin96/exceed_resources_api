@@ -62,7 +62,7 @@ export class CuponService extends CoreService<Cupon> {
           } else {
             update['$pull'] = { cuponCodes: code.codeId };
           }
-          await this.findByIdAndUpdate({ id: cuponId, session, update });
+          await this.findAndUpdate({ id: cuponId, session, update });
         }
         return await this.findById({ id: cuponId });
       },

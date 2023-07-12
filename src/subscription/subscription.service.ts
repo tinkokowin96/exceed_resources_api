@@ -64,7 +64,7 @@ export class SubscriptionService extends CoreService<Subscription> {
         if (promotionId)
           activePromotion = await this.findById({ id: promotionId, custom: this.promotionModel });
         const update = { ...payload, price, routes, activePromotion };
-        return await this.findByIdAndUpdate({ id, update, session });
+        return await this.findAndUpdate({ id, update, session });
       },
       req,
       res,

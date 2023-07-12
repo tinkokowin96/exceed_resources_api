@@ -90,7 +90,7 @@ export class UserService extends CoreService<User> {
         for (const sub of subscriptions) {
           if (sub.usedSlot === sub.numSlot)
             throw new BadRequestException('All subscription slots have been used');
-          await this.findByIdAndUpdate({
+          await this.findAndUpdate({
             id: sub.id,
             update: { $inc: { usedSlot: 1 }, $push: { users: user } },
             session,
@@ -99,7 +99,7 @@ export class UserService extends CoreService<User> {
         }
 
         if (!req.user)
-          await this.findByIdAndUpdate({
+          await this.findAndUpdate({
             id: associatedOrganization.branch.organization.config as any,
             update: { $set: { superAdmin: user } },
             custom: this.organizationModel,
@@ -164,7 +164,7 @@ export class UserService extends CoreService<User> {
   async toggleErAppAccess({ id, accessErApp }: ToggleErAppAccessDto, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) =>
-        await this.findByIdAndUpdate({
+        await this.findAndUpdate({
           id,
           update: {
             $set: { accessErApp },

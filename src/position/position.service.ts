@@ -58,7 +58,7 @@ export class PositionService extends CoreService<Position> {
 
         if (configId) config = await this.findById({ id: configId, custom: this.configModel });
 
-        return await this.findByIdAndUpdate({
+        return await this.findAndUpdate({
           id,
           update: {
             $set: {

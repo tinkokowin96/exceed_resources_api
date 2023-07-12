@@ -35,7 +35,7 @@ export class ErConfigService extends CoreService<ErConfig> {
           const baseCurrency = await this.findById({ id: baseCurrencyId, custom: this.currencyModel });
           update['baseCurrency'] = baseCurrency;
         }
-        return await this.findByIdAndUpdate({ id: process.env.CONFIG_ID, update: { $set: update }, session });
+        return await this.findAndUpdate({ id: process.env.CONFIG_ID, update: { $set: update }, session });
       },
       req,
       res,
@@ -56,7 +56,7 @@ export class ErConfigService extends CoreService<ErConfig> {
     return this.makeTransaction({
       action: async (session) => {
         const { id, ...update } = dto;
-        return await this.findByIdAndUpdate({ id, update: { $set: update }, session });
+        return await this.findAndUpdate({ id, update: { $set: update }, session });
       },
       req,
       res,

@@ -54,21 +54,21 @@ type FindByIdType<T> = QueryType<T> & {
   id: string | Types.ObjectId;
 };
 
-type FindByIdAndUpdateType<T> = Omit<FindByIdType<T>, 'projection'> & {
+type FindAndUpdateType<T> = Omit<FindByIdType<T>, 'projection' | 'id'> & {
+  id?: string | Types.ObjectId;
+  filter?: FilterQuery<T>;
   update: UpdateQuery<T>;
   session: ClientSession;
 };
 
-type UpdateManyType<T> = Omit<FindByIdAndUpdateType<T>, 'id'> & {
+type UpdateManyType<T> = Omit<FindAndUpdateType<T>, 'id' | 'filter'> & {
   filter: FilterQuery<T>;
-  update: UpdateQuery<T>;
-  session: ClientSession;
   pagination?: Omit<GetOptionsType<T>, 'filter' | 'options'>;
 };
 
 type MakeTransactionType = {
   action: (session: ClientSession) => Promise<any>;
-  req: AppRequest;
+  req?: AppRequest;
   res?: Response;
   callback?: () => any;
   audit?: Pick<Audit, 'name' | 'module' | 'payload' | 'triggeredBy'>;
@@ -178,24 +178,30 @@ export abstract class CoreService<T> {
     else throw new NotFoundException('Document not found with this id');
   }
 
-  async findByIdAndUpdate<K = T>({
+  async findAndUpdate<K = T>({
     id,
+    filter,
     update,
     session,
     custom,
     options,
-  }: FindByIdAndUpdateType<Type<K, T>>) {
+  }: FindAndUpdateType<Type<K, T>>) {
     const model: Model<Type<K, T>> = (custom ?? this.model) as any;
+    if (!id && !filter) throw new BadRequestException('Require filter to update');
+
     const prev = await model.findById(id, null, {
       lean: true,
     });
     if (!prev) throw new NotFoundException('Document not found with this id');
 
-    const next = await model.findByIdAndUpdate(
-      id,
+    const updateOptions = [
       { ...update, updatedAt: new Date() },
       { ...options, session, new: true },
-    );
+    ];
+
+    const next = id
+      ? await model.findByIdAndUpdate(id, ...updateOptions)
+      : await model.findOneAndUpdate(filter, ...updateOptions);
 
     return {
       prev,
@@ -244,7 +250,7 @@ export abstract class CoreService<T> {
 
       if (audit) {
         const user = {};
-        if (req.user) user['submittedUser'] = req.user;
+        if (req?.user) user['submittedUser'] = req.user;
         else user['submittedIP'] = req.ip;
         await this.create({
           dto: { ...audit, ...user, response: res } as any,

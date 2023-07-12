@@ -17,26 +17,34 @@ export class CommonService extends CoreService<User> {
   }
 
   async approveExtraSalary() {
-    const filter = { $and: [{ createdAt: new Date(), status: EExtraSalaryStatus.Pending }] };
-    const extras = await this.extraSalaryModel.find(filter, null, {
-      populate: [{ path: 'User', select: '_id' }],
-    });
-    await this.extraSalaryModel.updateMany(filter, {
-      $set: {
-        status: {
-          $cond: {
-            if: { $eq: ['$earning', true] },
-            then: EExtraSalaryStatus.Approved,
-            else: EExtraSalaryStatus.Penalized,
+    return this.makeTransaction({
+      action: async (session) => {
+        const filter = { $and: [{ createdAt: new Date(), status: EExtraSalaryStatus.Pending }] };
+        const extras = await this.extraSalaryModel.find(filter, null, {
+          populate: [{ path: 'user', select: '_id' }],
+        });
+        await this.updateMany({
+          filter,
+          session,
+          update: {
+            $set: {
+              status: {
+                $cond: {
+                  if: { $eq: ['$earning', true] },
+                  then: EExtraSalaryStatus.Approved,
+                  else: EExtraSalaryStatus.Penalized,
+                },
+              },
+            },
           },
-        },
+        });
+        for (const { extra, user } of extras) {
+          if (extra.isPoint) {
+            await this.findAndUpdate({ filter: { _id: user._id }, update: {}, session });
+          }
+        }
       },
     });
-    for (const { extra } of extras) {
-      if (extra.isPoint) {
-        // await
-      }
-    }
   }
 
   /**

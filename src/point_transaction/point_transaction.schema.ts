@@ -3,6 +3,7 @@ import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
 import { CoreSchema } from 'src/common/schema/core.shema';
+import { User } from 'src/user/schema/user.schema';
 
 @Schema()
 export class PointTransaction extends CoreSchema {
@@ -18,5 +19,9 @@ export class PointTransaction extends CoreSchema {
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Category' })
   @IsNotEmpty()
-  category: Category;
+  category?: Category;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  @IsNotEmpty()
+  user: User;
 }

@@ -108,6 +108,7 @@ export enum ECategory {
   Bank = 'Bank',
   Leave = 'Leave',
   Event = 'Event',
+  PointTransaction = 'PointTransaction',
 }
 
 export enum EWorkingHour {

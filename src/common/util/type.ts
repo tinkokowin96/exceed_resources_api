@@ -16,6 +16,6 @@ export interface AppRequest extends Request {
 }
 
 export type TriggeredBy = {
-  session: ClientSession;
+  session?: ClientSession;
   service: string;
 };

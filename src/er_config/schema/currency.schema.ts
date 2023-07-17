@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
-import { CoreSchema } from 'src/common/schema/core.shema';
+import { CoreSchema } from 'src/core/schema/core.shema';
 
 @Schema()
 export class Currency extends CoreSchema {

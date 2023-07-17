@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest } from 'src/core/util/type';
 import {
   AddAssociatedOrganizationDto,
   CreateUserDto,

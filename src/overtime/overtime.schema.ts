@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Compensation, FieldValue } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
+import { Compensation, FieldValue } from 'src/core/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()

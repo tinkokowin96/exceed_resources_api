@@ -3,9 +3,9 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
-import { Compensation } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { EExtraSalary, EExtraSalaryStatus } from 'src/common/util/enumn';
+import { Compensation } from 'src/core/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
+import { EExtraSalary, EExtraSalaryStatus } from 'src/core/util/enumn';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()

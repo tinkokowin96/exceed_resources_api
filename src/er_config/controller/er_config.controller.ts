@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest } from 'src/core/util/type';
 import { CreateCurrencyDto } from '../dto/currency.dto';
 import { EditErConfigDto } from '../dto/er_config.dto';
 import { ErConfigService } from '../service/er_config.service';

@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { DepartmentService } from './department.service';
 import { Users } from 'src/auth/user.decorator';
 import { CreateDepartmentDto } from './department.dto';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest } from 'src/core/util/type';
 import { Response } from 'express';
 
 @Controller('department')

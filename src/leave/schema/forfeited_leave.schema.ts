@@ -2,9 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsDateString, IsEnum, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { FieldValue } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { ERequestStatus } from 'src/common/util/enumn';
+import { FieldValue } from 'src/core/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
+import { ERequestStatus } from 'src/core/util/enumn';
 import { User } from 'src/user/schema/user.schema';
 import { AccumulatedLeave } from './accumulated_leave.schema';
 

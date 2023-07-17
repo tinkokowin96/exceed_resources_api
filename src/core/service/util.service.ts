@@ -8,7 +8,7 @@ import { CoreService } from './core.service';
 import { PointTransaction } from 'src/point_transaction/point_transaction.schema';
 
 @Injectable()
-export class CommonService extends CoreService<User> {
+export class UtilService extends CoreService<User> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(User.name) model: Model<User>,

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
-import { CoreService } from 'src/common/service/core.service';
-import { ECategory, EExtraSalaryStatus, EModule } from 'src/common/util/enumn';
-import { AppRequest, TriggeredBy } from 'src/common/util/type';
+import { CoreService } from 'src/core/service/core.service';
+import { ECategory, EExtraSalaryStatus, EModule } from 'src/core/util/enumn';
+import { AppRequest, TriggeredBy } from 'src/core/util/type';
 import { PointTransaction } from 'src/point_transaction/point_transaction.schema';
 import { ExtraSalary } from 'src/salary/schema/extra_salary.schema';
 import { ApproveExtraSalryDto } from '../dto/extra_salary.dto';
@@ -49,7 +49,9 @@ export class ExtraSalaryService extends CoreService<ExtraSalary> {
           ? (
               await this.updateMany({
                 ...update,
-                filter: { $and: [{ createdAt: new Date(), status: EExtraSalaryStatus.Pending }] },
+                filter: {
+                  $and: [{ createdAt: new Date(), status: EExtraSalaryStatus.Pending, earning: false }],
+                },
               })
             ).next
           : (await this.findAndUpdate({ ...update, id })).next;

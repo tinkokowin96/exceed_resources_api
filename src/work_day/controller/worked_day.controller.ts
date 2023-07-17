@@ -1,9 +1,9 @@
 import { Body, Controller, Patch, Post, Req, Res } from '@nestjs/common';
 import { WorkedDayService } from '../service/worked_day.service';
 import { Users } from 'src/auth/user.decorator';
-import { Location } from 'src/common/schema/common.schema';
+import { Location } from 'src/core/schema/common.schema';
 import { Response } from 'express';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest } from 'src/core/util/type';
 
 @Controller('worked-day')
 export class WorkedDayController {

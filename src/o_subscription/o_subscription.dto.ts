@@ -1,6 +1,6 @@
 import { IntersectionType, OmitType, PickType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { FindDto } from 'src/common/dto/find.dto';
+import { FindDto } from 'src/core/dto/find.dto';
 import { OSubscription } from './o_subscription.schema';
 
 export class CreateOSubscriptionDto extends OmitType(OSubscription, [

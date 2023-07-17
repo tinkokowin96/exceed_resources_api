@@ -3,8 +3,8 @@ import { Type } from 'class-transformer';
 import { IsDateString, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
-import { PromotionAllowance } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
+import { PromotionAllowance } from 'src/core/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
 
 @Schema()
 export class Cupon extends CoreSchema {

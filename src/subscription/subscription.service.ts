@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
-import { CoreService } from 'src/common/service/core.service';
+import { CoreService } from 'src/core/service/core.service';
 import { Subscription } from './subscription.schema';
 import { Promotion } from '../promotion/promotion.schema';
 import { CreateSubscriptionDto, UpdateSubscriptionDto } from 'src/subscription/subscription.dto';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest } from 'src/core/util/type';
 import { Response } from 'express';
-import { EModule } from 'src/common/util/enumn';
+import { EModule } from 'src/core/util/enumn';
 
 @Injectable()
 export class SubscriptionService extends CoreService<Subscription> {

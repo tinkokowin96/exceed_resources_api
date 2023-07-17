@@ -1,8 +1,8 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { Location } from 'src/common/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
+import { Location } from 'src/core/schema/common.schema';
 
 export class UserStatus extends CoreSchema {
   @Prop({ type: String, required: true })

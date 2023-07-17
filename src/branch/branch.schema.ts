@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Location } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
+import { Location } from 'src/core/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { Organization } from 'src/organization/schema/organization.schema';
 

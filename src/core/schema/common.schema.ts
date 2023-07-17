@@ -20,7 +20,7 @@ import { Cupon } from 'src/cupon/schema/cupon.schema';
 import { Leave } from 'src/leave/schema/leave.schema';
 import { Promotion } from 'src/promotion/promotion.schema';
 import { IsEmoji } from '../custom_validator/is_emoji.validator';
-import { EAttachment, ECompensation, EMessage, EMonth, ETime } from '../util/enumn';
+import { EAttachment, ECompensation, EMessage, EMonth } from '../util/enumn';
 
 export class Hour {
   @IsNotEmpty()
@@ -156,10 +156,6 @@ export class TimeCompensation {
   @IsNotEmpty()
   @IsNumber()
   amount: number;
-
-  @IsNotEmpty()
-  @IsEnum(ETime)
-  unit: ETime;
 
   @IsNotEmpty()
   @ValidateNested()

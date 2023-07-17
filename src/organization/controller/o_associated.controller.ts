@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { OAssociatedService } from '../service/o_associated.service';
 import { CreateOAssociatedDto } from '../dto/o_associated.dto';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest } from 'src/core/util/type';
 import { Response } from 'express';
 
 @Controller('o-associated')

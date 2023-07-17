@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Break } from 'src/break/schema/break.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
+import { CoreSchema } from 'src/core/schema/core.shema';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 
 @Schema()

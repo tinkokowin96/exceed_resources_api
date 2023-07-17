@@ -3,12 +3,12 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import dayjs from 'dayjs';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
-import { Location } from 'src/common/schema/common.schema';
-import { CoreService } from 'src/common/service/core.service';
-import { getWeekDay } from 'src/common/util/date_time';
-import { EModule } from 'src/common/util/enumn';
-import { calculateDistance, getNestedIndex } from 'src/common/util/misc';
-import { AppRequest } from 'src/common/util/type';
+import { Location } from 'src/core/schema/common.schema';
+import { CoreService } from 'src/core/service/core.service';
+import { getWeekDay } from 'src/core/util/date_time';
+import { EModule, ETime } from 'src/core/util/enumn';
+import { calculateDistance, getNestedIndex } from 'src/core/util/misc';
+import { AppRequest } from 'src/core/util/type';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 import { CustomWorkDay } from '../schema/custom_work_day.schema';
 import { WorkedDay } from '../schema/worked_day.schema';
@@ -28,6 +28,7 @@ export class WorkedDayService extends CoreService<WorkedDay> {
   async checkIn(location: Location, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
+        let latePenalty;
         const customWorkDay = await this.findOne({
           filter: {
             $and: [
@@ -37,15 +38,17 @@ export class WorkedDayService extends CoreService<WorkedDay> {
                 $or: [
                   { acceptedUsers: { $elemMatch: req.user._id } },
                   { affectedPositions: { $elemMatch: req.user.currentOrganization.position } },
+                  { affectAllUser: true },
                 ],
               },
             ],
           },
           custom: this.customWorkDayModel,
         });
+
         const config =
           customWorkDay?.config ??
-          (req.config as OConfig).workDays.find((each) => each.day === getWeekDay(new Date().getDay()))
+          (req.config as OConfig).workDays.find((each) => each.days.includes(getWeekDay(new Date().getDay())))
             .config;
 
         if (!config.allowRemote) {
@@ -58,9 +61,17 @@ export class WorkedDayService extends CoreService<WorkedDay> {
         }
         if (!config.flexibleWorkingHour) {
           const checkInTime = dayjs({ hour: config.checkInTime.hour, minute: config.checkInTime.minute });
-          const dateDiff = dayjs().diff(checkInTime, 'minutes');
+          const dateDiff = dayjs().diff(
+            checkInTime,
+            config.compensationUnit === ETime.Day
+              ? 'days'
+              : config.compensationUnit === ETime.Hour
+              ? 'hours'
+              : 'minutes',
+          );
           if (dateDiff > 0) {
-            const penalty = config.penalties[getNestedIndex(config.penalties, 'numMinute', dateDiff)].penalty;
+            const penalty =
+              config.latePenalties[getNestedIndex(config.latePenalties, 'amount', dateDiff)].compensation;
             if (penalty) {
             }
           }
@@ -74,4 +85,6 @@ export class WorkedDayService extends CoreService<WorkedDay> {
       audit: { name: 'check-in', module: EModule.WorkingHour, payload: location },
     });
   }
+
+  // async tolerateLate() {}
 }

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Users } from 'src/auth/user.decorator';
-import { EUser } from 'src/common/util/enumn';
-import { AppRequest } from 'src/common/util/type';
+import { EUser } from 'src/core/util/enumn';
+import { AppRequest } from 'src/core/util/type';
 import { Response } from 'express';
 import { OSubscriptionService } from './o_subscription.service';
 import { CalculatePriceDto, CreateOSubscriptionDto } from './o_subscription.dto';

@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { AppOmitWithExtra } from 'src/common/dto/core.dto';
+import { AppOmitWithExtra } from 'src/core/dto/core.dto';
 import { AccumulatedLeave } from '../schema/accumulated_leave.schema';
 
 export class CreateAccumulatedLeaveDto extends AppOmitWithExtra(AccumulatedLeave, [

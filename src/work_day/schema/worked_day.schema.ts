@@ -4,12 +4,13 @@ import { IsDateString, IsMongoId, IsNotEmpty, ValidateNested } from 'class-valid
 import { SchemaTypes } from 'mongoose';
 import { Break } from 'src/break/schema/break.schema';
 import { CustomBreak } from 'src/break/schema/custom_break.schema';
-import { Compensation, Counter } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
+import { Counter } from 'src/core/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
 import { Overtime } from 'src/overtime/overtime.schema';
+import { ExtraSalary } from 'src/salary/schema/extra_salary.schema';
 import { User } from 'src/user/schema/user.schema';
 
-class BreakWorkingHour {
+class UtilizedBreak {
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => Counter)
@@ -18,6 +19,9 @@ class BreakWorkingHour {
   @IsNotEmpty()
   @IsMongoId()
   break: Break;
+
+  @IsMongoId()
+  latePenalty?: ExtraSalary;
 }
 
 @Schema()
@@ -31,13 +35,13 @@ export class WorkedDay extends CoreSchema {
   @IsDateString()
   checkOutTime?: Date;
 
+  @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested({ each: true })
-  @Type(() => BreakWorkingHour)
-  breaks?: BreakWorkingHour[];
+  @Type(() => UtilizedBreak)
+  breaks?: UtilizedBreak[];
 
-  @ValidateNested()
-  @Type(() => Compensation)
-  latePenalty?: Compensation;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'ExtraSalary' })
+  latePenalty?: ExtraSalary;
 
   @Prop({ type: SchemaTypes.ObjectId, ref: 'CustomBreak' })
   userBreak?: CustomBreak;

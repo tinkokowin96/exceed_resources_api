@@ -2,7 +2,7 @@ import { Body, Controller, Patch, Post, Req, Res } from '@nestjs/common';
 import { PositionService } from './position.service';
 import { Users } from 'src/auth/user.decorator';
 
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest } from 'src/core/util/type';
 import { Response } from 'express';
 import { CreatePositionDto, UpdatePositionDto } from './position.dto';
 

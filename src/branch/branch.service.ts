@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CoreService } from 'src/common/service/core.service';
+import { CoreService } from 'src/core/service/core.service';
 import { Branch } from './branch.schema';
 import { CreateBranchDto } from './branch.dto';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { Organization } from 'src/organization/schema/organization.schema';
-import { AppRequest, TriggeredBy } from 'src/common/util/type';
+import { AppRequest, TriggeredBy } from 'src/core/util/type';
 import { Response } from 'express';
-import { EModule } from 'src/common/util/enumn';
+import { EModule } from 'src/core/util/enumn';
 import { omit } from 'lodash';
 import { OConfig } from 'src/organization/schema/o_config.schema';
 

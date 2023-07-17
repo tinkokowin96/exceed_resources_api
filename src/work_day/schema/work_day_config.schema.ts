@@ -1,16 +1,20 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
-import { Compensation, Hour, TimeCompensation } from 'src/common/schema/common.schema';
-import { EWeekDay } from 'src/common/util/enumn';
+import { Compensation, Hour, TimeCompensation } from 'src/core/schema/common.schema';
+import { ETime, EWeekDay } from 'src/core/util/enumn';
 
 export class WorkDayConfig {
   @IsNotEmpty()
   @IsBoolean()
   offDay: boolean;
 
+  //TODO: need to valiate this must not empty if there is latePenalties
+  @IsEnum(ETime)
+  compensationUnit: ETime;
+
   @ValidateNested({ each: true })
   @Type(() => TimeCompensation)
-  penalties?: TimeCompensation[];
+  latePenalties?: TimeCompensation[];
 
   @IsBoolean()
   allowRemote?: boolean;

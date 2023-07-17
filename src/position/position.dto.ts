@@ -1,8 +1,8 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { AppOmitWithExtra } from 'src/common/dto/core.dto';
-import { UpdateArray } from 'src/common/schema/common.schema';
+import { AppOmitWithExtra } from 'src/core/dto/core.dto';
+import { UpdateArray } from 'src/core/schema/common.schema';
 import { Position } from './position.schema';
 
 export class CreatePositionDto extends PickType(Position, [

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
-import { CoreService } from 'src/common/service/core.service';
-import { EModule } from 'src/common/util/enumn';
-import { AppRequest } from 'src/common/util/type';
+import { CoreService } from 'src/core/service/core.service';
+import { EModule } from 'src/core/util/enumn';
+import { AppRequest } from 'src/core/util/type';
 import { CreateBreakDto } from '../dto/break.dto';
 import { Break } from '../schema/break.schema';
 

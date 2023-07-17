@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CoreService } from 'src/common/service/core.service';
+import { CoreService } from 'src/core/service/core.service';
 import { AccumulatedLeave } from '../schema/accumulated_leave.schema';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { CreateAccumulatedLeaveDto } from '../dto/accumulated_leave.dto';
-import { AppRequest, TriggeredBy } from 'src/common/util/type';
+import { AppRequest, TriggeredBy } from 'src/core/util/type';
 import { Response } from 'express';
-import { EModule } from 'src/common/util/enumn';
+import { EModule } from 'src/core/util/enumn';
 import { User } from 'src/user/schema/user.schema';
 import { Leave } from '../schema/leave.schema';
 

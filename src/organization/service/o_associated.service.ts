@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CoreService } from 'src/common/service/core.service';
+import { CoreService } from 'src/core/service/core.service';
 import { OAssociated } from '../schema/o_associated.schema';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { CreateOAssociatedDto } from '../dto/o_associated.dto';
-import { AppRequest, TriggeredBy } from 'src/common/util/type';
+import { AppRequest, TriggeredBy } from 'src/core/util/type';
 import { Response } from 'express';
-import { EModule } from 'src/common/util/enumn';
+import { EModule } from 'src/core/util/enumn';
 import { Branch } from 'src/branch/branch.schema';
 import { Position } from 'src/position/position.schema';
 import { Department } from 'src/department/department.schema';

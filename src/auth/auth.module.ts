@@ -3,7 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import * as cookieParser from 'cookie-parser';
-import { ExceedLimit, ExceedLimitSchema } from 'src/common/schema/exceed_limit.schema';
+import { ExceedLimit, ExceedLimitSchema } from 'src/core/schema/exceed_limit.schema';
 import { ErConfig, ErConfigSchema } from 'src/er_config/schema/er_config.schema';
 import { Organization, OrganizationSchema } from 'src/organization/schema/organization.schema';
 import { Position, PositionSchema } from 'src/position/position.schema';

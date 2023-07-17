@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { AppOmitWithExtra } from 'src/common/dto/core.dto';
+import { AppOmitWithExtra } from 'src/core/dto/core.dto';
 import { LeaveAllowedDto } from 'src/leave/dto/leave.dto';
 import { OAssociated } from '../schema/o_associated.schema';
 

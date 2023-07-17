@@ -2,12 +2,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Model } from 'mongoose';
-import { CoreService } from 'src/common/service/core.service';
-import { EModule } from 'src/common/util/enumn';
-import { AppRequest, TriggeredBy } from 'src/common/util/type';
+import { CoreService } from 'src/core/service/core.service';
+import { EModule } from 'src/core/util/enumn';
+import { AppRequest, TriggeredBy } from 'src/core/util/type';
 import { CreateOConfigDto } from '../dto/o_config.dto';
 import { OConfig } from '../schema/o_config.schema';
-import { Field } from 'src/common/schema/field.schema';
+import { Field } from 'src/core/schema/field.schema';
 
 @Injectable()
 export class OConfigService extends CoreService<OConfig> {

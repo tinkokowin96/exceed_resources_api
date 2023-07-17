@@ -2,9 +2,9 @@ import { Prop, Schema } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { Counter, TimeCompensation } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { ERequestStatus } from 'src/common/util/enumn';
+import { Counter, TimeCompensation } from 'src/core/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
+import { ERequestStatus, ETime } from 'src/core/util/enumn';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()
@@ -34,6 +34,11 @@ export class CustomBreak extends CoreSchema {
   @ValidateNested()
   @Type(() => Counter)
   breakTime: Counter;
+
+  @Prop({ type: String, enum: ETime, required: true })
+  @IsNotEmpty()
+  @IsEnum(ETime)
+  compensationUnit: ETime;
 
   @Prop({ type: SchemaTypes.Mixed })
   @ValidateNested()

@@ -5,7 +5,7 @@ import { SchemaTypes } from 'mongoose';
 import { Bank } from 'src/bank/bank.schema';
 import { ChatGroup } from 'src/chat/schema/chat_group.shema';
 import { DirectMessage } from 'src/chat/schema/direct_message.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
+import { CoreSchema } from 'src/core/schema/core.shema';
 import { OAssociated } from 'src/organization/schema/o_associated.schema';
 import { Project } from 'src/project/schema/project.schema';
 import { UserStatus } from './user_status.schema';

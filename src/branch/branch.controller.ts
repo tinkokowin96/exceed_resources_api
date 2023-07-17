@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { Response } from 'express';
 import { Users } from 'src/auth/user.decorator';
-import { AppRequest } from 'src/common/util/type';
+import { AppRequest } from 'src/core/util/type';
 import { CreateBranchDto } from './branch.dto';
 import { BranchService } from './branch.service';
 

@@ -1,10 +1,11 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Branch } from 'src/branch/branch.schema';
-import { TimeCompensation } from 'src/common/schema/common.schema';
-import { CoreSchema } from 'src/common/schema/core.shema';
+import { TimeCompensation } from 'src/core/schema/common.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
+import { ETime } from 'src/core/util/enumn';
 
 export class Break extends CoreSchema {
   @Prop({ type: String, required: true })
@@ -16,6 +17,11 @@ export class Break extends CoreSchema {
   @IsNotEmpty()
   @IsNumber()
   allowedMinutes: number;
+
+  @Prop({ type: String, enum: ETime, required: true })
+  @IsNotEmpty()
+  @IsEnum(ETime)
+  compensationUnit: ETime;
 
   @Prop({ type: Boolean, default: false })
   @IsBoolean()

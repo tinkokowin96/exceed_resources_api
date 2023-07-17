@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsEnum, IsHexColor, IsNotEmpty, IsString } from 'class-validator';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { ECategory } from 'src/common/util/enumn';
+import { CoreSchema } from 'src/core/schema/core.shema';
+import { ECategory } from 'src/core/util/enumn';
 
 @Schema()
 export class Category extends CoreSchema {

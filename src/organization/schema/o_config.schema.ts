@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { CoreSchema } from 'src/common/schema/core.shema';
-import { Field } from 'src/common/schema/field.schema';
+import { CoreSchema } from 'src/core/schema/core.shema';
+import { Field } from 'src/core/schema/field.schema';
 import { LeaveAllowed } from 'src/leave/schema/leave.schema';
 import { WorkDay } from 'src/work_day/schema/work_day_config.schema';
 

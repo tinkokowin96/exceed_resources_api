@@ -96,6 +96,7 @@ export enum EExtraSalaryStatus {
   Approved = 'Approved',
   Pending = 'Pending',
   Declined = 'Declined',
+  Tolerated = 'Tolerated',
 }
 
 export enum ECategory {

@@ -7,7 +7,7 @@ import { BranchModule } from './branch/branch.module';
 import { BreakModule } from './break/break.module';
 import { CategoryModule } from './category/category.module';
 import { ChatModule } from './chat/chat.module';
-import { CommonModule } from './common/common.module';
+import { CoreModule } from './core/core.module';
 import { CuponModule } from './cupon/cupon.module';
 import { DepartmentModule } from './department/department.module';
 import { ErConfigModule } from './er_config/er_config.module';
@@ -36,7 +36,7 @@ import { OrganizationModule } from './organization/organization.module';
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.MONGODB_URI, { loggerLevel: 'info' }),
-    CommonModule,
+    CoreModule,
     ChatModule,
     OrganizationModule,
     ReportModule,

@@ -1,4 +1,4 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Category } from 'src/category/category.schema';
@@ -25,3 +25,5 @@ export class PointTransaction extends CoreSchema {
   @IsNotEmpty()
   user: User;
 }
+
+export const PointTransactionSchema = SchemaFactory.createForClass(PointTransaction);

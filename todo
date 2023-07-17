@@ -3,4 +3,7 @@
  * may be client to check issue status like asana
  *
  * TODO: Test if not included fields in Dto comes to service
+ * NOTE: Showing user when is which break must be handle(be will provide required data)
+ * coz it this is handle by be and if there is many user, can't even image performamce impact
+ * for scheduling and emiting events for each user..
  * */

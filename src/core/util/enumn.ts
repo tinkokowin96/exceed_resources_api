@@ -110,6 +110,7 @@ export enum ECategory {
   Leave = 'Leave',
   Event = 'Event',
   PointTransaction = 'PointTransaction',
+  ExtraSalary = 'ExtraSalary',
 }
 
 export enum EWorkingHour {
@@ -160,13 +161,6 @@ export enum EMonth {
   Oct = 'Oct',
   Nov = 'Nov',
   Dec = 'Dec',
-}
-
-export enum EExtraSalary {
-  Late = 'Late',
-  Leave = 'Leave',
-  Overtime = 'Overtime',
-  CustomWorkDay = 'CustomWorkDay',
 }
 
 export enum EScheduledTask {

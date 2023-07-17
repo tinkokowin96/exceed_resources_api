@@ -7,21 +7,47 @@ import { ECategory, EExtraSalaryStatus, EModule } from 'src/core/util/enumn';
 import { AppRequest, TriggeredBy } from 'src/core/util/type';
 import { PointTransaction } from 'src/point_transaction/point_transaction.schema';
 import { ExtraSalary } from 'src/salary/schema/extra_salary.schema';
-import { ApproveExtraSalryDto } from '../dto/extra_salary.dto';
+import { ApproveExtraSalaryDto, CreateExtraSalaryDto } from '../dto/extra_salary.dto';
+import { omit } from 'lodash';
 
 @Injectable()
 export class ExtraSalaryService extends CoreService<ExtraSalary> {
   constructor(
     @InjectConnection() connection: Connection,
     @InjectModel(ExtraSalary.name) model: Model<ExtraSalary>,
-    @InjectModel(ExtraSalary.name) private readonly extraSalaryModel: Model<ExtraSalary>,
     @InjectModel(PointTransaction.name) private readonly pointTransactionModel: Model<PointTransaction>,
   ) {
     super(connection, model);
   }
 
+  async createExtraSalary(
+    dto: CreateExtraSalaryDto,
+    req: AppRequest,
+    res: Response,
+    triggeredBy?: TriggeredBy,
+  ) {
+    return this.makeTransaction({
+      action: async (ses) => {
+        const session = triggeredBy?.session ?? ses;
+        return await this.create({
+          dto: { ...omit(dto, 'category'), user: req.user },
+          category: { ...dto.category, type: ECategory.ExtraSalary },
+          session,
+        });
+      },
+      req,
+      res: triggeredBy ? undefined : res,
+      audit: {
+        name: 'crate-extrasalary',
+        payload: dto,
+        module: EModule.Salary,
+        triggeredBy: triggeredBy?.service,
+      },
+    });
+  }
+
   async approveExtraSalary(
-    dto: ApproveExtraSalryDto,
+    dto: ApproveExtraSalaryDto,
     req?: AppRequest,
     res?: Response,
     triggeredBy?: TriggeredBy,

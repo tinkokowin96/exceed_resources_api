@@ -1,16 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, Max, Min, ValidateIf, ValidateNested } from 'class-validator';
 import { Compensation, Hour, TimeCompensation } from 'src/core/schema/common.schema';
-import { ETime, EWeekDay } from 'src/core/util/enumn';
+import { EWeekDay } from 'src/core/util/enumn';
 
 export class WorkDayConfig {
   @IsNotEmpty()
   @IsBoolean()
   offDay: boolean;
-
-  //TODO: need to valiate this must not empty if there is latePenalties
-  @IsEnum(ETime)
-  compensationUnit: ETime;
 
   @ValidateNested({ each: true })
   @Type(() => TimeCompensation)
@@ -22,10 +18,23 @@ export class WorkDayConfig {
   @IsBoolean()
   requireCheckOut?: boolean;
 
+  @IsBoolean()
+  flexibleWorkingHour?: boolean;
+
+  @ValidateIf((object) => object.flexibleWorkingHour)
+  @IsNotEmpty()
+  @Min(3)
+  @Max(20)
+  numWorkingHour?: number;
+
+  @ValidateIf((object) => !object.flexibleWorkingHour)
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => Hour)
   checkInTime?: Hour;
 
+  @ValidateIf((object) => !object.flexibleWorkingHour)
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => Hour)
   checkOutTime?: Hour;
@@ -42,12 +51,6 @@ export class WorkDayConfig {
 
   @IsBoolean()
   allowCustomBreak?: boolean;
-
-  @IsBoolean()
-  flexibleWorkingHour?: boolean;
-
-  @IsNumber()
-  numWorkingHour?: number;
 }
 
 export class WorkDay {

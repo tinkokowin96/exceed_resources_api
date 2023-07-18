@@ -7,7 +7,7 @@ import { Connection, Model } from 'mongoose';
 import { Location } from 'src/core/schema/common.schema';
 import { CoreService } from 'src/core/service/core.service';
 import { getWeekDay } from 'src/core/util/date_time';
-import { EModule, ETime } from 'src/core/util/enumn';
+import { EModule } from 'src/core/util/enumn';
 import { calculateDistance, getNestedIndex } from 'src/core/util/misc';
 import { AppRequest } from 'src/core/util/type';
 import { OConfig } from 'src/organization/schema/o_config.schema';
@@ -27,50 +27,54 @@ export class WorkedDayService extends CoreService<WorkedDay> {
     dayjs.extend(objectSupport);
   }
 
+  async getConfig(location: Location, req: AppRequest) {
+    const customWorkDay = await this.findOne({
+      filter: {
+        $and: [
+          { startDate: { $gte: new Date() } },
+          { endDate: { $lte: new Date() } },
+          {
+            $or: [
+              { acceptedUsers: { $elemMatch: req.user._id } },
+              { affectedPositions: { $elemMatch: req.user.currentOrganization.position } },
+              { affectAllUser: true },
+            ],
+          },
+        ],
+      },
+      custom: this.customWorkDayModel,
+    });
+
+    const config =
+      customWorkDay?.config ??
+      (req.config as OConfig).workDays.find((each) => each.days.includes(getWeekDay(new Date().getDay())))
+        .config;
+
+    if (!config.allowRemote) {
+      const distance = calculateDistance(
+        location,
+        customWorkDay?.location ?? req.user.currentOrganization.branch.location,
+      );
+      if (distance > (req.config as OConfig).toleranceRangeInMeter)
+        throw new BadRequestException('User is not within the range of office');
+    }
+
+    return config;
+  }
+
   async checkIn(location: Location, req: AppRequest, res: Response) {
     return this.makeTransaction({
       action: async (session) => {
         let latePenalty;
-        const customWorkDay = await this.findOne({
-          filter: {
-            $and: [
-              { startDate: { $gte: new Date() } },
-              { endDate: { $lte: new Date() } },
-              {
-                $or: [
-                  { acceptedUsers: { $elemMatch: req.user._id } },
-                  { affectedPositions: { $elemMatch: req.user.currentOrganization.position } },
-                  { affectAllUser: true },
-                ],
-              },
-            ],
-          },
-          custom: this.customWorkDayModel,
-        });
+        const config = await this.getConfig(location, req);
 
-        const config =
-          customWorkDay?.config ??
-          (req.config as OConfig).workDays.find((each) => each.days.includes(getWeekDay(new Date().getDay())))
-            .config;
-
-        if (!config.allowRemote) {
-          const distance = calculateDistance(
-            location,
-            customWorkDay?.location ?? req.user.currentOrganization.branch.location,
-          );
-          if (distance > (req.config as OConfig).toleranceRangeInMeter)
-            throw new BadRequestException('User is not within the range of office');
-        }
         if (!config.flexibleWorkingHour) {
-          const checkInTime = dayjs({ hour: config.checkInTime.hour, minute: config.checkInTime.minute });
-          const dateDiff = dayjs().diff(
-            checkInTime,
-            config.compensationUnit === ETime.Day
-              ? 'days'
-              : config.compensationUnit === ETime.Hour
-              ? 'hours'
-              : 'minutes',
-          );
+          const checkinTIme = dayjs({
+            hour: config.checkInTime.hour,
+            minute: config.checkInTime.minute,
+          });
+          const dateDiff = dayjs().diff(checkinTIme, 'minutes');
+
           if (dateDiff > 0) {
             const penalty =
               config.latePenalties[getNestedIndex(config.latePenalties, 'amount', dateDiff)].compensation;
@@ -88,11 +92,36 @@ export class WorkedDayService extends CoreService<WorkedDay> {
           }
         }
 
-        return this.create({ dto: { checkInTime: new Date(), latePenalty, user: req.user }, session });
+        return this.create({ dto: { latePenalty, user: req.user }, session });
       },
       req,
       res,
       audit: { name: 'check-in', module: EModule.WorkingHour, payload: location },
+    });
+  }
+
+  async checkOut(location: Location, req: AppRequest, res: Response) {
+    return this.makeTransaction({
+      action: async (session) => {
+        let checkoutTime;
+        const config = await this.getConfig(location, req);
+
+        if (config.flexibleWorkingHour) {
+          const workedDay = await this.findOne({ filter: { createdAt: new Date() } });
+          checkoutTime = dayjs(workedDay.createdAt).add(config.numWorkingHour, 'hours');
+        }
+        if (dayjs().diff(checkoutTime ?? dayjs(config.checkOutTime), 'minutes') < 0)
+          throw new BadRequestException("Working time hasn't ended");
+
+        return await this.findAndUpdate({
+          filter: { createdAt: new Date() },
+          update: { $set: { checkOutTime: new Date() } },
+          session,
+        });
+      },
+      req,
+      res,
+      audit: { name: 'check-out', module: EModule.Salary, payload: location },
     });
   }
 

@@ -26,11 +26,6 @@ class UtilizedBreak {
 
 @Schema()
 export class WorkedDay extends CoreSchema {
-  @Prop({ type: Date, required: true })
-  @IsNotEmpty()
-  @IsDateString()
-  checkInTime: Date;
-
   @Prop({ type: Date })
   @IsDateString()
   checkOutTime?: Date;

@@ -1,65 +1,77 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsNotEmpty, Max, Min, ValidateIf, ValidateNested } from 'class-validator';
+import {
+	IsBoolean,
+	IsEnum,
+	IsNotEmpty,
+	Max,
+	Min,
+	ValidateIf,
+	ValidateNested,
+} from 'class-validator';
 import { Compensation, Hour, TimeCompensation } from 'src/core/schema/common.schema';
 import { EWeekDay } from 'src/core/util/enumn';
 
 export class WorkDayConfig {
-  @IsNotEmpty()
-  @IsBoolean()
-  offDay: boolean;
+	@IsNotEmpty()
+	@IsBoolean()
+	offDay: boolean;
 
-  @ValidateNested({ each: true })
-  @Type(() => TimeCompensation)
-  latePenalties?: TimeCompensation[];
+	// @IsNotEmpty()
+	// @IsBoolean()
+	// requireCBApprove: boolean;
 
-  @IsBoolean()
-  allowRemote?: boolean;
+	@ValidateNested({ each: true })
+	@Type(() => TimeCompensation)
+	latePenalties?: TimeCompensation[];
 
-  @IsBoolean()
-  requireCheckOut?: boolean;
+	@IsBoolean()
+	allowRemote?: boolean;
 
-  @IsBoolean()
-  flexibleWorkingHour?: boolean;
+	@IsBoolean()
+	requireCheckOut?: boolean;
 
-  @ValidateIf((object) => object.flexibleWorkingHour)
-  @IsNotEmpty()
-  @Min(3)
-  @Max(20)
-  numWorkingHour?: number;
+	@IsBoolean()
+	flexibleWorkingHour?: boolean;
 
-  @ValidateIf((object) => !object.flexibleWorkingHour)
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => Hour)
-  checkInTime?: Hour;
+	@ValidateIf((object) => object.flexibleWorkingHour)
+	@IsNotEmpty()
+	@Min(3)
+	@Max(20)
+	numWorkingHour?: number;
 
-  @ValidateIf((object) => !object.flexibleWorkingHour)
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => Hour)
-  checkOutTime?: Hour;
+	@ValidateIf((object) => !object.flexibleWorkingHour)
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => Hour)
+	checkInTime?: Hour;
 
-  @ValidateNested()
-  @Type(() => Compensation)
-  overtimeHourlyAllowance?: Compensation;
+	@ValidateIf((object) => !object.flexibleWorkingHour)
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => Hour)
+	checkOutTime?: Hour;
 
-  @IsBoolean()
-  allowRemoteCheckIn?: boolean;
+	@ValidateNested()
+	@Type(() => Compensation)
+	overtimeHourlyAllowance?: Compensation;
 
-  @IsBoolean()
-  allowLateSubstitute?: boolean;
+	@IsBoolean()
+	allowRemoteCheckIn?: boolean;
 
-  @IsBoolean()
-  allowCustomBreak?: boolean;
+	@IsBoolean()
+	allowLateSubstitute?: boolean;
+
+	@IsBoolean()
+	allowCustomBreak?: boolean;
 }
 
 export class WorkDay {
-  @IsNotEmpty()
-  @IsEnum(EWeekDay, { each: true })
-  days: EWeekDay[];
+	@IsNotEmpty()
+	@IsEnum(EWeekDay, { each: true })
+	days: EWeekDay[];
 
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => WorkDayConfig)
-  config: WorkDayConfig;
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => WorkDayConfig)
+	config: WorkDayConfig;
 }

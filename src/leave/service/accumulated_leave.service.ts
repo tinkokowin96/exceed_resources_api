@@ -12,48 +12,53 @@ import { Leave } from '../schema/leave.schema';
 
 @Injectable()
 export class AccumulatedLeaveService extends CoreService<AccumulatedLeave> {
-  constructor(
-    @InjectModel(AccumulatedLeave.name) model: Model<AccumulatedLeave>,
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-    @InjectModel(Leave.name) private readonly leaveModel: Model<Leave>,
-    @InjectConnection() connection: Connection,
-  ) {
-    super(connection, model);
-  }
+	constructor(
+		@InjectModel(AccumulatedLeave.name) model: Model<AccumulatedLeave>,
+		@InjectModel(User.name) private readonly userModel: Model<User>,
+		@InjectModel(Leave.name) private readonly leaveModel: Model<Leave>,
+		@InjectConnection() connection: Connection,
+	) {
+		super(connection, model);
+	}
 
-  async createAccumulatedLeave(
-    dto: CreateAccumulatedLeaveDto,
-    req: AppRequest,
-    res: Response,
-    trigger?: TriggeredBy,
-  ) {
-    return this.makeTransaction({
-      action: async (session) => {
-        const { leaveId, grantedUserId, ...payload } = dto;
-        let grantedUser;
-        if (!payload.isEntitledLeave && !grantedUserId)
-          throw new BadRequestException('Required granted user if not entitled leave');
-        if (grantedUserId) grantedUser = await this.findById({ id: grantedUserId, custom: this.userModel });
-        const leave = await this.findById({ id: leaveId, custom: this.leaveModel });
-        return await this.create({
-          dto: {
-            ...payload,
-            availableDay: payload.numDay,
-            leave,
-            grantedBy: grantedUser,
-            year: new Date().getFullYear(),
-          },
-          session,
-        });
-      },
-      req,
-      res,
-      audit: {
-        name: 'create-accumulated-leave',
-        module: EModule.Leave,
-        payload: dto,
-        triggeredBy: trigger.service,
-      },
-    });
-  }
+	async createAccumulatedLeave(
+		dto: CreateAccumulatedLeaveDto,
+		req: AppRequest,
+		res: Response,
+		trigger?: TriggeredBy,
+	) {
+		return this.makeTransaction({
+			session: trigger?.session,
+			action: async (session) => {
+				const { leaveId, grantedUserId, ...payload } = dto;
+				let grantedUser;
+				if (!payload.isEntitledLeave && !grantedUserId)
+					throw new BadRequestException('Required granted user if not entitled leave');
+				if (grantedUserId)
+					grantedUser = await this.findById({
+						id: grantedUserId,
+						custom: this.userModel,
+					});
+				const leave = await this.findById({ id: leaveId, custom: this.leaveModel });
+				return await this.create({
+					dto: {
+						...payload,
+						availableDay: payload.numDay,
+						leave,
+						grantedBy: grantedUser,
+						year: new Date().getFullYear(),
+					},
+					session,
+				});
+			},
+			req,
+			res,
+			audit: {
+				name: 'create-accumulated-leave',
+				module: EModule.Leave,
+				payload: dto,
+				triggeredBy: trigger.service,
+			},
+		});
+	}
 }

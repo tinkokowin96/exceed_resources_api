@@ -11,41 +11,48 @@ import { Field } from 'src/core/schema/field.schema';
 
 @Injectable()
 export class OConfigService extends CoreService<OConfig> {
-  constructor(
-    @InjectConnection() connection: Connection,
-    @InjectModel(OConfig.name) model: Model<OConfig>,
-    @InjectModel(Field.name) private readonly fieldModel: Model<Field>,
-  ) {
-    super(connection, model);
-  }
+	constructor(
+		@InjectConnection() connection: Connection,
+		@InjectModel(OConfig.name) model: Model<OConfig>,
+		@InjectModel(Field.name) private readonly fieldModel: Model<Field>,
+	) {
+		super(connection, model);
+	}
 
-  async createOConfig(dto: CreateOConfigDto, req: AppRequest, res: Response, trigger?: TriggeredBy) {
-    return this.makeTransaction({
-      action: async (ses) => {
-        const { overtimeFormFieldIds, workDays, ...payload } = dto;
-        const session = trigger?.session ?? ses;
-        const overtimeForm = (
-          await this.find({
-            filter: { _id: { $in: overtimeFormFieldIds } },
-            custom: this.fieldModel,
-          })
-        ).items;
-        const days = workDays.reduce((prev, curr) => {
-          prev.push(...curr.days);
-          return prev;
-        }, []);
-        if (days.length !== 7)
-          throw new BadRequestException('Required seven work day for a week, with one config for a day');
-        return await this.create({ dto: { ...payload, overtimeForm, workDays }, session });
-      },
-      req,
-      res: trigger ? undefined : res,
-      audit: {
-        name: 'create-oconfig',
-        module: EModule.Organization,
-        payload: dto,
-        triggeredBy: trigger?.service,
-      },
-    });
-  }
+	async createOConfig(
+		dto: CreateOConfigDto,
+		req: AppRequest,
+		res: Response,
+		trigger?: TriggeredBy,
+	) {
+		return this.makeTransaction({
+			session: trigger?.session,
+			action: async (session) => {
+				const { overtimeFormFieldIds, workDays, ...payload } = dto;
+				const overtimeForm = (
+					await this.find({
+						filter: { _id: { $in: overtimeFormFieldIds } },
+						custom: this.fieldModel,
+					})
+				).items;
+				const days = workDays.reduce((prev, curr) => {
+					prev.push(...curr.days);
+					return prev;
+				}, []);
+				if (days.length !== 7)
+					throw new BadRequestException(
+						'Required seven work day for a week, with one config for a day',
+					);
+				return await this.create({ dto: { ...payload, overtimeForm, workDays }, session });
+			},
+			req,
+			res: trigger ? undefined : res,
+			audit: {
+				name: 'create-oconfig',
+				module: EModule.Organization,
+				payload: dto,
+				triggeredBy: trigger?.service,
+			},
+		});
+	}
 }

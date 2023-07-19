@@ -3,7 +3,8 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import { Response } from 'express';
-import { Connection, Model, ObjectId, Types } from 'mongoose';
+import { Connection, Model, Types } from 'mongoose';
+import { Break } from 'src/break/schema/break.schema';
 import { Location } from 'src/core/schema/common.schema';
 import { CoreService } from 'src/core/service/core.service';
 import { getWeekDay } from 'src/core/util/date_time';
@@ -14,7 +15,6 @@ import { OConfig } from 'src/organization/schema/o_config.schema';
 import { ExtraSalaryService } from 'src/salary/service/extra_salary.service';
 import { CustomWorkDay } from '../schema/custom_work_day.schema';
 import { WorkedDay } from '../schema/worked_day.schema';
-import { Break } from 'src/break/schema/break.schema';
 
 @Injectable()
 export class WorkedDayService extends CoreService<WorkedDay> {

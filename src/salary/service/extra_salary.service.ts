@@ -12,139 +12,151 @@ import { omit } from 'lodash';
 
 @Injectable()
 export class ExtraSalaryService extends CoreService<ExtraSalary> {
-  constructor(
-    @InjectConnection() connection: Connection,
-    @InjectModel(ExtraSalary.name) model: Model<ExtraSalary>,
-    @InjectModel(PointTransaction.name) private readonly pointTransactionModel: Model<PointTransaction>,
-  ) {
-    super(connection, model);
-  }
+	constructor(
+		@InjectConnection() connection: Connection,
+		@InjectModel(ExtraSalary.name) model: Model<ExtraSalary>,
+		@InjectModel(PointTransaction.name)
+		private readonly pointTransactionModel: Model<PointTransaction>,
+	) {
+		super(connection, model);
+	}
 
-  async createExtraSalary(
-    dto: CreateExtraSalaryDto,
-    req: AppRequest,
-    res: Response,
-    triggeredBy?: TriggeredBy,
-  ) {
-    return this.makeTransaction({
-      action: async (ses) => {
-        const session = triggeredBy?.session ?? ses;
-        return await this.create({
-          dto: { ...omit(dto, 'category'), user: req.user },
-          category: { ...dto.category, type: ECategory.ExtraSalary },
-          session,
-        });
-      },
-      req,
-      res: triggeredBy ? undefined : res,
-      audit: {
-        name: 'crate-extrasalary',
-        payload: dto,
-        module: EModule.Salary,
-        triggeredBy: triggeredBy?.service,
-      },
-    });
-  }
+	async createExtraSalary(
+		dto: CreateExtraSalaryDto,
+		req: AppRequest,
+		res: Response,
+		triggeredBy?: TriggeredBy,
+	) {
+		return this.makeTransaction({
+			session: triggeredBy?.session,
+			action: async (session) => {
+				return await this.create({
+					dto: { ...omit(dto, 'category'), user: req.user },
+					category: { ...dto.category, type: ECategory.ExtraSalary },
+					session,
+				});
+			},
+			req,
+			res: triggeredBy ? undefined : res,
+			audit: {
+				name: 'crate-extrasalary',
+				payload: dto,
+				module: EModule.Salary,
+				triggeredBy: triggeredBy?.service,
+			},
+		});
+	}
 
-  async approveExtraSalary(
-    dto: ApproveExtraSalaryDto,
-    req?: AppRequest,
-    res?: Response,
-    triggeredBy?: TriggeredBy,
-  ) {
-    return this.makeTransaction({
-      action: async (ses) => {
-        const session = triggeredBy?.session ?? ses;
-        const { late, id } = dto;
-        const update = {
-          session,
-          update: {
-            $set: {
-              status: {
-                $cond: {
-                  if: { $eq: ['$earning', true] },
-                  then: EExtraSalaryStatus.Approved,
-                  else: EExtraSalaryStatus.Penalized,
-                },
-              },
-            },
-          },
-        };
+	async approveExtraSalary(
+		dto: ApproveExtraSalaryDto,
+		req?: AppRequest,
+		res?: Response,
+		triggeredBy?: TriggeredBy,
+	) {
+		return this.makeTransaction({
+			session: triggeredBy?.session,
+			action: async (session) => {
+				const { late, id } = dto;
+				const update = {
+					session,
+					update: {
+						$set: {
+							status: {
+								$cond: {
+									if: { $eq: ['$earning', true] },
+									then: EExtraSalaryStatus.Approved,
+									else: EExtraSalaryStatus.Penalized,
+								},
+							},
+						},
+					},
+				};
 
-        const docs = late
-          ? (
-              await this.updateMany({
-                ...update,
-                filter: {
-                  $and: [{ createdAt: new Date(), status: EExtraSalaryStatus.Pending, earning: false }],
-                },
-              })
-            ).next
-          : (await this.findAndUpdate({ ...update, id })).next;
+				const docs = late
+					? (
+							await this.updateMany({
+								...update,
+								filter: {
+									$and: [
+										{
+											createdAt: new Date(),
+											status: EExtraSalaryStatus.Pending,
+											earning: false,
+										},
+									],
+								},
+							})
+					  ).next
+					: (await this.findAndUpdate({ ...update, id })).next;
 
-        for (const doc of Array.isArray(docs) ? docs : [docs]) {
-          await doc.populate([
-            {
-              path: 'user',
-              select: '_id currentOrganization',
-              populate: [
-                {
-                  path: 'currentOrganization',
-                  select: 'numPoint',
-                },
-              ],
-            },
-            {
-              path: 'category',
-              select: 'name',
-            },
-          ]);
+				for (const doc of Array.isArray(docs) ? docs : [docs]) {
+					await doc.populate([
+						{
+							path: 'user',
+							select: '_id currentOrganization',
+							populate: [
+								{
+									path: 'currentOrganization',
+									select: 'numPoint',
+								},
+							],
+						},
+						{
+							path: 'category',
+							select: 'name',
+						},
+					]);
 
-          const {
-            extra,
-            user,
-            earning,
-            category: { name },
-          } = doc;
-          if (extra.isPoint) {
-            this.findAndUpdate({
-              filter: { _id: user._id },
-              update: { $inc: { 'user.currentOrganization.numPoint': extra.amount * (late ? -1 : 1) } },
-              session,
-            });
-            this.create({
-              dto: { numPoint: extra.amount, earning, user },
-              category: {
-                type: ECategory.PointTransaction,
-                category: name,
-              },
-              custom: this.pointTransactionModel,
-              session,
-            });
-          }
-        }
-      },
-      req,
-      res: triggeredBy ? undefined : res,
-      audit: {
-        name: 'approve-extrasalary',
-        module: EModule.Salary,
-        payload: dto,
-        triggeredBy: triggeredBy?.service,
-      },
-    });
-  }
+					const {
+						extra,
+						user,
+						earning,
+						category: { name },
+					} = doc;
+					if (extra.isPoint) {
+						this.findAndUpdate({
+							filter: { _id: user._id },
+							update: {
+								$inc: {
+									'user.currentOrganization.numPoint':
+										extra.amount * (late ? -1 : 1),
+								},
+							},
+							session,
+						});
+						this.create({
+							dto: { numPoint: extra.amount, earning, user },
+							category: {
+								type: ECategory.PointTransaction,
+								category: name,
+							},
+							custom: this.pointTransactionModel,
+							session,
+						});
+					}
+				}
+			},
+			req,
+			res: triggeredBy ? undefined : res,
+			audit: {
+				name: 'approve-extrasalary',
+				module: EModule.Salary,
+				payload: dto,
+				triggeredBy: triggeredBy?.service,
+			},
+		});
+	}
 
-  /**
-   * TODO: some notifications come from BE (push notification) and some will be local notification(FE handle it)
-   * sendNotification()
-   */
+	/**
+	 * TODO: some notifications come from BE (push notification) and some will be local notification(FE handle it)
+	 * sendNotification()
+	 */
 
-  /**
-   * TODO:
-   * combine all remaining accumulated leave from previous year to one
-   */
-  // async yearlyStatistics() {
-  //   return;
-  // }
+	/**
+	 * TODO:
+	 * combine all remaining accumulated leave from previous year to one
+	 */
+	// async yearlyStatistics() {
+	//   return;
+	// }
 }

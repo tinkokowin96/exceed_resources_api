@@ -1,24 +1,19 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
-import { AdjudicatedStatus, Counter, TimeCompensation } from 'src/core/schema/common.schema';
+import {
+	AdjudicatedStatus,
+	Counter,
+	FieldValue,
+	TimeCompensation,
+} from 'src/core/schema/common.schema';
 import { CoreSchema } from 'src/core/schema/core.shema';
 import { ERequestStatus } from 'src/core/util/enumn';
 import { User } from 'src/user/schema/user.schema';
 
 @Schema()
 export class CustomBreak extends CoreSchema {
-	@Prop({ type: String, required: true })
-	@IsNotEmpty()
-	@IsString()
-	title: string;
-
-	@Prop({ type: String, required: true })
-	@IsNotEmpty()
-	@IsString()
-	description: string;
-
 	@Prop({ type: Number, required: true })
 	@IsNotEmpty()
 	@IsNumber()
@@ -40,6 +35,11 @@ export class CustomBreak extends CoreSchema {
 	@ValidateNested()
 	@Type(() => TimeCompensation)
 	penalty: TimeCompensation;
+
+	@Prop({ type: [SchemaTypes.Mixed] })
+	@ValidateNested({ each: true })
+	@Type(() => FieldValue)
+	form: FieldValue[];
 
 	/**
 	 * NOTE: This is the approval status from each executive

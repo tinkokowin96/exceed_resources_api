@@ -20,7 +20,14 @@ import { Cupon } from 'src/cupon/schema/cupon.schema';
 import { Leave } from 'src/leave/schema/leave.schema';
 import { Promotion } from 'src/promotion/promotion.schema';
 import { IsEmoji } from '../custom_validator/is_emoji.validator';
-import { EAttachment, ECompensation, EMessage, EMonth, ERequestStatus } from '../util/enumn';
+import {
+	EAttachment,
+	ECompensation,
+	EField,
+	EMessage,
+	EMonth,
+	ERequestStatus,
+} from '../util/enumn';
 import { User } from 'src/user/schema/user.schema';
 
 export class Hour {
@@ -190,7 +197,11 @@ export class FieldValue {
 	id: string;
 
 	@IsNotEmpty()
-	value: string;
+	@IsEnum(EField)
+	type: EField;
+
+	@IsNotEmpty()
+	value: any;
 }
 
 export class UpdateArray {

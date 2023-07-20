@@ -17,26 +17,25 @@ export class CustomBreak extends CoreSchema {
 	@Prop({ type: Number, required: true })
 	@IsNotEmpty()
 	@IsNumber()
-	proposedMinutes: number;
+	proposedHour: number;
 
 	//NOTE: this is overrall status
-	@Prop({ type: String, enum: ERequestStatus, required: true })
-	@IsNotEmpty()
+	@Prop({ type: String, enum: ERequestStatus, default: ERequestStatus.Pending })
 	@IsEnum(ERequestStatus)
-	status: ERequestStatus;
+	status?: ERequestStatus;
 
-	@Prop({ type: SchemaTypes.Mixed, required: true })
-	@IsNotEmpty()
+	@Prop({ type: SchemaTypes.Mixed })
 	@ValidateNested()
 	@Type(() => Counter)
-	breakTime: Counter;
+	breakTime?: Counter;
 
 	@Prop({ type: SchemaTypes.Mixed })
 	@ValidateNested()
 	@Type(() => TimeCompensation)
-	penalty: TimeCompensation;
+	penalty?: TimeCompensation;
 
-	@Prop({ type: [SchemaTypes.Mixed] })
+	@Prop({ type: [SchemaTypes.Mixed], required: true })
+	@IsNotEmpty()
 	@ValidateNested({ each: true })
 	@Type(() => FieldValue)
 	form: FieldValue[];
@@ -48,8 +47,8 @@ export class CustomBreak extends CoreSchema {
 	@Prop({ type: [SchemaTypes.Mixed] })
 	@ValidateNested({ each: true })
 	@Type(() => AdjudicatedStatus)
-	adjudicatedStatus: AdjudicatedStatus[];
+	adjudicatedStatus?: AdjudicatedStatus[];
 
 	@Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-	lateToleratedBy: User;
+	lateToleratedBy?: User;
 }

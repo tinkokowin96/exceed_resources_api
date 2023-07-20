@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { SchemaTypes } from 'mongoose';
 import { Branch } from 'src/branch/branch.schema';
-import { TimeCompensation } from 'src/core/schema/common.schema';
+import { Compensation } from 'src/core/schema/common.schema';
 import { CoreSchema } from 'src/core/schema/core.shema';
 import { Leave } from 'src/leave/schema/leave.schema';
 
@@ -24,8 +24,8 @@ export class CustomBreakConfig extends IntersectionType(
 
 	@Prop({ type: SchemaTypes.Mixed })
 	@ValidateNested({ each: true })
-	@Type(() => TimeCompensation)
-	latePenalties?: TimeCompensation[];
+	@Type(() => Compensation)
+	latePenalties?: Compensation[];
 
 	@Prop({ type: SchemaTypes.ObjectId, ref: 'Branch', required: true })
 	@IsNotEmpty()

@@ -160,17 +160,6 @@ export class PromotionAllowance extends PickType(Compensation, ['amount', 'isPoi
 	isPercent: boolean;
 }
 
-export class TimeCompensation {
-	@IsNotEmpty()
-	@IsNumber()
-	amount: number;
-
-	@IsNotEmpty()
-	@ValidateNested()
-	@Type(() => Compensation)
-	compensation: Compensation;
-}
-
 export class Location {
 	@IsNotEmpty()
 	@IsLatitude()
@@ -186,9 +175,8 @@ export class Counter {
 	@IsDateString()
 	start: Date;
 
-	@IsNotEmpty()
 	@IsDateString()
-	end: Date;
+	end?: Date;
 }
 
 export class FieldValue {

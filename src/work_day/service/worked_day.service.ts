@@ -86,7 +86,7 @@ export class WorkedDayService extends CoreService<WorkedDay> {
 						const penalty =
 							config.latePenalties[
 								getNestedIndex(config.latePenalties, 'amount', dateDiff)
-							].compensation;
+							];
 						if (penalty) {
 							latePenalty = await this.extraSalaryService.createExtraSalary(
 								{ earning: false, extra: penalty, category: { category: 'Late' } },

@@ -132,6 +132,7 @@ export abstract class CoreService<T> {
 		const doc = new model({
 			...payload,
 			_id: new Types.ObjectId(),
+			createdAt: new Date(),
 		});
 		return await doc.save({ session });
 	}

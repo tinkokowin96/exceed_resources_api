@@ -89,4 +89,21 @@ export class CommonService extends CoreService<Field> {
 			if (fields.length) throw new BadRequestException('Missing mandatory fields');
 		}
 	}
+
+	// async compensateExtraSalary(
+	// 	{ amount, compensations, earning, category }: CompensateExtraSalaryDto,
+	// 	req: AppRequest,
+	// 	res: Response,
+	// 	triggeredBy: TriggeredBy,
+	// ) {
+	// 	const compensation = compensations[getNestedIndex(compensations, 'amount', amount)];
+	// 	if (compensation) {
+	// 		return await this.extraSalaryService.createExtraSalary(
+	// 			{ earning, extra: compensation, category },
+	// 			req,
+	// 			res,
+	// 			triggeredBy,
+	// 		);
+	// 	}
+	// }
 }

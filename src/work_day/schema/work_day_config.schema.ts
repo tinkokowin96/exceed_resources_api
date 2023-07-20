@@ -8,7 +8,7 @@ import {
 	ValidateIf,
 	ValidateNested,
 } from 'class-validator';
-import { Compensation, Hour, TimeCompensation } from 'src/core/schema/common.schema';
+import { Compensation, Hour } from 'src/core/schema/common.schema';
 import { EWeekDay } from 'src/core/util/enumn';
 
 export class WorkDayConfig {
@@ -21,8 +21,8 @@ export class WorkDayConfig {
 	// requireCBApprove: boolean;
 
 	@ValidateNested({ each: true })
-	@Type(() => TimeCompensation)
-	latePenalties?: TimeCompensation[];
+	@Type(() => Compensation)
+	latePenalties?: Compensation[];
 
 	@IsBoolean()
 	allowRemote?: boolean;
